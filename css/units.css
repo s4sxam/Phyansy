@@ -1,0 +1,222 @@
+/* ═══════════════════════════════════════════
+   UNITS.CSS — Units & Measurement Section
+═══════════════════════════════════════════ */
+
+.units-section {
+  margin-bottom: 40px;
+}
+
+.units-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+}
+
+.units-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── SEARCH BAR ── */
+.units-search-bar {
+  margin-bottom: 14px;
+  position: relative;
+}
+
+.units-search-bar input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 14px 9px 36px;
+  border-radius: var(--radius-card, 12px);
+  border: 1px solid var(--border);
+  background: var(--surface, rgba(255,255,255,0.6));
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.units-search-bar input:focus {
+  border-color: rgba(102,126,234,0.5);
+}
+
+.units-search-bar input::placeholder {
+  color: var(--text-muted);
+}
+
+.units-search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  line-height: 0;
+}
+
+/* ── TABLE WRAPPER — scroll on mobile ── */
+.units-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-card, 12px);
+}
+
+/* ── TABLE ── */
+.units-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13.5px;
+}
+
+.units-table th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.units-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  vertical-align: middle;
+  line-height: 1.5;
+}
+
+.units-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.units-table tbody tr:hover td {
+  background: rgba(102,126,234,0.04);
+}
+
+/* Definition column — allow wrapping, reasonable max width */
+.units-table td:last-child {
+  min-width: 220px;
+  max-width: 420px;
+}
+
+/* ── COPY SYMBOL BUTTON ── */
+.unit-sym-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--unit-sym-color, #5a4fc0);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.unit-sym-btn:hover {
+  background: rgba(102,126,234,0.12);
+}
+
+.unit-sym-btn.copied {
+  color: #22c55e;
+  background: rgba(34,197,94,0.1);
+}
+
+/* ── DIMENSION BADGE ── */
+.unit-dim {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  background: rgba(102,126,234,0.07);
+  border-radius: 4px;
+  padding: 2px 6px;
+  white-space: nowrap;
+}
+
+/* ── NO RESULT ── */
+.units-no-result {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13.5px;
+}
+
+/* ── PREFIX SCALE ── */
+.prefix-scale {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.prefix-card {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: default;
+}
+
+.prefix-exp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--physics-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  min-width: 52px;
+  flex-shrink: 0;
+}
+
+.prefix-info {
+  min-width: 0;
+}
+
+.prefix-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.prefix-sym {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.prefix-example {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.3;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .units-table th,
+  .units-table td {
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
+
+  .units-table td:last-child {
+    min-width: 160px;
+  }
+
+  .prefix-scale {
+    grid-template-columns: 1fr 1fr;
+  }
+}

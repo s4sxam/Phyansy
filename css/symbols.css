@@ -1,0 +1,185 @@
+/* ═══════════════════════════════════════════
+   SYMBOLS.CSS — Symbols Reference Section
+═══════════════════════════════════════════ */
+
+/* ── SEARCH BAR ── */
+/* Fix #6: search bar styling (input lives in index.html) */
+.sym-search-wrap {
+  margin-bottom: 20px;
+}
+
+/* ── SUB-TABS ── */
+.symbols-sub-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.sym-sub-btn {
+  padding: 7px 18px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.8);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-sec);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sym-sub-btn:hover {
+  color: var(--text);
+  border-color: rgba(102,126,234,0.4);
+}
+
+.sym-sub-btn.active {
+  background: var(--physics-grad);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 8px rgba(102,126,234,0.3);
+}
+
+/* ── GREEK GRID ── */
+/* Fix #5: overflow visible so expanded detail isn't clipped by grid */
+.greek-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  overflow: visible;
+}
+
+/* ── GREEK CARD ── */
+.greek-card {
+  padding: 18px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  /* Fix #2: transition for smooth expand */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.greek-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.greek-letters {
+  font-size: 36px;
+  font-weight: 300;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  background: var(--physics-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.greek-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.greek-pron {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.greek-use {
+  font-size: 12px;
+  color: var(--text-sec);
+  line-height: 1.3;
+}
+
+/* ── GREEK DETAIL (click-expanded, replaces old CSS :hover tooltip) ── */
+/* .lazy-detail hidden by default — only shown when card has .expanded.
+   lazyRenderer toggles .expanded on click, so this is what drives
+   open AND close.                                                      */
+.lazy-detail {
+  display: none;
+}
+
+.greek-card.expanded .lazy-detail {
+  display: block;
+}
+
+.greek-detail {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  text-align: left;
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.greek-detail-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.greek-detail ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.greek-detail li {
+  font-size: 12px;
+  color: var(--text-sec);
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
+.greek-detail li::before {
+  content: '→ ';
+  color: #667eea;
+}
+
+/* ── MATH SYMBOLS GRID ── */
+.math-symbols-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+/* ── MATH SYMBOL CARD ── */
+.math-sym-card {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.math-sym-glyph {
+  font-size: 28px;
+  line-height: 1;
+  background: var(--physics-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  min-width: 36px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.math-sym-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.math-sym-use {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}

@@ -1,0 +1,239 @@
+/* ═══════════════════════════════════════════
+   CALCULATOR.CSS — Physics Calculator Section
+═══════════════════════════════════════════ */
+
+.calc-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ── PICKER PANEL ── */
+.calc-picker {
+  padding: 24px;
+}
+
+.calc-picker label[for="calc-eq-select"] {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.calc-select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.8);
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: border-color 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239a8f8a' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.calc-select:focus {
+  border-color: rgba(102,126,234,0.5);
+  box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+}
+
+.calc-solve-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.calc-var-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.calc-var-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.6);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 13.5px;
+  color: var(--text-sec);
+}
+
+.calc-var-check:hover {
+  border-color: rgba(102,126,234,0.3);
+  background: var(--physics-soft);
+}
+
+.calc-var-check input[type="radio"] {
+  accent-color: #667eea;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.calc-var-sym {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  color: #5a4fc0;
+  margin-right: 4px;
+}
+
+/* ── RIGHT PANEL ── */
+.calc-panel {
+  padding: 28px;
+}
+
+.calc-eq-display {
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 500;
+  padding: 20px;
+  background: var(--physics-soft);
+  border-radius: 12px;
+  color: #4a3fb0;
+  margin-bottom: 24px;
+  letter-spacing: 0.03em;
+}
+
+.calc-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.calc-input-group label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-sec);
+  margin-bottom: 6px;
+}
+
+.calc-num-input {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.8);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.calc-num-input:focus {
+  border-color: rgba(102,126,234,0.5);
+  box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+  background: white;
+}
+
+.calc-num-input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── CALCULATE BUTTON ── */
+.calc-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: var(--physics-grad);
+  color: white;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(102,126,234,0.35);
+  margin-bottom: 20px;
+}
+
+.calc-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(102,126,234,0.45);
+}
+
+.calc-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(102,126,234,0.3);
+}
+
+/* ── RESULT PANEL ── */
+.calc-result {
+  display: none;
+  padding: 20px;
+  background: var(--physics-soft);
+  border-radius: 12px;
+  border: 1px solid rgba(102,126,234,0.15);
+  animation: fadeIn 0.3s ease;
+}
+
+.calc-result.show {
+  display: block;
+}
+
+.calc-result-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #667eea;
+  margin-bottom: 6px;
+}
+
+.calc-result-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 32px;
+  font-weight: 700;
+  background: var(--physics-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.calc-result-unit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--text-sec);
+  margin-bottom: 12px;
+}
+
+.calc-result-explain {
+  font-size: 13px;
+  color: var(--text-sec);
+  line-height: 1.5;
+  padding-top: 12px;
+  border-top: 1px solid rgba(102,126,234,0.15);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .calc-layout {
+    grid-template-columns: 1fr;
+  }
+}
