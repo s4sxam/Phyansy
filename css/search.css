@@ -1,0 +1,156 @@
+/* =============================================================================
+   search.css — Phyansy Global Search Engine Styles
+   ============================================================================= */
+
+/* ── GLOBAL SEARCH WRAP ──────────────────────────────────────────────────── */
+#phy-global-search-wrap {
+  padding: 0;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  #phy-global-search-wrap {
+    max-width: 100%;
+  }
+
+  #phy-global-input {
+    font-size: 16px !important;
+  }
+
+  .phy-search-shortcut {
+    display: none;
+  }
+}
+
+/* ── INTEGRATE INTO SECTION LAYOUT ──────────────────────────────────────── */
+.section.active #phy-global-search-wrap {
+  display: block;
+}
+
+/* ── DARK MODE ADJUSTMENTS ───────────────────────────────────────────────── */
+[data-theme="dark"] #phy-dropdown,
+[data-theme="dark"] #phy-results-panel {
+  background: rgba(10, 9, 18, 0.98);
+  border-color: rgba(255,255,255,0.07);
+}
+
+[data-theme="dark"] .phy-dd-item:hover,
+[data-theme="dark"] .phy-dd-item.active,
+[data-theme="dark"] .phy-result-row:hover {
+  background: rgba(102, 126, 234, 0.09);
+}
+
+/* ── LIGHT MODE ADJUSTMENTS ──────────────────────────────────────────────── */
+[data-theme="light"] #phy-global-search-wrap .phy-search-inner {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] #phy-global-input {
+  color: var(--text-primary, #1a1825);
+}
+
+[data-theme="light"] #phy-dropdown,
+[data-theme="light"] #phy-results-panel {
+  background: rgba(251, 251, 254, 0.99);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .phy-dd-item:hover,
+[data-theme="light"] .phy-dd-item.active,
+[data-theme="light"] .phy-result-row:hover {
+  background: rgba(102, 126, 234, 0.07);
+}
+
+[data-theme="light"] .phy-dd-name,
+[data-theme="light"] .phy-result-name {
+  color: var(--text-primary, #1a1825);
+}
+
+[data-theme="light"] mark.phy-highlight {
+  background: rgba(102, 126, 234, 0.14);
+  color: inherit;
+}
+
+/* ── PREFIX PILL COLOURS BY SECTION ─────────────────────────────────────── */
+.phy-prefix-pill[data-section="constants"] {
+  background: rgba(99, 179, 237, 0.12);
+  color: #63b3ed;
+  border-color: rgba(99, 179, 237, 0.2);
+}
+.phy-prefix-pill[data-section="equations"] {
+  background: rgba(154, 117, 234, 0.12);
+  color: #9a75ea;
+  border-color: rgba(154, 117, 234, 0.2);
+}
+.phy-prefix-pill[data-section="symbols"] {
+  background: rgba(72, 187, 120, 0.12);
+  color: #48bb78;
+  border-color: rgba(72, 187, 120, 0.2);
+}
+.phy-prefix-pill[data-section="units"] {
+  background: rgba(237, 137, 54, 0.12);
+  color: #ed8936;
+  border-color: rgba(237, 137, 54, 0.2);
+}
+
+/* ── OVERLAY ANIMATION ───────────────────────────────────────────────────── */
+#phy-results-overlay { animation: none; }
+#phy-results-overlay.open {
+  animation: phyOverlayIn 0.2s ease forwards;
+}
+@keyframes phyOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+#phy-results-panel { animation: none; }
+#phy-results-overlay.open #phy-results-panel {
+  animation: phyPanelIn 0.24s cubic-bezier(0.32, 1.4, 0.6, 1) forwards;
+}
+@keyframes phyPanelIn {
+  from { transform: translateY(12px) scale(0.98); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* ── DROPDOWN OPEN ANIMATION ─────────────────────────────────────────────── */
+#phy-dropdown.open {
+  animation: phyDropIn 0.16s ease forwards;
+}
+@keyframes phyDropIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── RESULT ROW SCORE (debug, hidden in production) ────────────────────── */
+.phy-result-score { display: none; }
+
+/* ── SECTION RESULT ICONS ───────────────────────────────────────────────── */
+.phy-result-row[data-section="constants"] .phy-result-icon,
+.phy-dd-item[data-section="constants"] .phy-dd-icon {
+  background: rgba(99, 179, 237, 0.1);
+  color: #63b3ed;
+}
+.phy-result-row[data-section="equations"] .phy-result-icon,
+.phy-dd-item[data-section="equations"] .phy-dd-icon {
+  background: rgba(154, 117, 234, 0.1);
+  color: #9a75ea;
+}
+.phy-result-row[data-section="symbols"] .phy-result-icon,
+.phy-dd-item[data-section="symbols"] .phy-dd-icon {
+  background: rgba(72, 187, 120, 0.1);
+  color: #48bb78;
+}
+.phy-result-row[data-section="units"] .phy-result-icon,
+.phy-dd-item[data-section="units"] .phy-dd-icon {
+  background: rgba(237, 137, 54, 0.1);
+  color: #ed8936;
+}
+
+/* ── ACCESSIBILITY: focus rings ─────────────────────────────────────────── */
+#phy-global-input:focus-visible { outline: none; }
+.phy-results-close:focus-visible,
+.phy-search-clear:focus-visible {
+  outline: 2px solid var(--accent, #667eea);
+  outline-offset: 2px;
+}
