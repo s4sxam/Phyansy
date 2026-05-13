@@ -143,6 +143,27 @@ export function createLazySection(config) {
       const toggle = () => {
         const willExpand = !card.classList.contains('expanded');
 
+        // ── CLOSE OTHER EXPANDED CARDS (with scroll-anchor fix) ─────────────
+        if (willExpand) {
+          // 1. Snapshot card's position BEFORE any layout change
+          const cardRectBefore = card.getBoundingClientRect();
+
+          // 2. Collapse all other open cards
+          grid.querySelectorAll('[data-lazy-idx].expanded').forEach(other => {
+            if (other !== card) {
+              other.classList.remove('expanded');
+              other.setAttribute('aria-expanded', 'false');
+            }
+          });
+
+          // 3. Compensate for layout shift: keep clicked card at same visual position
+          const cardRectAfter = card.getBoundingClientRect();
+          const shift = cardRectAfter.top - cardRectBefore.top;
+          if (shift !== 0) {
+            window.scrollBy({ top: shift, behavior: 'instant' });
+          }
+        }
+
         // ── LAZY INJECTION: runs exactly once per card ──────────────────────
         if (willExpand && !card.dataset.lazyLoaded) {
           const idx      = Number(card.dataset.lazyIdx);
@@ -319,6 +340,31 @@ export function createLazyTabSection(config) {
     grid.querySelectorAll('[data-lazy-idx]').forEach(card => {
       const toggle = () => {
         const willExpand = !card.classList.contains('expanded');
+
+        // ── CLOSE OTHER EXPANDED CARDS (with scroll-anchor fix) ─────────────
+        if (willExpand) {
+          // 1. Snapshot card's position BEFORE any layout change
+          const cardRectBefore = card.getBoundingClientRect();
+
+          // 2. Collapse all other open cards
+          grid.querySelectorAll('[data-lazy-idx].expanded').forEach(other => {
+            if (other !== card) {
+              other.classList.remove('expanded');
+              other.setAttribute('aria-expanded', 'false');
+              const lbl = other.querySelector('.eq-expand-label');
+              if (lbl) lbl.textContent = 'Details';
+              const chv = other.querySelector('.eq-chevron');
+              if (chv) chv.style.transform = '';
+            }
+          });
+
+          // 3. Compensate for layout shift: keep clicked card at same visual position
+          const cardRectAfter = card.getBoundingClientRect();
+          const shift = cardRectAfter.top - cardRectBefore.top;
+          if (shift !== 0) {
+            window.scrollBy({ top: shift, behavior: 'instant' });
+          }
+        }
 
         // LAZY INJECTION: runs exactly once per card
         if (willExpand && !card.dataset.lazyLoaded) {
