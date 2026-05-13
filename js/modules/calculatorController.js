@@ -7,6 +7,7 @@ import { showToast } from './toastController.js';
 
 let currentEq = CALC_EQS[0];
 let solveFor = currentEq.vars[0].id;
+let _countUpInterval = null; // FIX 8
 
 function formatNum(n) {
   if (!isFinite(n)) return 'Error';
@@ -29,7 +30,8 @@ function animateCountUp(el, targetStr) {
   const stepMs   = duration / steps;
   let step = 0;
 
-  const interval = setInterval(() => {
+  if (_countUpInterval) clearInterval(_countUpInterval); // FIX 8
+  _countUpInterval = setInterval(() => {
     step++;
     const progress = step / steps;
     // Ease-out cubic
@@ -37,7 +39,8 @@ function animateCountUp(el, targetStr) {
     const current = targetNum * eased;
     el.textContent = formatNum(current);
     if (step >= steps) {
-      clearInterval(interval);
+      clearInterval(_countUpInterval); // FIX 8
+      _countUpInterval = null; // FIX 8
       el.textContent = targetStr; // Snap to exact value
     }
   }, stepMs);
@@ -47,7 +50,9 @@ function updateSolveForUI() {
   const container = document.getElementById('calc-var-checks');
   if (!container) return;
 
+  // FIX 3+4 — filter out constant vars from solve-for options
   container.innerHTML = currentEq.vars
+    .filter(v => !v.constant)
     .map(
       (v) => `
       <label class="calc-var-check">
@@ -75,30 +80,52 @@ function updateInputsUI() {
   container.innerHTML = currentEq.vars
     .map((v) => {
       const disabled = v.id === solveFor;
+      const isConst  = !!v.constant; // FIX 3+4
+      const lockIcon = isConst
+        ? `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`
+        : '';
+      const note = isConst
+        ? `<div class="calc-const-note">🔒 This is a fundamental constant — its value is fixed.</div>`
+        : (v.default !== undefined
+            ? `<div class="calc-const-note">Default is Earth's surface gravity. You may change this.</div>` // FIX 5
+            : '');
       return `
         <div class="calc-input-group" id="input-group-${v.id}">
           <label for="calc-input-${v.id}">
-            <span style="font-family:'JetBrains Mono',monospace;color:#5a4fc0;font-weight:600">${v.sym}</span>
-            — ${v.label} ${disabled ? '<span style="color:var(--text-muted);font-weight:400">(solving for this)</span>' : `(${v.unit})`}
+            <span class="calc-var-sym">${v.sym}</span><!-- FIX 42 -->
+            — ${v.label} ${disabled && !isConst ? '<span class="calc-solving-hint">(solving for this)</span>' : `(${v.unit})`}
+            ${lockIcon}
           </label>
           <input
             class="calc-num-input"
             id="calc-input-${v.id}"
             type="number"
-            placeholder="${disabled ? 'Result will appear here' : `Enter ${v.label.toLowerCase()} in ${v.unit}`}"
-            ${disabled ? 'disabled' : ''}
+            placeholder="${isConst ? String(v.value) : (disabled ? 'Result will appear here' : `Enter ${v.label.toLowerCase()} in ${v.unit}`)}"
+            value="${isConst ? String(v.value) : (v.default !== undefined && !disabled ? String(v.default) : '')}"
+            ${disabled || isConst ? 'disabled' : ''}
+            ${isConst ? 'readonly title="This is a fundamental constant — its value is fixed."' : ''}
             step="any"
             aria-label="${v.label}"
           >
+          ${note}
         </div>
-      `;
+      `; // FIX 3+4+5
     })
     .join('');
 }
 
 function updateEquationDisplay() {
   const el = document.getElementById('calc-eq-display');
-  if (el) el.textContent = currentEq.formula;
+  if (!el) return;
+  if (currentEq.formulaLatex && window.renderMathInElement) {
+    el.innerHTML = '\\(' + currentEq.formulaLatex + '\\)'; // FIX 9
+    renderMathInElement(el, {
+      delimiters: [{ left: '\\(', right: '\\)', display: false }],
+      throwOnError: false,
+    });
+  } else {
+    el.textContent = currentEq.formula;
+  }
 }
 
 function hideResult() {
@@ -149,8 +176,25 @@ function calculate() {
         input.style.borderColor = 'rgba(239,68,68,0.7)';
         valid = false;
       } else {
-        vals[v.id] = num;
+        // FIX 2 — constraint checking
+        if (v.constraints) {
+          if (v.constraints.min !== undefined && num < v.constraints.min) {
+            input.style.borderColor = 'rgba(239,68,68,0.7)';
+            showToast(`${v.label} cannot be negative or zero`);
+            valid = false;
+          }
+          if (v.constraints.nonzero && num === 0) {
+            input.style.borderColor = 'rgba(239,68,68,0.7)';
+            showToast(`${v.label} cannot be zero`);
+            valid = false;
+          }
+        }
+        if (valid || vals[v.id] === undefined) vals[v.id] = num;
       }
+    }
+    // FIX 3+4 — inject constant value
+    if (v.constant && v.value !== undefined) {
+      vals[v.id] = v.value;
     }
   });
 
@@ -170,6 +214,10 @@ function calculate() {
     return;
   }
 
+  if (isNaN(result)) {
+    showToast('Result is undefined — check your inputs (e.g. negative energy is not physical)'); // FIX 6
+    return;
+  }
   if (!isFinite(result)) {
     showToast('Cannot divide by zero — check your inputs');
     return;
@@ -184,7 +232,9 @@ function calculate() {
 
 function loadEquation(eq) {
   currentEq = eq;
-  solveFor  = eq.vars[0].id;
+  // FIX 3+4 — default to first non-constant var
+  const firstSolvable = eq.vars.find(v => !v.constant);
+  solveFor  = firstSolvable ? firstSolvable.id : eq.vars[0].id;
   updateEquationDisplay();
   updateSolveForUI();
   updateInputsUI();
