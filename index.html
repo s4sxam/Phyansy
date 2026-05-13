@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,6 +27,7 @@
   <link rel="stylesheet" href="css/calculator.css">
   <link rel="stylesheet" href="css/modal.css">
   <link rel="stylesheet" href="css/cookie.css">
+  <link rel="stylesheet" href="css/search.css">
 
   <!-- Prevent flash of wrong theme -->
   <script>
@@ -115,10 +117,7 @@
       <p class="section-sub">Fundamental constants of the universe — click any card to expand</p>
     </div>
     <div class="controls">
-      <div class="search-wrap">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input class="search-input" type="search" id="const-search" placeholder="Search constants…" role="search" aria-label="Search physical constants">
-      </div>
+      <input type="search" id="const-search" aria-hidden="true" style="display:none">
       <div class="filter-btns" id="const-filters" role="group" aria-label="Filter by category"></div>
     </div>
     <div class="constants-grid" id="constants-grid" role="list"></div>
@@ -132,12 +131,7 @@
       <h1 class="section-title">Key Equations</h1>
       <p class="section-sub">Essential formulas across all branches of physics — click to see variable legend</p>
     </div>
-    <div class="controls eq-controls">
-      <div class="search-wrap">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input class="search-input" type="search" id="eq-search" placeholder="Search equations, tags (e.g. suvat, energy…)" role="search" aria-label="Search equations">
-      </div>
-    </div>
+    <input type="search" id="eq-search" aria-hidden="true" style="display:none">
     <div class="eq-branch-tabs" id="eq-branch-tabs" role="tablist" aria-label="Physics branch"></div>
     <div class="filter-btns eq-difficulty-filters" id="eq-difficulty-filters" role="group" aria-label="Filter by difficulty"></div>
     <div class="eq-grid" id="eq-grid" role="list"></div>
@@ -151,12 +145,7 @@
       <h1 class="section-title">Symbols Reference</h1>
       <p class="section-sub">Greek alphabet and mathematical notation used in physics</p>
     </div>
-    <!-- Fix #6: search bar for Greek symbols -->
-    <div class="sym-search-wrap">
-      <input type="search" id="sym-search" class="search-input"
-             placeholder="Search symbols… (e.g. lambda, wave, frequency)"
-             aria-label="Search symbols">
-    </div>
+    <input type="search" id="sym-search" aria-hidden="true" style="display:none">
     <div class="symbols-sub-tabs" role="tablist" aria-label="Symbol category">
       <button class="sym-sub-btn active" data-sym="greek" role="tab" aria-selected="true">Greek Alphabet</button>
       <button class="sym-sub-btn" data-sym="math" role="tab" aria-selected="false">Math Symbols</button>
@@ -178,13 +167,7 @@
       <p class="section-sub">SI base units, derived units, and metric prefixes — click any symbol to copy</p>
     </div>
 
-    <!-- Shared search across SI + Derived tables -->
-    <div class="units-search-bar" style="margin-bottom:24px">
-      <span class="units-search-icon" aria-hidden="true">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </span>
-      <input id="unit-search" type="search" placeholder="Search units — name, symbol, quantity…" aria-label="Search units">
-    </div>
+    <input type="search" id="unit-search" aria-hidden="true" style="display:none">
 
     <div class="units-section">
       <h2 class="units-section-title">SI Base Units</h2>
