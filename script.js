@@ -10,6 +10,7 @@ import { initThemeController, toggleTheme } from './js/modules/themeController.j
 import { initBgRenderer }        from './js/modules/bgRenderer.js';
 import { initFavicon }           from './js/modules/faviconController.js';
 import { initCookieController }  from './js/modules/cookieController.js';
+import { initSearch }            from './js/modules/searchInit.js';
 
 // ── GLOBAL DRAG GUARD ────────────────────────────────────────────────────────
 window._quantraIsDragging = false;
@@ -91,6 +92,7 @@ function injectSectionIcons() {
     wireThemeToggle();
     injectSectionIcons();
     initPageController();
+    initSearch();   // ← Advanced search engine (global + fuzzy)
   };
 
   if (isRealMobileDevice() && mobileLanding) {
