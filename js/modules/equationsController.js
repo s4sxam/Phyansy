@@ -54,7 +54,7 @@ export function initEquations() {
               ${eq.difficulty ? `<span class="eq-difficulty-badge eq-diff-${diffSlug}">${eq.difficulty}</span>` : ''}
             </div>
           </div>
-          <div class="eq-formula-display" aria-label="Formula: ${eq.formula}">${eq.formula}</div>
+          <div class="eq-formula-display" aria-label="Formula: ${eq.formula}">\\(${eq.formulaLatex || eq.formula}\\)</div><!-- FIX 1 -->
           <div class="eq-desc">${eq.desc}</div>
           ${tagsHtml}
           <div class="eq-expand-hint" aria-hidden="true">
