@@ -8,9 +8,10 @@ export const CALC_EQS = [
     id: 'nsl',
     name: "Newton's Second Law — F = ma",
     formula: 'F = m × a',
+    formulaLatex: 'F = ma', // FIX 9
     vars: [
       { id: 'F', label: 'Force',        unit: 'N',    sym: 'F' },
-      { id: 'm', label: 'Mass',         unit: 'kg',   sym: 'm' },
+      { id: 'm', label: 'Mass',         unit: 'kg',   sym: 'm', constraints: { min: 0 } }, // FIX 2
       { id: 'a', label: 'Acceleration', unit: 'm/s²', sym: 'a' },
     ],
     solve: {
@@ -28,9 +29,10 @@ export const CALC_EQS = [
     id: 'ke',
     name: 'Kinetic Energy — KE = ½mv²',
     formula: 'KE = ½ × m × v²',
+    formulaLatex: 'KE = \\frac{1}{2}mv^2', // FIX 9
     vars: [
-      { id: 'KE', label: 'Kinetic Energy', unit: 'J',   sym: 'KE' },
-      { id: 'm',  label: 'Mass',           unit: 'kg',  sym: 'm' },
+      { id: 'KE', label: 'Kinetic Energy', unit: 'J',   sym: 'KE', constraints: { min: 0 } }, // FIX 2
+      { id: 'm',  label: 'Mass',           unit: 'kg',  sym: 'm',  constraints: { min: 0.000001 } }, // FIX 2
       { id: 'v',  label: 'Speed',          unit: 'm/s', sym: 'v' },
     ],
     solve: {
@@ -48,6 +50,7 @@ export const CALC_EQS = [
     id: 'ohm',
     name: "Ohm's Law — V = IR",
     formula: 'V = I × R',
+    formulaLatex: 'V = IR', // FIX 9
     vars: [
       { id: 'V', label: 'Voltage',    unit: 'V', sym: 'V' },
       { id: 'I', label: 'Current',    unit: 'A', sym: 'I' },
@@ -68,10 +71,11 @@ export const CALC_EQS = [
     id: 'grav',
     name: 'Gravitational PE — U = mgh',
     formula: 'U = m × g × h',
+    formulaLatex: 'U = mgh', // FIX 9
     vars: [
       { id: 'U', label: 'Potential Energy',  unit: 'J',    sym: 'U' },
-      { id: 'm', label: 'Mass',              unit: 'kg',   sym: 'm' },
-      { id: 'g', label: 'Gravity (9.81)',    unit: 'm/s²', sym: 'g' },
+      { id: 'm', label: 'Mass',              unit: 'kg',   sym: 'm', constraints: { min: 0.000001 } }, // FIX 2
+      { id: 'g', label: 'Gravity (9.81)',    unit: 'm/s²', sym: 'g', default: 9.81 }, // FIX 5
       { id: 'h', label: 'Height',            unit: 'm',    sym: 'h' },
     ],
     solve: {
@@ -91,10 +95,11 @@ export const CALC_EQS = [
     id: 'photon',
     name: 'Photon Energy — E = hf',
     formula: 'E = h × f',
+    formulaLatex: 'E = hf', // FIX 9
     vars: [
       { id: 'E', label: 'Energy',               unit: 'J',   sym: 'E' },
-      { id: 'h', label: 'Planck (6.626×10⁻³⁴)', unit: 'J·s', sym: 'h' },
-      { id: 'f', label: 'Frequency',            unit: 'Hz',  sym: 'f' },
+      { id: 'h', label: 'Planck (6.626×10⁻³⁴)', unit: 'J·s', sym: 'h', constant: true, value: 6.626e-34, constraints: { min: 0.000001 } }, // FIX 4 FIX 2
+      { id: 'f', label: 'Frequency',            unit: 'Hz',  sym: 'f', constraints: { min: 0.000001 } }, // FIX 2
     ],
     solve: {
       E: (v) => v.h * v.f,
@@ -111,10 +116,11 @@ export const CALC_EQS = [
     id: 'wave',
     name: 'Wave Speed — v = fλ',
     formula: 'v = f × λ',
+    formulaLatex: 'v = f\\lambda', // FIX 9
     vars: [
       { id: 'v',   label: 'Wave Speed',  unit: 'm/s', sym: 'v' },
-      { id: 'f',   label: 'Frequency',   unit: 'Hz',  sym: 'f' },
-      { id: 'lam', label: 'Wavelength',  unit: 'm',   sym: 'λ' },
+      { id: 'f',   label: 'Frequency',   unit: 'Hz',  sym: 'f',   constraints: { min: 0.000001 } }, // FIX 2
+      { id: 'lam', label: 'Wavelength',  unit: 'm',   sym: 'λ',   constraints: { min: 0.000001 } }, // FIX 2
     ],
     solve: {
       v:   (v) => v.f * v.lam,
@@ -131,10 +137,11 @@ export const CALC_EQS = [
     id: 'emc2',
     name: 'Mass-Energy — E = mc²',
     formula: 'E = m × c²',
+    formulaLatex: 'E = mc^2', // FIX 9
     vars: [
       { id: 'E', label: 'Energy',                  unit: 'J',   sym: 'E' },
-      { id: 'm', label: 'Mass',                    unit: 'kg',  sym: 'm' },
-      { id: 'c', label: 'Speed of light (3×10⁸)',  unit: 'm/s', sym: 'c' },
+      { id: 'm', label: 'Mass',                    unit: 'kg',  sym: 'm', constraints: { min: 0.000001 } }, // FIX 2
+      { id: 'c', label: 'Speed of light (3×10⁸)',  unit: 'm/s', sym: 'c', constant: true, value: 299792458 }, // FIX 3
     ],
     solve: {
       E: (v) => v.m * v.c * v.c,
