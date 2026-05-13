@@ -237,3 +237,23 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── FIX 2/3/4/5/42 — Constant lock note + var symbol styling ── */
+.calc-const-note {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.calc-var-sym {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--physics-accent, #667eea); /* FIX 42 */
+  font-weight: 600;
+}
+
+.calc-solving-hint {
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 0.85em;
+}
