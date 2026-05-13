@@ -12,6 +12,7 @@
   --border: rgba(0,0,0,0.08);
   --card-bg: rgba(255,255,255,0.92);
   --physics-grad: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --physics-accent: #667eea; /* FIX 42 */
   --physics-soft: rgba(102,126,234,0.08);
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.08);
   --shadow-lg: 0 8px 32px rgba(0,0,0,0.12), 0 24px 64px rgba(0,0,0,0.1);
@@ -42,6 +43,7 @@
   --particle-color: rgba(160,140,255,0.4);
   --theme-icon-sun: none;
   --theme-icon-moon: block;
+  --physics-accent: #a08cff; /* FIX 42 */
 }
 
 [data-theme="dark"] body {
