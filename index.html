@@ -251,32 +251,57 @@
 
 <div id="toast" role="status" aria-live="polite"></div>
 
-<!-- Constants Detail Modal -->
-<div id="const-modal" class="const-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="const-modal-title">
-  <div class="const-modal-box">
-    <button class="const-modal-close" id="const-modal-close" aria-label="Close">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
+<!-- ── CONSTANTS MODAL (desktop only) ── -->
+<div id="const-modal" class="phys-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="const-modal-title">
+  <div class="phys-modal-box">
+    <button class="phys-modal-close" id="const-modal-close" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
-
-    <div class="const-modal-header">
-      <div class="const-modal-symbol" id="const-modal-symbol"></div>
-      <div class="const-modal-meta">
+    <div class="phys-modal-header">
+      <div class="phys-modal-symbol" id="const-modal-symbol"></div>
+      <div class="phys-modal-meta">
         <span class="const-badge" id="const-modal-badge"></span>
-        <div class="const-modal-name" id="const-modal-title"></div>
-        <div class="const-modal-value" id="const-modal-value"></div>
+        <div class="phys-modal-name" id="const-modal-title"></div>
+        <div class="phys-modal-value" id="const-modal-value"></div>
       </div>
     </div>
-
-    <button class="const-copy-btn const-modal-copy" id="const-modal-copy">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>
+    <button class="const-copy-btn phys-modal-copy" id="const-modal-copy">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
       Copy exact value
     </button>
+    <div class="phys-modal-body" id="const-modal-body"></div>
+  </div>
+</div>
 
-    <div class="const-modal-body" id="const-modal-body"></div>
+<!-- ── EQUATIONS MODAL (desktop only) ── -->
+<div id="eq-modal" class="phys-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="eq-modal-title">
+  <div class="phys-modal-box">
+    <button class="phys-modal-close" id="eq-modal-close" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="phys-modal-header eq-modal-header">
+      <div class="phys-modal-name" id="eq-modal-title"></div>
+      <div class="eq-modal-badges" id="eq-modal-badges"></div>
+    </div>
+    <div class="eq-modal-formula" id="eq-modal-formula"></div>
+    <div class="phys-modal-body" id="eq-modal-body"></div>
+  </div>
+</div>
+
+<!-- ── SYMBOLS MODAL (desktop only) ── -->
+<div id="sym-modal" class="phys-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="sym-modal-title">
+  <div class="phys-modal-box phys-modal-box--sm">
+    <button class="phys-modal-close" id="sym-modal-close" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="phys-modal-header">
+      <div class="sym-modal-letters" id="sym-modal-letters"></div>
+      <div class="phys-modal-meta">
+        <div class="phys-modal-name" id="sym-modal-title"></div>
+        <div class="phys-modal-value" id="sym-modal-pron"></div>
+      </div>
+    </div>
+    <div class="phys-modal-body" id="sym-modal-body"></div>
   </div>
 </div>
 
