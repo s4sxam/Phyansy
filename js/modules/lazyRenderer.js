@@ -127,6 +127,17 @@ export function createLazySection(config) {
         : html.replace(/^(<\w+)/, `$1 data-lazy-idx="${globalIdx}"`);
     }).join('');
 
+    // FIX 1 — Batch-render KaTeX on all visible card faces at once
+    if (window.renderMathInElement) {
+      renderMathInElement(grid, {
+        delimiters: [
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true },
+        ],
+        throwOnError: false,
+      });
+    }
+
     // Wire expand + lazy detail injection
     grid.querySelectorAll('[data-lazy-idx]').forEach(card => {
       const toggle = () => {
@@ -293,6 +304,17 @@ export function createLazyTabSection(config) {
         ? html
         : html.replace(/^(<\w+)/, `$1 data-lazy-branch="${branch}" data-lazy-idx="${i}"`);
     }).join('');
+
+    // FIX 1 — Batch-render KaTeX on all visible card faces at once
+    if (window.renderMathInElement) {
+      renderMathInElement(grid, {
+        delimiters: [
+          { left: '\\(', right: '\\)', display: false },
+          { left: '\\[', right: '\\]', display: true },
+        ],
+        throwOnError: false,
+      });
+    }
 
     grid.querySelectorAll('[data-lazy-idx]').forEach(card => {
       const toggle = () => {
