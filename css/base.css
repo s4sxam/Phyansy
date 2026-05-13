@@ -104,7 +104,7 @@ main#main-app {
 /* ── SECTIONS ── */
 .section {
   display: none;
-  animation: fadeIn 0.3s ease;
+  
 }
 
 .section.active {
@@ -220,7 +220,7 @@ main#main-app {
 /* ── STAGGER ANIMATION ── */
 .stagger-item {
   opacity: 0;
-  animation: staggerIn 0.4s ease forwards;
+  animation: staggerIn 0.15s ease forwards;
 }
 
 @keyframes staggerIn {
