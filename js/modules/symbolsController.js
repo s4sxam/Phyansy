@@ -1,18 +1,64 @@
 // =============================================================================
 // symbolsController.js — uses lazyRenderer engine
+// Desktop (>768px) → modal | Mobile (≤768px) → expand-in-card
 // =============================================================================
 
 import { GREEK, MATH_SYMBOLS } from '../data/symbolsData.js';
 import { createLazySection } from './lazyRenderer.js';
 
-export function initSymbols() {
+const DESKTOP_BREAKPOINT = 768;
+const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
 
-  // Greek — expandable cards via click (lazyRenderer handles expand/collapse)
-  // Detail is injected into .lazy-detail on first click, not via CSS :hover
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+
+function initModal() {
+  const overlay   = document.getElementById('sym-modal');
+  const closeBtn  = document.getElementById('sym-modal-close');
+  const lettersEl = document.getElementById('sym-modal-letters');
+  const titleEl   = document.getElementById('sym-modal-title');
+  const pronEl    = document.getElementById('sym-modal-pron');
+  const bodyEl    = document.getElementById('sym-modal-body');
+
+  if (!overlay) return null;
+
+  function openModal(g) {
+    lettersEl.textContent = `${g.upper} ${g.lower}`;
+    titleEl.textContent   = g.name;
+    pronEl.textContent    = g.pron;
+    bodyEl.innerHTML      = `
+      <div class="greek-detail">
+        <div class="greek-detail-title">Physics uses</div>
+        <ul>${g.ext.map(e => `<li>${e}</li>`).join('')}</ul>
+      </div>`;
+
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    closeBtn.focus();
+  }
+
+  function closeModal() {
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && overlay.classList.contains('show')) closeModal();
+  });
+
+  return { openModal };
+}
+
+// ── MAIN INIT ─────────────────────────────────────────────────────────────────
+
+export function initSymbols() {
+  const modal = initModal();
+
   createLazySection({
     data:         GREEK,
     gridId:       'greek-grid',
-    searchId:     'sym-search',          // Fix #1: wire the search input
+    searchId:     'sym-search',
     searchFields: ['name', 'pron', 'primary'],
 
     renderCard: (g, globalIdx, i) => `
@@ -28,17 +74,28 @@ export function initSymbols() {
         <div class="lazy-detail"></div>
       </div>`,
 
-    // Fix #2: detail rendered by JS on click — not by CSS :hover
-    // .greek-detail replaces .greek-tooltip so CSS hover rule no longer applies
     renderDetail: (g) => `
       <div class="greek-detail">
         <div class="greek-detail-title">Physics uses</div>
         <ul>${g.ext.map(e => `<li>${e}</li>`).join('')}</ul>
-      </div>
-    `,
+      </div>`,
+
+    onExpand: (card, g) => {
+      // Desktop → modal, keep card collapsed
+      if (isDesktop() && modal) {
+        modal.openModal(g);
+        requestAnimationFrame(() => {
+          card.classList.remove('expanded');
+          card.setAttribute('aria-expanded', 'false');
+          card.dataset.lazyLoaded = '';
+        });
+        return;
+      }
+      // Mobile → expand-in-card (lazyRenderer handles it)
+    },
   });
 
-  // Math symbols — simple static list, no expand needed
+  // Math symbols — static list, no expand
   const mathGrid = document.getElementById('math-sym-grid');
   if (mathGrid) {
     mathGrid.innerHTML = MATH_SYMBOLS.map((s, i) => `
