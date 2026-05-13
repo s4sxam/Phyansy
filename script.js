@@ -9,6 +9,7 @@ import { initLangController }    from './js/modules/langController.js';
 import { initThemeController, toggleTheme } from './js/modules/themeController.js';
 import { initBgRenderer }        from './js/modules/bgRenderer.js';
 import { initFavicon }           from './js/modules/faviconController.js';
+import { initCookieController }  from './js/modules/cookieController.js';
 
 // ── GLOBAL DRAG GUARD ────────────────────────────────────────────────────────
 window._quantraIsDragging = false;
@@ -79,6 +80,7 @@ function injectSectionIcons() {
 
   initSettingsController();
   initLangController();
+  initCookieController();
 
   const mobileLanding = document.getElementById('mobile-landing');
   const mainApp       = document.getElementById('main-app');
