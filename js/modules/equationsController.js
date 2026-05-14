@@ -5,10 +5,6 @@
 
 import { EQUATIONS } from '../data/equationsData.js';
 import { createLazyTabSection } from './lazyRenderer.js';
-import { isComplexEquation } from './deviceManager.js';
-
-const DESKTOP_BREAKPOINT = 768;
-const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
 
 const ICONS = {
   whatItSays:    `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
@@ -21,6 +17,9 @@ const ICONS = {
   misconception: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
   related:       `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
 };
+
+const DESKTOP_BREAKPOINT = 768;
+const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
 
 // ── DIMENSION STRING → LATEX ──────────────────────────────────────────────────
 // Converts plain-text dimension strings like "[M][L][T]⁻²" into a KaTeX-ready
@@ -313,7 +312,6 @@ function initModal() {
 
   function closeModal() {
     overlay.classList.remove('show');
-    overlay.classList.remove('mobile-complex-eq');
     document.body.style.overflow = '';
   }
 
@@ -323,7 +321,7 @@ function initModal() {
     if (e.key === 'Escape' && overlay.classList.contains('show')) closeModal();
   });
 
-  return { openModal, overlay };
+  return { openModal };
 }
 
 // ── MAIN INIT ─────────────────────────────────────────────────────────────────
@@ -374,16 +372,8 @@ export function initEquations() {
     renderDetail: (eq) => buildDetailHTML(eq),
 
     onExpand: (cardEl, eq) => {
-      const desktop = isDesktop();
-      const complex = isComplexEquation(eq);
-
-      // Desktop → always modal (unchanged behaviour)
-      // Mobile + complex equation → modal with mobile-complex-eq unlock class
-      // Mobile + simple equation → expand-in-card (unchanged behaviour)
-      if (modal && (desktop || complex)) {
-        if (!desktop && complex) {
-          modal.overlay.classList.add('mobile-complex-eq');
-        }
+      // Desktop → modal, keep card collapsed
+      if (isDesktop() && modal) {
         modal.openModal(eq);
         requestAnimationFrame(() => {
           cardEl.classList.remove('expanded');
@@ -397,7 +387,7 @@ export function initEquations() {
         return;
       }
 
-      // Mobile + simple equation → expand-in-card
+      // Mobile → expand-in-card
       if (window.renderMathInElement) {
         renderMathInElement(cardEl, {
           delimiters: [
