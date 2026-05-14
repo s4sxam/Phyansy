@@ -80,14 +80,13 @@ function unitToLatex(unit) {
 }
 
 // ── MATHIFY ───────────────────────────────────────────────────────────────────
-// Tokenizes prose into [already-latex | plain-text] spans.
-// Only plain-text spans are processed — existing \(...\) and \[...\] are
-// passed through untouched, preventing double-wrapping or corruption.
+// Converts prose strings into KaTeX-renderable HTML.
+// Existing \(...\) and \[...\] delimiters are passed through untouched.
+// Only plain-prose spans are scanned for math patterns.
 function mathify(text) {
   if (!text) return text;
 
-  // ── Tokenize: split on existing LaTeX delimiters ──────────────────────────
-  // Tokens alternate: plain-text, latex, plain-text, latex, ...
+  // Tokenize: split on existing LaTeX delimiters so we never double-process them
   const TOKEN_RE = /(\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\])/g;
   const parts = [];
   let last = 0, m;
@@ -98,12 +97,11 @@ function mathify(text) {
   }
   if (last < text.length) parts.push({ type: 'prose', text: text.slice(last) });
 
-  // ── Process only prose spans ──────────────────────────────────────────────
   return parts.map(p => p.type === 'latex' ? p.text : processProse(p.text)).join('');
 }
 
 function processProse(text) {
-  // Unicode fractions
+  // ── 1. Unicode fractions ──────────────────────────────────────────────────
   text = text
     .replace(/½/g, '\\(\\tfrac{1}{2}\\)')
     .replace(/¼/g, '\\(\\tfrac{1}{4}\\)')
@@ -111,72 +109,96 @@ function processProse(text) {
     .replace(/⅓/g, '\\(\\tfrac{1}{3}\\)')
     .replace(/⅔/g, '\\(\\tfrac{2}{3}\\)');
 
-  // Raw LaTeX fragments: anything containing \cmd, ^{}, _{}, or { }
-  // Wrapped in math-like context (preceded/followed by word char or operator)
-  // Strategy: find contiguous tokens that look like a math expression
+  // ── 2. Raw LaTeX ^{} / _{} scanner ───────────────────────────────────────
+  // Wraps tokens that contain explicit LaTeX sub/superscript braces: T_eff^{1/4}, c_{R1+R2}
+  // For single-char subscripts like _n, requires a word boundary after (prevents
+  // "m_n" from greedily eating the start of "m_nucleus").
   text = text.replace(
-    /(?<!\\\()([A-Za-z\d_.*]+(?:[_^]\{[^}]*\}|[_^][A-Za-z\d])*(?:\s*[+\-*/=]\s*[A-Za-z\d_.*]+(?:[_^]\{[^}]*\}|[_^][A-Za-z\d])*)*)/g,
-    (match) => {
-      // Only wrap if it contains actual LaTeX syntax chars
-      if (/[_^\\{}]/.test(match)) {
-        return `\\(${match}\\)`;
-      }
-      return match;
+    /((?:[A-Za-z\u0391-\u03C9\u00C5\u210F\u2113\u221E\u2202\u2207\d]|\([^)]{1,60}\))(?:[_^]\{[^{}]{0,80}\}|[_^][A-Za-z\u0391-\u03C9\d](?![A-Za-z\d]))+)/g,
+    (match) => `\\(${match}\\)`
+  );
+
+  // ── 2b. Identifier_subscript pattern ─────────────────────────────────────
+  // Handles prose identifiers like m_nucleus, T_eff, u_k that have multi-char
+  // subscripts written without braces. Converts to \(base_{\text{sub}}\).
+  text = text.replace(
+    /(?<![\\(])\b([A-Za-z]\w*)_([A-Za-z]\w+)\b/g,
+    (_, base, sub) => `\\(${base}_{\\text{${sub}}}\\)`
+  );
+
+  // ── 3. Derivative notation: dv/dt, d²x/dt² ───────────────────────────────
+  text = text.replace(
+    /\b(d[²³]?[a-zA-Z\u03A8\u03C8\u03A6\u03C6\u03C1])\/(d(?:t[²³]?|[a-zA-Z][²³]?))\b/g,
+    (_, num, den) => {
+      const toExp = s => s.replace(/²/g, '^2').replace(/³/g, '^3');
+      return `\\(\\frac{${toExp(num)}}{${toExp(den)}}\\)`;
     }
   );
 
-  // Derivative notation: dv/dt, d²x/dt²
+  // ── 4. Integral symbol ∫ ──────────────────────────────────────────────────
   text = text.replace(
-    /\b(d[²³]?[a-zA-Z])\/(d[a-zA-Z][²³]?)\b/g,
-    (_, n, d) => `\\(\\frac{${n.replace(/²/g,'^2').replace(/³/g,'^3')}}{${d.replace(/²/g,'^2').replace(/³/g,'^3')}}\\)`
-  );
-
-  // Integral symbol ∫
-  text = text.replace(
-    /∫([^=\n.,]{1,60}?)(?=\s*[=.,]|\s*$)/g,
+    /∫([^=\n.,;]{1,80}?)(?=\s*[=.,;]|\s*$)/g,
     (_, body) => `\\(\\int ${body.trim()}\\)`
   );
 
-  // Short inline equations: only wrap if RHS has math operators/symbols
+  // ── 5. Inline equations (runs BEFORE unicode superscript to avoid nesting) ─
   text = text.replace(
-    /\b([A-Za-z][A-Za-z₀-₉⁰-⁹]{0,5})\s*=\s*([^\s=\n][^=\n]{0,60}?)(?=[\s.,;)—]|$)/g,
+    /\b([A-Za-z\u0391-\u03C9][A-Za-z\u0391-\u03C9\d_]{0,8})\s*=\s*([^\s=\n][^=\n]{0,80}?)(?=[\s.,;)—–]|$)/g,
     (match, lhs, rhs) => {
-      if (/^[a-z]{4,}$/.test(lhs)) return match;   // plain word
-      if (!/[+\-*/²³½¼∫√±×·\d^_{}\\]/.test(rhs)) return match; // no math
-      if (match.includes('\\(')) return match;       // already wrapped
+      if (/^[a-z]{4,}$/i.test(lhs) && !/[_^]/.test(lhs)) return match; // plain word
+      if (!/[+\-*/²³½¼∫√±×·\d^_{}\\\[\]()]/.test(rhs)) return match;   // no math chars
+      if (match.includes('\\(')) return match;                            // already wrapped
       return `\\(${lhs} = ${rhs.trim()}\\)`;
     }
   );
 
-  // Unicode superscripts: v², mc², T⁴
-  text = text.replace(/([A-Za-z\d)])([²³⁴⁵⁶])/g, (_, b, e) =>
-    `\\(${b}^{${ {'²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6'}[e] }}\\)`);
+  // ── 6. Unicode superscripts: mc², σT⁴, 4πR², R⁻¹ ────────────────────────
+  // Grabs the full preceding word so "mc²" → \(mc^{2}\) not "m\(c^{2}\)"
+  const supMap = {'²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁰':'0','⁻':'-','¹':'1'};
+  text = text.replace(
+    /([A-Za-z\u0391-\u03C9\u00C5\u210F\d]+)([²³⁴⁵⁶⁷⁸⁹⁻¹⁰]+)/g,
+    (_, base, exps) => {
+      const exp = exps.split('').map(c => supMap[c] || c).join('');
+      return `\\(${base}^{${exp}}\\)`;
+    }
+  );
 
-  // Unicode subscripts: v₀, x₁
-  text = text.replace(/([A-Za-z])([₀₁₂₃₄₅₆₇₈₉])/g, (_, b, s) =>
-    `\\(${b}_{${ '0123456789'['₀₁₂₃₄₅₆₇₈₉'.indexOf(s)] }}\\)`);
+  // ── 7. Unicode subscripts: v₀, x₁ ───────────────────────────────────────
+  text = text.replace(
+    /([A-Za-z\u0391-\u03C9])([₀₁₂₃₄₅₆₇₈₉])/g,
+    (_, b, s) => `\\(${b}_{${'0123456789'['₀₁₂₃₄₅₆₇₈₉'.indexOf(s)]}}\\)`
+  );
 
-  // √ root
-  text = text.replace(/√(\([^)]+\)|[A-Za-z\d]+)/g,
-    (_, a) => `\\(\\sqrt{${a.replace(/[()]/g,'')}}\\)`);
+  // ── 8. Square root √ ──────────────────────────────────────────────────────
+  text = text.replace(
+    /√(\([^)]+\)|[A-Za-z\d]+)/g,
+    (_, a) => `\\(\\sqrt{${a.replace(/[()]/g, '')}}\\)`
+  );
 
-  // · dot product
-  text = text.replace(/([A-Za-z\d])\u00B7([A-Za-z\d])/g,
-    (_, a, b) => `\\(${a} \\cdot ${b}\\)`);
+  // ── 9. Operators: · dot, ∝ proportional, ≈ approximately ─────────────────
+  text = text.replace(/([A-Za-z\d])\u00B7([A-Za-z\d])/g, (_, a, b) => `\\(${a} \\cdot ${b}\\)`);
+  text = text.replace(
+    /([A-Za-z\u0391-\u03C9\d]+)\s*∝\s*([A-Za-z\u0391-\u03C9\d^²³⁴⁻]+)/g,
+    (_, a, b) => `\\(${a} \\propto ${b}\\)`
+  );
+  text = text.replace(
+    /([A-Za-z\d.]+)\s*≈\s*([A-Za-z\d./×⁻\-+^]+)/g,
+    (_, a, b) => `\\(${a} \\approx ${b}\\)`
+  );
 
-  // ∝ proportional
-  text = text.replace(/([A-Za-z\d]+)\s*∝\s*([A-Za-z\d^²³⁴]+)/g,
-    (_, a, b) => `\\(${a} \\propto ${b}\\)`);
+  // ── 10. Fix accidental nesting: \( ... \( ... \) ... \) → \( ... ... \) ──
+  // Caused when an inline-eq wraps a span that already has a wrapped sub-term.
+  text = text.replace(
+    /\\\(([^\\]*)\\\(([^\\]*)\\\)([^\\]*)\\\)/g,
+    (_, pre, inner, post) => `\\(${pre}${inner}${post}\\)`
+  );
 
-  // ≈ approximately equal inline
-  text = text.replace(/([A-Za-z\d.]+)\s*≈\s*([A-Za-z\d./×⁻\-+^]+)/g,
-    (_, a, b) => `\\(${a} \\approx ${b}\\)`);
-
-  // Merge adjacent \) \( with no content between
+  // ── 11. Collapse adjacent \)\s*\( ─────────────────────────────────────────
   text = text.replace(/\\\)\s*\\\(/g, ' ');
 
   return text;
 }
+
 
 function section(icon, label, content, mod) {
   return `<div class="eq-section${mod ? ' eq-section--' + mod : ''}">
