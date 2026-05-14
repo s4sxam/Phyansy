@@ -1,44 +1,35 @@
 // =============================================================================
-// deviceManager.js — Device detection & equation complexity scoring
-// Single source of truth. Import isDesktop / isComplexEquation from here.
+// deviceManager.js — Equation complexity scoring for Phyansy
+// Only export what's needed. isDesktop() stays local in each controller.
 // =============================================================================
 
-const MOBILE_BREAKPOINT = 768;
-
-/** True when the viewport is wider than the mobile breakpoint. */
-export const isDesktop = () => window.innerWidth > MOBILE_BREAKPOINT;
-
-/** True when the viewport is a coarse-pointer touch device (phone/tablet). */
-export const isTouchDevice = () =>
-  window.matchMedia('(pointer: coarse)').matches;
-
 /**
- * Scores an equation's visual complexity.
- * Returns true when the rendered math is likely to overflow a narrow card.
+ * Returns true when the equation's rendered KaTeX is likely to overflow
+ * a narrow mobile card, warranting a modal instead of expand-in-card.
  *
- * Heuristics (each adds to a score; threshold = 2):
- *  +3  has integralForm (display-mode KaTeX — always wide)
- *  +2  formulaLatex longer than 35 chars
- *  +1  formulaLatex longer than 20 chars
- *  +2  formula contains \frac, \sum, \int, \prod, \oint (multi-line constructs)
- *  +1  formula contains \sqrt, \vec, \hat, \partial, \nabla
- *  +2  vars count > 5 (lots of rows → tall + risk of wide subscripts)
+ * Scoring (threshold = 3):
+ *  +3  formula > 50 chars (very long)
+ *  +2  formula > 35 chars (moderately long)
+ *  +1  formula > 22 chars (slightly long)
+ *  +3  contains \partial, \nabla, \oint, \prod, \sum  (multi-line constructs)
+ *  +2  contains \int (integral)
+ *  +2  contains nested \frac...\frac
+ *  +1  mixes \vec and \frac
  */
 export function isComplexEquation(eq) {
   if (!eq) return false;
 
+  const latex = eq.formulaLatex || eq.formula || '';
   let score = 0;
 
-  if (eq.integralForm) score += 3;
+  if (latex.length > 50)      score += 3;
+  else if (latex.length > 35) score += 2;
+  else if (latex.length > 22) score += 1;
 
-  const latex = eq.formulaLatex || eq.formula || '';
-  if (latex.length > 35) score += 2;
-  else if (latex.length > 20) score += 1;
+  if (/\\partial|\\nabla|\\oint|\\prod|\\sum/.test(latex)) score += 3;
+  if (/\\int[^e]/.test(latex))                             score += 2;
+  if (/\\frac[^}]*\\frac/.test(latex))                    score += 2;
+  if (/\\vec[^}]*\\frac|\\frac[^}]*\\vec/.test(latex))   score += 1;
 
-  if (/\\frac|\\sum|\\int|\\prod|\\oint/.test(latex)) score += 2;
-  if (/\\sqrt|\\vec|\\hat|\\partial|\\nabla/.test(latex)) score += 1;
-
-  if (Array.isArray(eq.vars) && eq.vars.length > 5) score += 2;
-
-  return score >= 2;
+  return score >= 3;
 }
