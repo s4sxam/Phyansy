@@ -7,15 +7,15 @@ import { CONSTANTS } from '../data/constantsData.js';
 import { createLazySection } from './lazyRenderer.js';
 import { showToast } from './toastController.js';
 
-const DESKTOP_BREAKPOINT = 768;
-const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
-
 const ICONS = {
   whatItSays: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
   example:    `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
   deep:       `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>`,
   matters:    `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
 };
+
+const DESKTOP_BREAKPOINT = 768;
+const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
 
 // ── SHARED DETAIL BUILDER ─────────────────────────────────────────────────────
 
