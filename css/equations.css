@@ -248,7 +248,7 @@
 .eq-si-unit .katex,
 .eq-si-sym .katex,
 .eq-meta-dim .katex {
-  font-size: 1em;
+  font-size: 1.1em;
 }
 
 /* ── KATEX FORMULA BLOCK (expanded) ── */
@@ -384,23 +384,24 @@
 .eq-si-table {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .eq-si-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: 10px;
+  padding: 5px 2px;
   flex-wrap: nowrap;
 }
 
 .eq-si-sym {
-  font-weight: 700;
+  font-weight: 600;
   color: #5a4fc0;
-  min-width: 32px;
+  min-width: 40px;
   flex-shrink: 0;
-  line-height: 1.5;
+  line-height: 1;
+  font-size: 15px;
 }
 
 [data-theme="dark"] .eq-si-sym {
@@ -409,16 +410,18 @@
 
 .eq-si-arrow {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
   flex-shrink: 0;
+  opacity: 0.5;
 }
 
 .eq-si-unit {
-  font-size: 13px;
-  color: var(--text-sec);
-  line-height: 1.5;
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1;
   word-break: break-word;
   min-width: 0;
+  font-weight: 500;
 }
 
 /* ── SECTIONS ── */
