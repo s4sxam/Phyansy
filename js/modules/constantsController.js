@@ -6,7 +6,9 @@
 import { CONSTANTS } from '../data/constantsData.js';
 import { createLazySection } from './lazyRenderer.js';
 import { showToast } from './toastController.js';
-import { isDesktop } from './deviceManager.js';
+
+const DESKTOP_BREAKPOINT = 768;
+const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
 
 const ICONS = {
   whatItSays: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
