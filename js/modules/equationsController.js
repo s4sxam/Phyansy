@@ -1,4 +1,3 @@
-
 // =============================================================================
 // equationsController.js — KaTeX-powered equation renderer
 // Desktop (>768px) → modal | Mobile (≤768px) → expand-in-card
@@ -80,6 +79,105 @@ function unitToLatex(unit) {
   return s;
 }
 
+// ── MATHIFY ───────────────────────────────────────────────────────────────────
+// Tokenizes prose into [already-latex | plain-text] spans.
+// Only plain-text spans are processed — existing \(...\) and \[...\] are
+// passed through untouched, preventing double-wrapping or corruption.
+function mathify(text) {
+  if (!text) return text;
+
+  // ── Tokenize: split on existing LaTeX delimiters ──────────────────────────
+  // Tokens alternate: plain-text, latex, plain-text, latex, ...
+  const TOKEN_RE = /(\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\])/g;
+  const parts = [];
+  let last = 0, m;
+  while ((m = TOKEN_RE.exec(text)) !== null) {
+    if (m.index > last) parts.push({ type: 'prose', text: text.slice(last, m.index) });
+    parts.push({ type: 'latex', text: m[0] });
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push({ type: 'prose', text: text.slice(last) });
+
+  // ── Process only prose spans ──────────────────────────────────────────────
+  return parts.map(p => p.type === 'latex' ? p.text : processProse(p.text)).join('');
+}
+
+function processProse(text) {
+  // Unicode fractions
+  text = text
+    .replace(/½/g, '\\(\\tfrac{1}{2}\\)')
+    .replace(/¼/g, '\\(\\tfrac{1}{4}\\)')
+    .replace(/¾/g, '\\(\\tfrac{3}{4}\\)')
+    .replace(/⅓/g, '\\(\\tfrac{1}{3}\\)')
+    .replace(/⅔/g, '\\(\\tfrac{2}{3}\\)');
+
+  // Raw LaTeX fragments: anything containing \cmd, ^{}, _{}, or { }
+  // Wrapped in math-like context (preceded/followed by word char or operator)
+  // Strategy: find contiguous tokens that look like a math expression
+  text = text.replace(
+    /(?<!\\\()([A-Za-z\d_.*]+(?:[_^]\{[^}]*\}|[_^][A-Za-z\d])*(?:\s*[+\-*/=]\s*[A-Za-z\d_.*]+(?:[_^]\{[^}]*\}|[_^][A-Za-z\d])*)*)/g,
+    (match) => {
+      // Only wrap if it contains actual LaTeX syntax chars
+      if (/[_^\\{}]/.test(match)) {
+        return `\\(${match}\\)`;
+      }
+      return match;
+    }
+  );
+
+  // Derivative notation: dv/dt, d²x/dt²
+  text = text.replace(
+    /\b(d[²³]?[a-zA-Z])\/(d[a-zA-Z][²³]?)\b/g,
+    (_, n, d) => `\\(\\frac{${n.replace(/²/g,'^2').replace(/³/g,'^3')}}{${d.replace(/²/g,'^2').replace(/³/g,'^3')}}\\)`
+  );
+
+  // Integral symbol ∫
+  text = text.replace(
+    /∫([^=\n.,]{1,60}?)(?=\s*[=.,]|\s*$)/g,
+    (_, body) => `\\(\\int ${body.trim()}\\)`
+  );
+
+  // Short inline equations: only wrap if RHS has math operators/symbols
+  text = text.replace(
+    /\b([A-Za-z][A-Za-z₀-₉⁰-⁹]{0,5})\s*=\s*([^\s=\n][^=\n]{0,60}?)(?=[\s.,;)—]|$)/g,
+    (match, lhs, rhs) => {
+      if (/^[a-z]{4,}$/.test(lhs)) return match;   // plain word
+      if (!/[+\-*/²³½¼∫√±×·\d^_{}\\]/.test(rhs)) return match; // no math
+      if (match.includes('\\(')) return match;       // already wrapped
+      return `\\(${lhs} = ${rhs.trim()}\\)`;
+    }
+  );
+
+  // Unicode superscripts: v², mc², T⁴
+  text = text.replace(/([A-Za-z\d)])([²³⁴⁵⁶])/g, (_, b, e) =>
+    `\\(${b}^{${ {'²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6'}[e] }}\\)`);
+
+  // Unicode subscripts: v₀, x₁
+  text = text.replace(/([A-Za-z])([₀₁₂₃₄₅₆₇₈₉])/g, (_, b, s) =>
+    `\\(${b}_{${ '0123456789'['₀₁₂₃₄₅₆₇₈₉'.indexOf(s)] }}\\)`);
+
+  // √ root
+  text = text.replace(/√(\([^)]+\)|[A-Za-z\d]+)/g,
+    (_, a) => `\\(\\sqrt{${a.replace(/[()]/g,'')}}\\)`);
+
+  // · dot product
+  text = text.replace(/([A-Za-z\d])\u00B7([A-Za-z\d])/g,
+    (_, a, b) => `\\(${a} \\cdot ${b}\\)`);
+
+  // ∝ proportional
+  text = text.replace(/([A-Za-z\d]+)\s*∝\s*([A-Za-z\d^²³⁴]+)/g,
+    (_, a, b) => `\\(${a} \\propto ${b}\\)`);
+
+  // ≈ approximately equal inline
+  text = text.replace(/([A-Za-z\d.]+)\s*≈\s*([A-Za-z\d./×⁻\-+^]+)/g,
+    (_, a, b) => `\\(${a} \\approx ${b}\\)`);
+
+  // Merge adjacent \) \( with no content between
+  text = text.replace(/\\\)\s*\\\(/g, ' ');
+
+  return text;
+}
+
 function section(icon, label, content, mod) {
   return `<div class="eq-section${mod ? ' eq-section--' + mod : ''}">
     <div class="eq-section-label"><span class="eq-section-icon">${icon}</span>${label}</div>
@@ -124,14 +222,14 @@ function buildDetailHTML(eq) {
     : '';
 
   const sections = [
-    eq.whatItSays    && section(ICONS.whatItSays,    'What It Says',        eq.whatItSays),
-    eq.example       && section(ICONS.example,       'Example',              `<div class="eq-example-box">${eq.example}</div>`, 'example'),
-    eq.derivation    && section(ICONS.derivation,    'Derivation',           `<div class="eq-derivation-box">${eq.derivation}</div>`, 'derivation'),
-    eq.deepMeaning   && section(ICONS.deepMeaning,   'Deep Meaning',         eq.deepMeaning, 'deep'),
+    eq.whatItSays    && section(ICONS.whatItSays,    'What It Says',        mathify(eq.whatItSays)),
+    eq.example       && section(ICONS.example,       'Example',              `<div class="eq-example-box">${mathify(eq.example)}</div>`, 'example'),
+    eq.derivation    && section(ICONS.derivation,    'Derivation',           `<div class="eq-derivation-box">${mathify(eq.derivation)}</div>`, 'derivation'),
+    eq.deepMeaning   && section(ICONS.deepMeaning,   'Deep Meaning',         mathify(eq.deepMeaning), 'deep'),
     eq.integralForm  && section(ICONS.math,          'Mathematical Form',    `<div class="eq-katex-block">\\[${eq.integralForm}\\]</div>`, 'math'),
-    eq.whoDiscovered && section(ICONS.history,       'History',              eq.whoDiscovered, 'history'),
-    eq.whyItMatters  && section(ICONS.whyItMatters,  'Why It Matters',       eq.whyItMatters, 'importance'),
-    eq.misconception && section(ICONS.misconception, 'Common Misconception', eq.misconception, 'misconception'),
+    eq.whoDiscovered && section(ICONS.history,       'History',              mathify(eq.whoDiscovered), 'history'),
+    eq.whyItMatters  && section(ICONS.whyItMatters,  'Why It Matters',       mathify(eq.whyItMatters), 'importance'),
+    eq.misconception && section(ICONS.misconception, 'Common Misconception', mathify(eq.misconception), 'misconception'),
     relatedHtml,
   ].filter(Boolean).join('');
 
