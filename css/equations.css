@@ -236,6 +236,21 @@
   gap: 0;
 }
 
+/* ── KATEX GLOBAL OVERFLOW FIX ── */
+.eq-meta-item .katex-display,
+.eq-katex-block .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
+}
+
+.eq-meta-item .katex,
+.eq-si-unit .katex,
+.eq-si-sym .katex,
+.eq-meta-dim .katex {
+  font-size: 1em;
+}
+
 /* ── KATEX FORMULA BLOCK (expanded) ── */
 .eq-katex-block {
   width: 100%;
@@ -306,20 +321,20 @@
 .eq-meta-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 14px;
 }
 
 .eq-meta-item {
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  background: rgba(0,0,0,0.025);
+  gap: 6px;
+  background: rgba(0,0,0,0.03);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 10px 14px;
-  flex: 1;
-  min-width: 140px;
+  flex: 1 1 140px;
+  min-width: 0;
   overflow: hidden;
 }
 
@@ -327,50 +342,42 @@
   background: rgba(255,255,255,0.04);
 }
 
-/* Dimensions item — accent left border */
-.eq-meta-item--dim {
-  border-left: 3px solid rgba(124,58,237,0.5);
-}
-
-/* SI Units item — accent left border */
-.eq-meta-item--si {
-  border-left: 3px solid rgba(37,99,235,0.45);
-}
-
 .eq-meta-key {
   font-size: 9px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.1em;
   color: var(--text-muted);
 }
 
-/* Dimensions value — KaTeX rendered, scrollable if wide */
 .eq-meta-val {
   font-size: 13.5px;
   color: var(--text);
+  white-space: normal;
+  word-break: break-word;
   overflow-x: auto;
-  padding-bottom: 2px;
   line-height: 1.6;
 }
 
+/* Dimensions — KaTeX rendered, no monospace override */
 .eq-meta-dim {
-  font-size: 13.5px;
+  font-size: 14px;
   color: var(--text);
-  overflow-x: auto;
-  padding-bottom: 2px;
-  line-height: 1.6;
+  line-height: 1.7;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-/* Parenthetical note beneath dimensions */
-.eq-meta-note {
+.eq-meta-dim-note {
   font-size: 11px;
   color: var(--text-muted);
-  line-height: 1.5;
   font-style: italic;
-  border-top: 1px solid var(--border);
-  padding-top: 6px;
-  margin-top: 2px;
+  line-height: 1.4;
+  display: block;
+  margin-top: 3px;
+  white-space: normal;
+  word-break: break-word;
 }
 
 /* ── SI UNITS TABLE ── */
@@ -382,16 +389,16 @@
 
 .eq-si-row {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
   font-size: 13px;
-  padding: 2px 0;
+  flex-wrap: nowrap;
 }
 
 .eq-si-sym {
-  font-weight: 600;
+  font-weight: 700;
   color: #5a4fc0;
-  min-width: 28px;
+  min-width: 32px;
   flex-shrink: 0;
   line-height: 1.5;
 }
@@ -402,15 +409,16 @@
 
 .eq-si-arrow {
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 12px;
   flex-shrink: 0;
-  opacity: 0.6;
 }
 
 .eq-si-unit {
   font-size: 13px;
   color: var(--text-sec);
   line-height: 1.5;
+  word-break: break-word;
+  min-width: 0;
 }
 
 /* ── SECTIONS ── */
@@ -467,38 +475,28 @@
 
 /* ── DERIVATION BOX ── */
 .eq-derivation-box {
-  background: rgba(59,130,246,0.05);
+  background: rgba(59,130,246,0.06);
   border-left: 3px solid rgba(59,130,246,0.4);
-  border-radius: 0 10px 10px 0;
+  border-radius: 0 8px 8px 0;
   padding: 12px 16px;
   font-size: 13.5px;
   line-height: 1.9;
   color: var(--text-sec);
   font-family: inherit;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  word-break: break-word;
   overflow-x: auto;
 }
 
 [data-theme="dark"] .eq-derivation-box {
-  background: rgba(59,130,246,0.08);
+  background: rgba(59,130,246,0.09);
   border-left-color: rgba(96,165,250,0.4);
 }
 
-/* Each derivation sentence on its own line */
-.deriv-step {
-  display: block;
-  padding: 3px 0;
-  border-bottom: 1px solid rgba(59,130,246,0.07);
-}
-
-.deriv-step:last-child {
-  border-bottom: none;
-}
-
-.deriv-step .katex {
-  font-size: 1.05em;
+/* KaTeX inside derivation box — allow scrolling on narrow cards */
+.eq-derivation-box .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
 }
 
 /* ── SECTION MODIFIERS ── */
