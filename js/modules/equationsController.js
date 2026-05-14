@@ -35,8 +35,23 @@ function buildDetailHTML(eq) {
     : '';
 
   const metaItems = [];
-  if (eq.dimensions) metaItems.push(`<div class="eq-meta-item"><span class="eq-meta-key">Dimensions</span><span class="eq-meta-val">${eq.dimensions}</span></div>`);
-  if (eq.SI_units)   metaItems.push(`<div class="eq-meta-item"><span class="eq-meta-key">SI Units</span><span class="eq-meta-val">${Object.entries(eq.SI_units).map(([k,v]) => `${k} → ${v}`).join(' · ')}</span></div>`);
+  if (eq.dimensions) metaItems.push(`
+    <div class="eq-meta-item">
+      <span class="eq-meta-key">Dimensions</span>
+      <span class="eq-meta-val eq-meta-dim">${eq.dimensions}</span>
+    </div>`);
+  if (eq.SI_units) metaItems.push(`
+    <div class="eq-meta-item eq-meta-item--si">
+      <span class="eq-meta-key">SI Units</span>
+      <div class="eq-si-table">
+        ${Object.entries(eq.SI_units).map(([k, v]) => `
+          <div class="eq-si-row">
+            <span class="eq-si-sym">${k}</span>
+            <span class="eq-si-arrow">→</span>
+            <span class="eq-si-unit">${v}</span>
+          </div>`).join('')}
+      </div>
+    </div>`);
   const metaHtml = metaItems.length ? `<div class="eq-meta-row">${metaItems.join('')}</div>` : '';
 
   const allTagsHtml = Array.isArray(eq.tags) && eq.tags.length
@@ -48,7 +63,7 @@ function buildDetailHTML(eq) {
     eq.example       && section(ICONS.example,       'Example',              `<div class="eq-example-box">${eq.example}</div>`, 'example'),
     eq.derivation    && section(ICONS.derivation,    'Derivation',           `<div class="eq-derivation-box">${eq.derivation}</div>`, 'derivation'),
     eq.deepMeaning   && section(ICONS.deepMeaning,   'Deep Meaning',         eq.deepMeaning, 'deep'),
-    eq.integralForm  && section(ICONS.math,          'Mathematical Form',    `<div class="eq-katex-inline">\\(${eq.integralForm}\\)</div>`, 'math'),
+    eq.integralForm  && section(ICONS.math,          'Mathematical Form',    `<div class="eq-katex-block">\\[${eq.integralForm}\\]</div>`, 'math'),
     eq.whoDiscovered && section(ICONS.history,       'History',              eq.whoDiscovered, 'history'),
     eq.whyItMatters  && section(ICONS.whyItMatters,  'Why It Matters',       eq.whyItMatters, 'importance'),
     eq.misconception && section(ICONS.misconception, 'Common Misconception', eq.misconception, 'misconception'),
