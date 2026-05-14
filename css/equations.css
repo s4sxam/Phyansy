@@ -621,19 +621,4 @@
     align-items: flex-end;
     gap: 3px;
   }
-
-  /* Safety net: prevent ANY KaTeX overflow from pushing viewport width */
-  .eq-card .katex-display {
-    overflow-x: auto;
-    overflow-y: hidden;
-    max-width: 100%;
-  }
-
-  .eq-card .katex {
-    max-width: 100%;
-  }
-
-  .eq-detail {
-    overflow-x: hidden;
-  }
 }
