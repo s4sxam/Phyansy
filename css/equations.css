@@ -313,13 +313,13 @@
 .eq-meta-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 6px;
   background: rgba(0,0,0,0.03);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 7px 12px;
+  padding: 8px 12px;
   flex: 1;
-  min-width: 150px;
+  min-width: 120px;
 }
 
 [data-theme="dark"] .eq-meta-item {
@@ -335,10 +335,59 @@
 }
 
 .eq-meta-val {
-  font-size: 12px;
+  font-size: 13px;
   font-family: 'JetBrains Mono', monospace;
   color: var(--text);
-  word-break: break-all;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+/* Dimensions — plain text, styled cleanly */
+.eq-meta-dim {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text);
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+/* ── SI UNITS TABLE ── */
+.eq-si-table {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.eq-si-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.eq-si-sym {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: #5a4fc0;
+  min-width: 20px;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .eq-si-sym {
+  color: #a78bfa;
+}
+
+.eq-si-arrow {
+  color: var(--text-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.eq-si-unit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-sec);
 }
 
 /* ── SECTIONS ── */
@@ -400,10 +449,9 @@
   border-radius: 0 8px 8px 0;
   padding: 10px 14px;
   font-size: 13.5px;
-  line-height: 1.7;
+  line-height: 1.8;
   color: var(--text-sec);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12.5px;
+  font-family: inherit;
 }
 
 [data-theme="dark"] .eq-derivation-box {
@@ -503,9 +551,12 @@
 /* ── RESPONSIVE ── */
 @media (max-width: 640px) {
   .eq-formula-display {
-    font-size: 16px;
-    padding: 12px;
+    font-size: 15px;
+    padding: 12px 10px;
     min-height: 48px;
+    overflow-x: auto;
+    justify-content: flex-start;
+    white-space: nowrap;
   }
 
   .eq-grid {
@@ -519,6 +570,7 @@
 
   .eq-meta-item {
     min-width: 100%;
+    flex: 1 1 100%;
   }
 
   .eq-card-badges {
