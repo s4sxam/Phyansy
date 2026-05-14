@@ -5,7 +5,10 @@
 
 import { EQUATIONS } from '../data/equationsData.js';
 import { createLazyTabSection } from './lazyRenderer.js';
-import { isDesktop, isComplexEquation } from './deviceManager.js';
+import { isComplexEquation } from './deviceManager.js';
+
+const DESKTOP_BREAKPOINT = 768;
+const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
 
 const ICONS = {
   whatItSays:    `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
@@ -310,6 +313,7 @@ function initModal() {
 
   function closeModal() {
     overlay.classList.remove('show');
+    overlay.classList.remove('mobile-complex-eq');
     document.body.style.overflow = '';
   }
 
@@ -319,7 +323,7 @@ function initModal() {
     if (e.key === 'Escape' && overlay.classList.contains('show')) closeModal();
   });
 
-  return { openModal };
+  return { openModal, overlay };
 }
 
 // ── MAIN INIT ─────────────────────────────────────────────────────────────────
@@ -370,11 +374,16 @@ export function initEquations() {
     renderDetail: (eq) => buildDetailHTML(eq),
 
     onExpand: (cardEl, eq) => {
-      // Desktop → always modal
-      // Mobile  → modal only for complex equations; simple ones expand in-card
-      const useModal = modal && (isDesktop() || isComplexEquation(eq));
+      const desktop = isDesktop();
+      const complex = isComplexEquation(eq);
 
-      if (useModal) {
+      // Desktop → always modal (unchanged behaviour)
+      // Mobile + complex equation → modal with mobile-complex-eq unlock class
+      // Mobile + simple equation → expand-in-card (unchanged behaviour)
+      if (modal && (desktop || complex)) {
+        if (!desktop && complex) {
+          modal.overlay.classList.add('mobile-complex-eq');
+        }
         modal.openModal(eq);
         requestAnimationFrame(() => {
           cardEl.classList.remove('expanded');
