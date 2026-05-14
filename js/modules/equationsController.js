@@ -1,3 +1,4 @@
+
 // =============================================================================
 // equationsController.js — KaTeX-powered equation renderer
 // Desktop (>768px) → modal | Mobile (≤768px) → expand-in-card
@@ -21,188 +22,64 @@ const ICONS = {
 const DESKTOP_BREAKPOINT = 768;
 const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
 
-// =============================================================================
-// dimToLatex
-// Converts plain-text dimension strings to KaTeX-ready LaTeX.
-//
-// Input examples:
-//   "[L][T]⁻¹"                 → \mathsf{L}\,\mathsf{T}^{-1}
-//   "[M][L]²[T]⁻²"             → \mathsf{M}\,\mathsf{L}^{2}\,\mathsf{T}^{-2}
-//   "dimensionless"             → \text{dimensionless}
-//   "[L]  (note here)"          → { latex: "...", note: "note here" }
-// =============================================================================
+// ── DIMENSION STRING → LATEX ──────────────────────────────────────────────────
+// Converts plain-text dimension strings like "[M][L][T]⁻²" into a KaTeX-ready
+// LaTeX string like "\mathrm{[M][L][T]^{-2}}". Handles superscripts, parenthetical
+// notes (stripped after a double-space), and dimensionless strings.
 function dimToLatex(raw) {
-  if (!raw) return null;
+  if (!raw) return '';
 
-  // Strip trailing parenthetical note: anything after 2+ spaces before "("
-  const noteMatch = raw.match(/^(.*?)\s{2,}\((.+)\)\s*$/s);
-  const core = noteMatch ? noteMatch[1].trim() : raw.trim();
-  const note = noteMatch ? noteMatch[2].trim() : null;
+  // Strip any parenthetical explanation after two spaces or " ("
+  const clean = raw.replace(/\s{2,}.*$/, '').replace(/\s+\(.*$/, '').trim();
 
-  // Dimensionless variants
-  const lower = core.toLowerCase().replace(/[\[\]]/g, '');
-  if (lower === 'dimensionless' || lower.startsWith('dimensionless')) {
-    return { latex: '\\text{dimensionless}', note };
-  }
+  if (/^dimensionless/i.test(clean)) return '\\text{dimensionless}';
 
-  // Unicode superscript → digit/minus map
-  const supMap = {
+  // Replace Unicode superscript characters with LaTeX exponents
+  const superMap = {
     '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4',
-    '⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9',
-    '⁻':'-',
+    '⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-',
   };
 
-  function parseExponent(str) {
-    return [...str].map(ch => supMap[ch] ?? ch).join('');
-  }
-
-  // Match [SYMBOL] optionally followed by unicode exponent chain
-  const tokenRe = /\[([A-Za-zΘθΩ]+(?:\/[A-Za-z]+)?)\]((?:[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+)?)/g;
-
-  let latex = '';
-  let lastIndex = 0;
-  let match;
-
-  while ((match = tokenRe.exec(core)) !== null) {
-    const between = core.slice(lastIndex, match.index).trim();
-    if (between) latex += `\\,\\text{${between}}`;
-
-    const sym = match[1];
-    const expRaw = match[2] || '';
-
-    if (expRaw) {
-      const exp = parseExponent(expRaw);
-      latex += `\\mathsf{${sym}}^{${exp}}\\,`;
-    } else {
-      latex += `\\mathsf{${sym}}\\,`;
-    }
-    lastIndex = tokenRe.lastIndex;
-  }
-
-  const trailing = core.slice(lastIndex).trim();
-  if (trailing) latex += `\\,\\text{${trailing}}`;
-
-  latex = latex.replace(/\\,\s*$/, '');
-
-  return { latex: latex || `\\text{${core}}`, note };
-}
-
-// =============================================================================
-// siUnitToLatex
-// Converts plain SI unit string to KaTeX \mathrm notation.
-//
-// "m/s²"    → \mathrm{m}\,\mathrm{s}^{-2}
-// "kg·m/s"  → \mathrm{kg}\,\mathrm{m}\,\mathrm{s}^{-1}
-// "N"       → \mathrm{N}
-// "J/K"     → \mathrm{J}\,\mathrm{K}^{-1}
-// =============================================================================
-function siUnitToLatex(unit) {
-  if (!unit || unit === '—' || unit === '-') return '\\text{—}';
-
-  const supMap = { '²':'2','³':'3','⁴':'4','¹':'1','⁻':'-','⁰':'0' };
-
-  // Normalize unicode superscripts to ^N notation
-  let s = unit.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+/g, m => {
-    const digits = [...m].map(ch => supMap[ch] ?? ch).join('');
-    return `^${digits}`;
+  // Convert sequences like ⁻² → ^{-2}, ² → ^{2}, etc.
+  let latex = clean.replace(/[⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, match => {
+    const exp = match.split('').map(c => superMap[c] || c).join('');
+    return `^{${exp}}`;
   });
 
-  // Split on "/" for numerator/denominator
-  const slashIdx = s.indexOf('/');
-  const numeratorStr   = slashIdx >= 0 ? s.slice(0, slashIdx) : s;
-  const denominatorStr = slashIdx >= 0 ? s.slice(slashIdx + 1) : null;
+  // Wrap letters (dimension symbols) in \mathrm for upright roman style
+  // Brackets, numbers, exponents and ^ { } are kept as-is
+  latex = latex.replace(/[A-Za-zΘθ]+/g, m => `\\mathrm{${m}}`);
 
-  // Tokenize a group string into LaTeX pieces
-  function tokenize(str) {
-    return str
-      .split(/[·\u00B7\s]+/)
-      .filter(Boolean)
-      .map(tok => {
-        // e.g. "m^2", "kg", "s^-1", "rad^-1"
-        const em = tok.match(/^([A-Za-zΩμ°%]+)\^(-?\d+)$/);
-        if (em) return `\\mathrm{${em[1]}}^{${em[2]}}`;
-        return `\\mathrm{${tok}}`;
-      });
-  }
-
-  const numTokens = tokenize(numeratorStr);
-
-  if (!denominatorStr) {
-    return numTokens.join('\\,');
-  }
-
-  // Denominator: negate each exponent (or append ^{-1} for plain symbols)
-  const denTokens = tokenize(denominatorStr).map(tok => {
-    // Already has exponent like ^{2} → flip to ^{-2}
-    const em = tok.match(/^(\\mathrm\{[^}]+\})\^\{(-?\d+)\}$/);
-    if (em) {
-      const exp = parseInt(em[2], 10);
-      return `${em[1]}^{${-exp}}`;
-    }
-    // Plain symbol → append ^{-1}
-    return `${tok}^{-1}`;
-  });
-
-  return [...numTokens, ...denTokens].join('\\,');
+  return latex;
 }
 
-// =============================================================================
-// renderDerivation
-// Parses derivation plain text and wraps recognisable inline math in \(...\).
-// Splits on sentence boundaries and renders each step on its own line.
-// =============================================================================
-function renderDerivation(text) {
-  if (!text) return '';
+// ── SI UNIT STRING → LATEX ────────────────────────────────────────────────────
+// Converts plain unit strings like "m/s²" or "N·m²/kg²" into LaTeX.
+function unitToLatex(unit) {
+  if (!unit) return '';
+  if (/^dimensionless$/i.test(unit.trim())) return '\\text{dimensionless}';
 
-  // Replace math-like symbols before wrapping
-  function latexify(expr) {
-    return expr
-      .replace(/½/g, '\\tfrac{1}{2}')
-      .replace(/×/g, '\\times')
-      .replace(/·/g, '\\cdot')
-      .replace(/−/g, '-')
-      .replace(/∫/g, '\\int')
-      .replace(/²/g, '^{2}')
-      .replace(/³/g, '^{3}')
-      .replace(/√\(([^)]+)\)/g, '\\sqrt{$1}')
-      .trim();
-  }
+  const superMap = {
+    '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4',
+    '⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-',
+  };
 
-  // Sentence splitter — split on ". " where next word starts with uppercase
-  const sentences = text.split(/(?<=[.:])\s+(?=[A-Z])/);
+  let s = unit
+    // Unicode superscripts → LaTeX exponents
+    .replace(/[⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, match => {
+      const exp = match.split('').map(c => superMap[c] || c).join('');
+      return `^{${exp}}`;
+    })
+    // · → \cdot
+    .replace(/·/g, '\\cdot ')
+    // / → \text{/} (keep readable)
+    .replace(/\//g, '/')
+    // wrap letter sequences in \text for upright roman
+    .replace(/[A-Za-zΩμΘ]+/g, m => `\\text{${m}}`);
 
-  return sentences.map(sentence => {
-    // Detect math-looking content
-    const hasMath = /[=∫½×÷²³]/.test(sentence) ||
-                    /\b[a-zA-Z]\s*=\s*[^\s]/.test(sentence);
-
-    if (!hasMath) {
-      return `<span class="deriv-step">${sentence}</span>`;
-    }
-
-    // Wrap inline math candidates: sequences around = with variables/numbers
-    // Strategy: find "EXPR = EXPR" patterns and wrap the whole token
-    const mathTokenRe = /([a-zA-Z²³_^{}\\]+\s*=\s*[^,.;:()]+?(?=[,.:;()\n]|$)|[∫½√][^\s,.;:]+(?:\s*[+\-][^\s,.;:]+)*)/g;
-
-    const fragments = [];
-    let result = sentence.replace(mathTokenRe, m => {
-      const latex = latexify(m);
-      const idx = fragments.length;
-      fragments.push(`\\(${latex}\\)`);
-      return `__F${idx}__`;
-    });
-
-    fragments.forEach((frag, i) => {
-      result = result.replace(`__F${i}__`, frag);
-    });
-
-    return `<span class="deriv-step">${result}</span>`;
-  }).join('\n');
+  return s;
 }
 
-// =============================================================================
-// section helper
-// =============================================================================
 function section(icon, label, content, mod) {
   return `<div class="eq-section${mod ? ' eq-section--' + mod : ''}">
     <div class="eq-section-label"><span class="eq-section-icon">${icon}</span>${label}</div>
@@ -210,68 +87,51 @@ function section(icon, label, content, mod) {
   </div>`;
 }
 
-// =============================================================================
-// buildDetailHTML
-// =============================================================================
 function buildDetailHTML(eq) {
   const relatedHtml = Array.isArray(eq.relatedEquations) && eq.relatedEquations.length
     ? section(ICONS.related, 'Related Equations',
         `<div class="eq-related-chips">${eq.relatedEquations.map(r => `<span class="eq-related-chip">${r}</span>`).join('')}</div>`)
     : '';
 
-  // ── DIMENSIONS ────────────────────────────────────────────────────────────
   const metaItems = [];
-
   if (eq.dimensions) {
-    const dim = dimToLatex(eq.dimensions);
-    if (dim) {
-      metaItems.push(`
-        <div class="eq-meta-item eq-meta-item--dim">
-          <span class="eq-meta-key">Dimensions</span>
-          <span class="eq-meta-val eq-meta-dim">\\(${dim.latex}\\)</span>
-          ${dim.note ? `<span class="eq-meta-note">${dim.note}</span>` : ''}
-        </div>`);
-    }
-  }
-
-  // ── SI UNITS ──────────────────────────────────────────────────────────────
-  if (eq.SI_units) {
+    const dimLatex = dimToLatex(eq.dimensions);
+    // Keep the note (parenthetical explanation after double-space) as plain text
+    const noteMatch = eq.dimensions.match(/\s{2,}(.*)$/);
+    const note = noteMatch ? `<span class="eq-meta-dim-note">${noteMatch[1]}</span>` : '';
     metaItems.push(`
-      <div class="eq-meta-item eq-meta-item--si">
-        <span class="eq-meta-key">SI Units</span>
-        <div class="eq-si-table">
-          ${Object.entries(eq.SI_units).map(([k, v]) => `
-            <div class="eq-si-row">
-              <span class="eq-si-sym">\\(${k}\\)</span>
-              <span class="eq-si-arrow">→</span>
-              <span class="eq-si-unit">\\(${siUnitToLatex(v)}\\)</span>
-            </div>`).join('')}
-        </div>
-      </div>`);
+    <div class="eq-meta-item">
+      <span class="eq-meta-key">Dimensions</span>
+      <span class="eq-meta-val eq-meta-dim">\\(${dimLatex}\\)${note}</span>
+    </div>`);
   }
-
+  if (eq.SI_units) metaItems.push(`
+    <div class="eq-meta-item eq-meta-item--si">
+      <span class="eq-meta-key">SI Units</span>
+      <div class="eq-si-table">
+        ${Object.entries(eq.SI_units).map(([k, v]) => `
+          <div class="eq-si-row">
+            <span class="eq-si-sym">\\(${k.replace(/[_^{}\\]/g, m => '\\' + m)}\\)</span>
+            <span class="eq-si-arrow">→</span>
+            <span class="eq-si-unit">\\(${unitToLatex(v)}\\)</span>
+          </div>`).join('')}
+      </div>
+    </div>`);
   const metaHtml = metaItems.length ? `<div class="eq-meta-row">${metaItems.join('')}</div>` : '';
 
-  // ── TAGS ──────────────────────────────────────────────────────────────────
   const allTagsHtml = Array.isArray(eq.tags) && eq.tags.length
     ? `<div class="eq-all-tags">${eq.tags.map(t => `<span class="eq-tag">${t}</span>`).join('')}</div>`
     : '';
 
-  // ── DERIVATION ────────────────────────────────────────────────────────────
-  const derivationContent = eq.derivation
-    ? `<div class="eq-derivation-box">${renderDerivation(eq.derivation)}</div>`
-    : null;
-
-  // ── SECTIONS ──────────────────────────────────────────────────────────────
   const sections = [
-    eq.whatItSays     && section(ICONS.whatItSays,    'What It Says',         eq.whatItSays),
-    eq.example        && section(ICONS.example,       'Example',              `<div class="eq-example-box">${eq.example}</div>`, 'example'),
-    derivationContent && section(ICONS.derivation,    'Derivation',           derivationContent, 'derivation'),
-    eq.deepMeaning    && section(ICONS.deepMeaning,   'Deep Meaning',         eq.deepMeaning, 'deep'),
-    eq.integralForm   && section(ICONS.math,          'Mathematical Form',    `<div class="eq-katex-block">\\[${eq.integralForm}\\]</div>`, 'math'),
-    eq.whoDiscovered  && section(ICONS.history,       'History',              eq.whoDiscovered, 'history'),
-    eq.whyItMatters   && section(ICONS.whyItMatters,  'Why It Matters',       eq.whyItMatters, 'importance'),
-    eq.misconception  && section(ICONS.misconception, 'Common Misconception', eq.misconception, 'misconception'),
+    eq.whatItSays    && section(ICONS.whatItSays,    'What It Says',        eq.whatItSays),
+    eq.example       && section(ICONS.example,       'Example',              `<div class="eq-example-box">${eq.example}</div>`, 'example'),
+    eq.derivation    && section(ICONS.derivation,    'Derivation',           `<div class="eq-derivation-box">${eq.derivation}</div>`, 'derivation'),
+    eq.deepMeaning   && section(ICONS.deepMeaning,   'Deep Meaning',         eq.deepMeaning, 'deep'),
+    eq.integralForm  && section(ICONS.math,          'Mathematical Form',    `<div class="eq-katex-block">\\[${eq.integralForm}\\]</div>`, 'math'),
+    eq.whoDiscovered && section(ICONS.history,       'History',              eq.whoDiscovered, 'history'),
+    eq.whyItMatters  && section(ICONS.whyItMatters,  'Why It Matters',       eq.whyItMatters, 'importance'),
+    eq.misconception && section(ICONS.misconception, 'Common Misconception', eq.misconception, 'misconception'),
     relatedHtml,
   ].filter(Boolean).join('');
 
