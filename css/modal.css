@@ -308,6 +308,9 @@
     border-bottom: none;
     padding: 22px 18px 36px;
     animation: phys-modal-slide-up 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+    transition: transform 0.08s linear, opacity 0.08s linear;
+    will-change: transform;
+    touch-action: pan-x;
   }
 
   /* Slide up from bottom — feels native on mobile */
