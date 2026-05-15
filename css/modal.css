@@ -6,6 +6,9 @@
    FIXES APPLIED (May 2026):
      #05 — Pull-handle pill: wider (44px) + taller (5px) to match 64px touch zone
      #15 — Close button: padding increased from 10px → 14px (34px→ ~44px tap area)
+     #17 — Close button: position:absolute → sticky+float so it never scrolls away
+     #18 — Mobile bottom padding now uses env(safe-area-inset-bottom) for iPhone home bar
+     #19 — .eq-modal-formula gains -webkit-overflow-scrolling:touch for iOS momentum scroll
 ═══════════════════════════════════════════ */
 
 /* ── OVERLAY ── */
@@ -62,10 +65,30 @@
 [data-theme="dark"] .phys-modal-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
 
 /* ── CLOSE ── */
+/*
+ * FIX #17 — The close button was position:absolute inside .phys-modal-box,
+ * which is the scroll container (overflow-y:auto). Absolute children scroll
+ * with the container, so the button disappeared as soon as the user scrolled
+ * down — forcing them to scroll back up just to close.
+ *
+ * Fix: position:sticky + float:right.
+ *   • float:right pulls it to the top-right corner without displacing content
+ *     (.phys-modal-header already has padding-right:40px to account for this).
+ *   • position:sticky + top:14px pins it to the visible top of the scroll
+ *     viewport — so it stays in view no matter how far the user scrolls.
+ *   • margin-bottom:-52px collapses the space the float would otherwise
+ *     reserve below itself, so long content isn't pushed down.
+ *   • z-index:10 keeps it above all modal content layers.
+ *
+ * This requires zero HTML changes and degrades gracefully: in the rare browser
+ * that doesn't support sticky, the button simply stays at the top of the page
+ * as before — which is still better than being unreachable mid-scroll.
+ */
 .phys-modal-close {
-  position: absolute;
+  position: sticky;
   top: 14px;
-  right: 14px;
+  float: right;
+  margin-bottom: -52px; /* collapse float's reserved space below the button */
   background: rgba(0,0,0,0.05);
   border: 1px solid rgba(0,0,0,0.09);
   border-radius: 10px;
@@ -76,7 +99,7 @@
   align-items: center;
   justify-content: center;
   transition: all 0.15s ease;
-  z-index: 1;
+  z-index: 10;
   line-height: 0;
 }
 .phys-modal-close:hover { background: rgba(0,0,0,0.1); color: #2c2420; }
@@ -310,7 +333,16 @@
     max-height: 92vh;
     border-radius: 20px 20px 0 0;
     border-bottom: none;
-    padding: 22px 18px 36px;
+    /*
+     * FIX #18 — Safe-area padding for iPhone home indicator.
+     * The old value (36px) was a hardcoded guess close to the ~34px gesture bar
+     * height, but env(safe-area-inset-bottom) is the correct API for this.
+     * max() keeps the 36px floor on devices with no home bar (older iPhones,
+     * Android) and upgrades to the device's actual safe-area + 20px breathing
+     * room on modern iPhones. Requires viewport-fit=cover in the <meta viewport>
+     * tag (added in index.html) or env() evaluates to 0.
+     */
+    padding: 22px 18px max(36px, calc(20px + env(safe-area-inset-bottom)));
     animation: phys-modal-slide-up 0.28s cubic-bezier(0.32, 0.72, 0, 1);
     transition: transform 0.08s linear, opacity 0.08s linear;
     will-change: transform;
@@ -342,7 +374,9 @@
 
   /* FIX #15 — Close button tap target: was padding:10px ≈ 34×34px.
      Apple HIG minimum is 44×44px. Increasing to padding:14px gives ~44×44px.
-     The position:absolute keeps it in the corner without affecting layout. */
+     FIX #17 (mobile) — top/right offsets updated to match the tighter mobile
+     sheet padding (22px top vs 28px desktop). sticky+float already applied
+     at the base rule above; only geometry values are overridden here. */
   .phys-modal-close {
     top: 12px;
     right: 12px;
@@ -357,5 +391,13 @@
   .eq-modal-formula {
     font-size: 18px;
     padding: 12px 10px;
+    /*
+     * FIX #19 — Missing -webkit-overflow-scrolling:touch on .eq-modal-formula.
+     * Every other horizontally-scrollable block in the codebase (eq-katex-block,
+     * eq-derivation-box, eq-formula-display) already has this for iOS momentum
+     * scrolling. This one was missed. Without it, swiping through a long formula
+     * on iOS Safari feels sticky and abrupt rather than physics-based/inertial.
+     */
+    -webkit-overflow-scrolling: touch;
   }
 }
