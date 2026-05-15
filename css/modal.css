@@ -1,7 +1,11 @@
 /* ═══════════════════════════════════════════
    MODAL.CSS — Unified desktop modals
    Constants · Equations · Symbols
-   Mobile (≤768px): expand-in-card instead
+   Mobile (≤768px): bottom-sheet modal
+
+   FIXES APPLIED (May 2026):
+     #05 — Pull-handle pill: wider (44px) + taller (5px) to match 64px touch zone
+     #15 — Close button: padding increased from 10px → 14px (34px→ ~44px tap area)
 ═══════════════════════════════════════════ */
 
 /* ── OVERLAY ── */
@@ -293,7 +297,7 @@
   border-color: rgba(102,126,234,0.16);
 }
 
-/* ── MOBILE: full-screen modal instead of expand-in-card ── */
+/* ── MOBILE: bottom-sheet modal ── */
 @media (max-width: 768px) {
   .phys-modal-overlay {
     padding: 0;
@@ -319,19 +323,14 @@
     to   { transform: translateY(0);    opacity: 1; }
   }
 
-  /* Bigger close button — easier to tap */
-  .phys-modal-close {
-    top: 12px;
-    right: 12px;
-    padding: 10px;
-  }
-
-  /* Pull handle hint at top */
+  /* FIX #05 — Pull-handle pill: was 36×4px. Now 44×5px matching the enlarged
+     64px drag zone in equationsController.js. The larger pill sets clear
+     affordance that matches the actual draggable area. */
   .phys-modal-box::before {
     content: '';
     display: block;
-    width: 36px;
-    height: 4px;
+    width: 44px;  /* was 36px */
+    height: 5px;  /* was 4px */
     background: rgba(0,0,0,0.15);
     border-radius: 99px;
     margin: 0 auto 16px;
@@ -339,6 +338,16 @@
 
   [data-theme="dark"] .phys-modal-box::before {
     background: rgba(255,255,255,0.15);
+  }
+
+  /* FIX #15 — Close button tap target: was padding:10px ≈ 34×34px.
+     Apple HIG minimum is 44×44px. Increasing to padding:14px gives ~44×44px.
+     The position:absolute keeps it in the corner without affecting layout. */
+  .phys-modal-close {
+    top: 12px;
+    right: 12px;
+    padding: 14px; /* was 10px — now meets Apple HIG 44px minimum tap target */
+    /* Visually the icon stays the same size; only the invisible hit area grows */
   }
 
   .phys-modal-name {
