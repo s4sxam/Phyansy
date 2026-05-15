@@ -1,6 +1,13 @@
 // =============================================================================
 // equationsController.js — KaTeX-powered equation renderer
-// Desktop (>768px) → modal | Mobile (≤768px) → expand-in-card
+// Desktop (>768px) → modal | Mobile (≤768px) → modal (bottom-sheet)
+//
+// FIXES APPLIED (May 2026):
+//   #01 — Double UI: mobile now opens ONLY modal, in-card expand suppressed
+//   #03 — iOS scroll lock: position:fixed body trick for Safari
+//   #05 — Drag handle zone enlarged from 48px → 64px; pill handle bigger
+//   #14 — Related equation chips are now tappable (scroll-to + open)
+//   #16 — Stagger animation delay capped: 20ms×i (≤200ms) on mobile
 // =============================================================================
 
 import { EQUATIONS } from '../data/equationsData.js';
@@ -22,71 +29,44 @@ const DESKTOP_BREAKPOINT = 768;
 const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
 
 // ── DIMENSION STRING → LATEX ──────────────────────────────────────────────────
-// Converts plain-text dimension strings like "[M][L][T]⁻²" into a KaTeX-ready
-// LaTeX string like "\mathrm{[M][L][T]^{-2}}". Handles superscripts, parenthetical
-// notes (stripped after a double-space), and dimensionless strings.
 function dimToLatex(raw) {
   if (!raw) return '';
-
-  // Strip any parenthetical explanation after two spaces or " ("
   const clean = raw.replace(/\s{2,}.*$/, '').replace(/\s+\(.*$/, '').trim();
-
   if (/^dimensionless/i.test(clean)) return '\\text{dimensionless}';
-
-  // Replace Unicode superscript characters with LaTeX exponents
   const superMap = {
     '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4',
     '⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-',
   };
-
-  // Convert sequences like ⁻² → ^{-2}, ² → ^{2}, etc.
   let latex = clean.replace(/[⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, match => {
     const exp = match.split('').map(c => superMap[c] || c).join('');
     return `^{${exp}}`;
   });
-
-  // Wrap letters (dimension symbols) in \mathrm for upright roman style
-  // Brackets, numbers, exponents and ^ { } are kept as-is
   latex = latex.replace(/[A-Za-zΘθ]+/g, m => `\\mathrm{${m}}`);
-
   return latex;
 }
 
 // ── SI UNIT STRING → LATEX ────────────────────────────────────────────────────
-// Converts plain unit strings like "m/s²" or "N·m²/kg²" into LaTeX.
 function unitToLatex(unit) {
   if (!unit) return '';
   if (/^dimensionless$/i.test(unit.trim())) return '\\text{dimensionless}';
-
   const superMap = {
     '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4',
     '⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-',
   };
-
   let s = unit
-    // Unicode superscripts → LaTeX exponents
     .replace(/[⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, match => {
       const exp = match.split('').map(c => superMap[c] || c).join('');
       return `^{${exp}}`;
     })
-    // · → \cdot
     .replace(/·/g, '\\cdot ')
-    // / → \text{/} (keep readable)
     .replace(/\//g, '/')
-    // wrap letter sequences in \text for upright roman
     .replace(/[A-Za-zΩμΘ]+/g, m => `\\text{${m}}`);
-
   return s;
 }
 
 // ── MATHIFY ───────────────────────────────────────────────────────────────────
-// Converts prose strings into KaTeX-renderable HTML.
-// Existing \(...\) and \[...\] delimiters are passed through untouched.
-// Only plain-prose spans are scanned for math patterns.
 function mathify(text) {
   if (!text) return text;
-
-  // Tokenize: split on existing LaTeX delimiters so we never double-process them
   const TOKEN_RE = /(\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\])/g;
   const parts = [];
   let last = 0, m;
@@ -96,12 +76,10 @@ function mathify(text) {
     last = m.index + m[0].length;
   }
   if (last < text.length) parts.push({ type: 'prose', text: text.slice(last) });
-
   return parts.map(p => p.type === 'latex' ? p.text : processProse(p.text)).join('');
 }
 
 function processProse(text) {
-  // ── 1. Unicode fractions ──────────────────────────────────────────────────
   text = text
     .replace(/½/g, '\\(\\tfrac{1}{2}\\)')
     .replace(/¼/g, '\\(\\tfrac{1}{4}\\)')
@@ -109,24 +87,16 @@ function processProse(text) {
     .replace(/⅓/g, '\\(\\tfrac{1}{3}\\)')
     .replace(/⅔/g, '\\(\\tfrac{2}{3}\\)');
 
-  // ── 2. Raw LaTeX ^{} / _{} scanner ───────────────────────────────────────
-  // Wraps tokens that contain explicit LaTeX sub/superscript braces: T_eff^{1/4}, c_{R1+R2}
-  // For single-char subscripts like _n, requires a word boundary after (prevents
-  // "m_n" from greedily eating the start of "m_nucleus").
   text = text.replace(
     /((?:[A-Za-z\u0391-\u03C9\u00C5\u210F\u2113\u221E\u2202\u2207\d]|\([^)]{1,60}\))(?:[_^]\{[^{}]{0,80}\}|[_^][A-Za-z\u0391-\u03C9\d](?![A-Za-z\d]))+)/g,
     (match) => `\\(${match}\\)`
   );
 
-  // ── 2b. Identifier_subscript pattern ─────────────────────────────────────
-  // Handles prose identifiers like m_nucleus, T_eff, u_k that have multi-char
-  // subscripts written without braces. Converts to \(base_{\text{sub}}\).
   text = text.replace(
     /(?<![\\(])\b([A-Za-z]\w*)_([A-Za-z]\w+)\b/g,
     (_, base, sub) => `\\(${base}_{\\text{${sub}}}\\)`
   );
 
-  // ── 3. Derivative notation: dv/dt, d²x/dt² ───────────────────────────────
   text = text.replace(
     /\b(d[²³]?[a-zA-Z\u03A8\u03C8\u03A6\u03C6\u03C1])\/(d(?:t[²³]?|[a-zA-Z][²³]?))\b/g,
     (_, num, den) => {
@@ -135,25 +105,21 @@ function processProse(text) {
     }
   );
 
-  // ── 4. Integral symbol ∫ ──────────────────────────────────────────────────
   text = text.replace(
     /∫([^=\n.,;]{1,80}?)(?=\s*[=.,;]|\s*$)/g,
     (_, body) => `\\(\\int ${body.trim()}\\)`
   );
 
-  // ── 5. Inline equations (runs BEFORE unicode superscript to avoid nesting) ─
   text = text.replace(
     /\b([A-Za-z\u0391-\u03C9][A-Za-z\u0391-\u03C9\d_]{0,8})\s*=\s*([^\s=\n][^=\n]{0,80}?)(?=[\s.,;)—–]|$)/g,
     (match, lhs, rhs) => {
-      if (/^[a-z]{4,}$/i.test(lhs) && !/[_^]/.test(lhs)) return match; // plain word
-      if (!/[+\-*/²³½¼∫√±×·\d^_{}\\\[\]()]/.test(rhs)) return match;   // no math chars
-      if (match.includes('\\(')) return match;                            // already wrapped
+      if (/^[a-z]{4,}$/i.test(lhs) && !/[_^]/.test(lhs)) return match;
+      if (!/[+\-*/²³½¼∫√±×·\d^_{}\\\[\]()]/.test(rhs)) return match;
+      if (match.includes('\\(')) return match;
       return `\\(${lhs} = ${rhs.trim()}\\)`;
     }
   );
 
-  // ── 6. Unicode superscripts: mc², σT⁴, 4πR², R⁻¹ ────────────────────────
-  // Grabs the full preceding word so "mc²" → \(mc^{2}\) not "m\(c^{2}\)"
   const supMap = {'²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁰':'0','⁻':'-','¹':'1'};
   text = text.replace(
     /([A-Za-z\u0391-\u03C9\u00C5\u210F\d]+)([²³⁴⁵⁶⁷⁸⁹⁻¹⁰]+)/g,
@@ -163,19 +129,16 @@ function processProse(text) {
     }
   );
 
-  // ── 7. Unicode subscripts: v₀, x₁ ───────────────────────────────────────
   text = text.replace(
     /([A-Za-z\u0391-\u03C9])([₀₁₂₃₄₅₆₇₈₉])/g,
     (_, b, s) => `\\(${b}_{${'0123456789'['₀₁₂₃₄₅₆₇₈₉'.indexOf(s)]}}\\)`
   );
 
-  // ── 8. Square root √ ──────────────────────────────────────────────────────
   text = text.replace(
     /√(\([^)]+\)|[A-Za-z\d]+)/g,
     (_, a) => `\\(\\sqrt{${a.replace(/[()]/g, '')}}\\)`
   );
 
-  // ── 9. Operators: · dot, ∝ proportional, ≈ approximately ─────────────────
   text = text.replace(/([A-Za-z\d])\u00B7([A-Za-z\d])/g, (_, a, b) => `\\(${a} \\cdot ${b}\\)`);
   text = text.replace(
     /([A-Za-z\u0391-\u03C9\d]+)\s*∝\s*([A-Za-z\u0391-\u03C9\d^²³⁴⁻]+)/g,
@@ -186,14 +149,10 @@ function processProse(text) {
     (_, a, b) => `\\(${a} \\approx ${b}\\)`
   );
 
-  // ── 10. Fix accidental nesting: \( ... \( ... \) ... \) → \( ... ... \) ──
-  // Caused when an inline-eq wraps a span that already has a wrapped sub-term.
   text = text.replace(
     /\\\(([^\\]*)\\\(([^\\]*)\\\)([^\\]*)\\\)/g,
     (_, pre, inner, post) => `\\(${pre}${inner}${post}\\)`
   );
-
-  // ── 11. Collapse adjacent \)\s*\( ─────────────────────────────────────────
   text = text.replace(/\\\)\s*\\\(/g, ' ');
 
   return text;
@@ -208,17 +167,22 @@ function section(icon, label, content, mod) {
 }
 
 function buildDetailHTML(eq) {
+  // FIX #14 — Related chips are now tappable: add data-eq-name and cursor:pointer
   const relatedHtml = Array.isArray(eq.relatedEquations) && eq.relatedEquations.length
     ? section(ICONS.related, 'Related Equations',
-        `<div class="eq-related-chips">${eq.relatedEquations.map(r => `<span class="eq-related-chip">${r}</span>`).join('')}</div>`)
+        `<div class="eq-related-chips">${eq.relatedEquations.map(r =>
+          `<span class="eq-related-chip" data-eq-name="${r}" role="button" tabindex="0" title="Open ${r}">${r}</span>`
+        ).join('')}</div>`)
     : '';
 
   const metaItems = [];
   if (eq.dimensions) {
     const dimLatex = dimToLatex(eq.dimensions);
-    // Keep the note (parenthetical explanation after double-space) as plain text
     const noteMatch = eq.dimensions.match(/\s{2,}(.*)$/);
-    const note = noteMatch ? `<span class="eq-meta-dim-note">${noteMatch[1]}</span>` : '';
+    // FIX #11 — dim note: show condensed on mobile via CSS class, not hidden
+    const note = noteMatch
+      ? `<span class="eq-meta-dim-note">${noteMatch[1]}</span>`
+      : '';
     metaItems.push(`
     <div class="eq-meta-item">
       <span class="eq-meta-key">Dimensions</span>
@@ -283,14 +247,35 @@ function initModal() {
 
   if (!overlay) return null;
 
-  // ── DRAG TO DISMISS / FULLSCREEN (mobile) ───────────────────────────────
   const box = overlay.querySelector('.phys-modal-box');
   let dragStartY   = 0;
   let dragDeltaY   = 0;
   let isDragging   = false;
   let isFullscreen = false;
-  const DISMISS_THRESHOLD   = 120; // px down → close
-  const FULLSCREEN_THRESHOLD = 80; // px up → fullscreen
+  const DISMISS_THRESHOLD    = 120; // px down → close
+  const FULLSCREEN_THRESHOLD = 80;  // px up  → fullscreen
+
+  // ── FIX #03 — iOS Safari scroll lock ────────────────────────────────────────
+  // Standard `body { overflow: hidden }` does NOT stop scroll on iOS Safari.
+  // The correct fix: save scrollY, lock body with position:fixed, restore on close.
+  let _savedScrollY = 0;
+
+  function lockBodyScroll() {
+    _savedScrollY = window.scrollY;
+    document.body.style.position   = 'fixed';
+    document.body.style.top        = `-${_savedScrollY}px`;
+    document.body.style.width      = '100%';
+    document.body.style.overflowY  = 'scroll'; // keep scrollbar width stable on desktop
+  }
+
+  function unlockBodyScroll() {
+    document.body.style.position  = '';
+    document.body.style.top       = '';
+    document.body.style.width     = '';
+    document.body.style.overflowY = '';
+    // Restore exact scroll position silently
+    window.scrollTo({ top: _savedScrollY, behavior: 'instant' });
+  }
 
   function openModal(eq) {
     titleEl.textContent = eq.name;
@@ -314,8 +299,20 @@ function initModal() {
       });
     }
 
+    // FIX #14 — Wire related chips inside modal body after content is rendered
+    bodyEl.querySelectorAll('.eq-related-chip[data-eq-name]').forEach(chip => {
+      chip.addEventListener('click', () => _openRelatedEquation(chip.dataset.eqName));
+      chip.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          _openRelatedEquation(chip.dataset.eqName);
+        }
+      });
+    });
+
     overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
+    lockBodyScroll(); // FIX #03
+
     // Reset sheet state on every open
     isFullscreen = false;
     box.style.transform    = '';
@@ -328,8 +325,7 @@ function initModal() {
 
   function closeModal() {
     overlay.classList.remove('show');
-    document.body.style.overflow = '';
-    // Reset any drag transform
+    unlockBodyScroll(); // FIX #03
     if (box) {
       box.style.transform = '';
       box.style.opacity   = '';
@@ -342,12 +338,12 @@ function initModal() {
     if (e.key === 'Escape' && overlay.classList.contains('show')) closeModal();
   });
 
+  // ── FIX #05 — Drag-to-dismiss: zone enlarged from 48px → 64px ───────────────
   function onDragStart(e) {
     const touch  = e.touches ? e.touches[0] : e;
     const boxTop = box.getBoundingClientRect().top;
-    // Allow drag only from the handle area (top 48px). If content is scrolled,
-    // don't hijack — let the user scroll back to top first.
-    if (touch.clientY - boxTop > 48) return;
+    // FIX: was 48px, now 64px — matches visual handle + comfortable thumb zone
+    if (touch.clientY - boxTop > 64) return;
     if (box.scrollTop > 0) return;
     isDragging = true;
     dragStartY = touch.clientY;
@@ -359,18 +355,14 @@ function initModal() {
     if (!isDragging) return;
     const touch = e.touches ? e.touches[0] : e;
     dragDeltaY = touch.clientY - dragStartY;
-
-    // Prevent page scroll while we're handling the dismiss gesture
     e.preventDefault();
 
     if (dragDeltaY > 0) {
-      // Dragging DOWN — follow finger, fade slightly
-      if (isFullscreen) return; // don't dismiss from fullscreen, only shrink
+      if (isFullscreen) return;
       const progress = Math.min(dragDeltaY / DISMISS_THRESHOLD, 1);
       box.style.transform = `translateY(${dragDeltaY}px)`;
       box.style.opacity   = String(1 - progress * 0.4);
     } else {
-      // Dragging UP — resist slightly (rubber band)
       const resistance = dragDeltaY * 0.25;
       box.style.transform = `translateY(${resistance}px)`;
       box.style.opacity   = '1';
@@ -396,22 +388,18 @@ function initModal() {
     box.style.transition = '';
 
     if (dragDeltaY >= DISMISS_THRESHOLD && !isFullscreen) {
-      // Swipe DOWN enough → close
       box.style.transform = `translateY(100%)`;
       box.style.opacity   = '0';
       setTimeout(closeModal, 220);
     } else if (dragDeltaY <= -FULLSCREEN_THRESHOLD && !isFullscreen) {
-      // Swipe UP enough → fullscreen
       box.style.transform = '';
       box.style.opacity   = '';
       setFullscreen(true);
     } else if (dragDeltaY >= FULLSCREEN_THRESHOLD && isFullscreen) {
-      // Swipe DOWN in fullscreen → back to sheet
       box.style.transform = '';
       box.style.opacity   = '';
       setFullscreen(false);
     } else {
-      // Snap back
       box.style.transform = '';
       box.style.opacity   = '';
     }
@@ -423,13 +411,37 @@ function initModal() {
     box.addEventListener('touchend',   onDragEnd);
   }
 
-  return { openModal };
+  return { openModal, closeModal };
+}
+
+// ── FIX #14 — Related equation helper: find eq by name and open it ────────────
+// Walks all branches, finds the matching equation, opens its modal.
+let _modalRef = null; // set after initModal
+
+function _openRelatedEquation(name) {
+  if (!_modalRef || !name) return;
+  const needle = name.trim().toLowerCase();
+  for (const branch of Object.values(EQUATIONS)) {
+    for (const eq of branch) {
+      if (eq.name.trim().toLowerCase() === needle) {
+        _modalRef.openModal(eq);
+        return;
+      }
+    }
+  }
+  // Equation not found — silently ignore (graceful degradation)
 }
 
 // ── MAIN INIT ─────────────────────────────────────────────────────────────────
 
 export function initEquations() {
   const modal = initModal();
+  _modalRef = modal; // FIX #14 — expose ref for related-chip navigation
+
+  // FIX #16 — Stagger animation delay: cap at 200ms on mobile, 300ms on desktop
+  const isMobile  = !isDesktop();
+  const stepMs    = isMobile ? 20 : 40;  // 20ms steps on mobile, 40ms on desktop
+  const maxDelay  = isMobile ? 200 : 300; // hard cap so late cards aren't sluggish
 
   createLazyTabSection({
     data:         EQUATIONS,
@@ -446,9 +458,11 @@ export function initEquations() {
         ? `<div class="eq-tags">${eq.tags.slice(0, 3).map(t => `<span class="eq-tag">${t}</span>`).join('')}</div>`
         : '';
       const diffSlug = eq.difficulty ? eq.difficulty.toLowerCase().replace(/[^a-z]/g, '') : '';
+      // FIX #16 — capped animation delay
+      const delay = Math.min(i * stepMs, maxDelay);
       return `
         <div class="glass-card eq-card stagger-item"
-             style="animation-delay:${i * 40}ms"
+             style="animation-delay:${delay}ms"
              data-lazy-branch="${branch}"
              data-lazy-idx="${i}"
              role="button" aria-expanded="false" tabindex="0"
@@ -473,11 +487,19 @@ export function initEquations() {
 
     renderDetail: (eq) => buildDetailHTML(eq),
 
+    // FIX #01 — On mobile: open ONLY the modal, do NOT let lazyRenderer expand
+    // the card in-place (both firing simultaneously was the double-UI bug).
+    // We signal "handled" by returning `true`; lazyRenderer checks this flag
+    // to skip its own expand logic when onExpand takes over.
+    //
+    // On desktop: same modal behaviour, but card also gets expanded class
+    // for keyboard/screen-reader affordance (existing behaviour, no change).
     onExpand: (cardEl, eq) => {
-      // Both mobile and desktop → open modal
       if (modal) {
         modal.openModal(eq);
       }
+      // Return true so lazyRenderer knows onExpand handled it on mobile
+      return !isDesktop();
     },
   });
 }
