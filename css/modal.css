@@ -1,299 +1,740 @@
 /* ═══════════════════════════════════════════
-   MODAL.CSS — Unified desktop modals
-   Constants · Equations · Symbols
-   Mobile (≤768px): expand-in-card instead
+   EQUATIONS.CSS — Key Equations Section
+   Updated: full field rendering + improved UX
 ═══════════════════════════════════════════ */
 
-/* ── OVERLAY ── */
-.phys-modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.72);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  z-index: 600;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.phys-modal-overlay.show {
+/* ── BRANCH TABS ── */
+.eq-branch-tabs {
   display: flex;
-}
-
-/* ── BOX ── */
-.phys-modal-box {
-  background: #fdfbf7;
-  border-radius: 20px;
-  border: 1px solid rgba(0,0,0,0.09);
-  box-shadow: 0 32px 80px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.1);
-  max-width: 700px;
-  width: 100%;
-  max-height: 88vh;
-  overflow-y: auto;
-  position: relative;
-  padding: 28px 28px 32px;
-  animation: phys-modal-in 0.2s cubic-bezier(0.34, 1.3, 0.64, 1);
-}
-
-.phys-modal-box--sm {
-  max-width: 480px;
-}
-
-[data-theme="dark"] .phys-modal-box {
-  background: #1a1826;
-  border-color: rgba(255,255,255,0.09);
-  box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 8px 24px rgba(0,0,0,0.4);
-}
-
-@keyframes phys-modal-in {
-  from { opacity: 0; transform: scale(0.95) translateY(8px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0);   }
-}
-
-.phys-modal-box::-webkit-scrollbar { width: 5px; }
-.phys-modal-box::-webkit-scrollbar-track { background: transparent; }
-.phys-modal-box::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 99px; }
-[data-theme="dark"] .phys-modal-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
-
-/* ── CLOSE ── */
-.phys-modal-close {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  background: rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.09);
-  border-radius: 10px;
-  cursor: pointer;
-  color: #9a8f8a;
-  padding: 7px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-  z-index: 1;
-  line-height: 0;
-}
-.phys-modal-close:hover { background: rgba(0,0,0,0.1); color: #2c2420; }
-[data-theme="dark"] .phys-modal-close { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); color: #6b6382; }
-[data-theme="dark"] .phys-modal-close:hover { background: rgba(255,255,255,0.1); color: #ede8ff; }
-
-/* ── HEADER ── */
-.phys-modal-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 16px;
-  padding-right: 40px;
-}
-
-.phys-modal-symbol {
-  font-size: 52px;
-  font-weight: 700;
-  line-height: 1;
-  font-family: 'JetBrains Mono', monospace;
-  background: var(--physics-grad);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  flex-shrink: 0;
-}
-
-.phys-modal-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding-top: 2px;
-}
-
-/* Badge inside modal — must not stretch */
-.phys-modal-meta .const-badge {
-  width: fit-content;
-}
-
-.phys-modal-name {
-  font-size: 19px;
-  font-weight: 700;
-  color: #2c2420;
-  line-height: 1.25;
-}
-[data-theme="dark"] .phys-modal-name { color: #ede8ff; }
-
-.phys-modal-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  font-weight: 500;
-  color: #5a4f4a;
-}
-[data-theme="dark"] .phys-modal-value { color: #a89fc0; }
-
-/* ── COPY BUTTON ── */
-.phys-modal-copy {
+  flex-wrap: wrap;
+  gap: 6px;
   margin-bottom: 20px;
 }
 
-/* ── DIVIDER ── */
-.phys-modal-divider {
-  height: 1px;
-  background: rgba(0,0,0,0.08);
-  margin: 14px 0;
-}
-[data-theme="dark"] .phys-modal-divider { background: rgba(255,255,255,0.07); }
-
-/* ── BODY — shared detail styles ── */
-.phys-modal-body .detail-row { margin-bottom: 12px; }
-
-.phys-modal-body .detail-label {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: #9a8f8a;
-  margin-bottom: 3px;
-}
-[data-theme="dark"] .phys-modal-body .detail-label { color: #6b6382; }
-
-.phys-modal-body .detail-val {
-  font-size: 13.5px;
-  color: #5a4f4a;
-  line-height: 1.5;
-}
-[data-theme="dark"] .phys-modal-body .detail-val { color: #a89fc0; }
-
-.phys-modal-body .detail-block {
-  margin-top: 12px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: rgba(102,126,234,0.05);
-  border: 1px solid rgba(102,126,234,0.12);
-}
-[data-theme="dark"] .phys-modal-body .detail-block {
-  background: rgba(102,126,234,0.08);
-  border-color: rgba(102,126,234,0.18);
+/* ── MOBILE: branch tabs scroll horizontally in one row ── */
+@media (max-width: 640px) {
+  .eq-branch-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+    margin-bottom: 14px;
+    /* fade out on right edge to hint scrollability */
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  }
+  .eq-branch-tabs::-webkit-scrollbar { display: none; }
+  .eq-branch-btn {
+    flex-shrink: 0;
+    font-size: 12px;
+    padding: 5px 13px;
+    white-space: nowrap;
+  }
 }
 
-.phys-modal-body .detail-block-label {
+.eq-branch-btn {
+  padding: 6px 16px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.8);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-sec);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.eq-branch-btn:hover {
+  color: var(--text);
+  border-color: rgba(108,99,255,0.4);
+  background: rgba(108,99,255,0.06);
+}
+
+.eq-branch-btn.active {
+  background: linear-gradient(135deg, #6c63ff, #a78bfa);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 2px 10px rgba(108,99,255,0.35);
+}
+
+/* ── EQUATIONS GRID ── */
+.eq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+/* ── EQUATION CARD ── */
+.eq-card {
+  padding: 20px 22px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.eq-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.eq-card.expanded {
+  transform: none;
+}
+
+/* ── CARD HEADER ── */
+.eq-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.eq-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+  line-height: 1.3;
+}
+
+.eq-card-badges {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: #667eea;
-  margin-bottom: 8px;
-}
-[data-theme="dark"] .phys-modal-body .detail-block-label { color: #a88fff; }
-.phys-modal-body .detail-block-label svg { flex-shrink: 0; opacity: 0.8; }
-
-.phys-modal-body .detail-block-text {
-  font-size: 14px;
-  color: #5a4f4a;
-  line-height: 1.75;
-}
-[data-theme="dark"] .phys-modal-body .detail-block-text { color: #c8c0e0; }
-
-.phys-modal-body .detail-block-text em {
-  font-style: normal;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  background: rgba(102,126,234,0.1);
-  padding: 1px 5px;
-  border-radius: 4px;
-  color: #2c2420;
-}
-[data-theme="dark"] .phys-modal-body .detail-block-text em {
-  background: rgba(102,126,234,0.18);
-  color: #ede8ff;
-}
-
-/* ════════════════════════════
-   EQUATIONS MODAL SPECIFICS
-════════════════════════════ */
-.eq-modal-header {
-  flex-direction: column;
-  gap: 8px;
-}
-
-.eq-modal-badges {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.eq-modal-formula {
-  font-size: 22px;
-  text-align: center;
-  padding: 16px 12px;
-  margin-bottom: 18px;
-  background: rgba(102,126,234,0.05);
-  border: 1px solid rgba(102,126,234,0.1);
-  border-radius: 12px;
-  overflow-x: auto;
-}
-[data-theme="dark"] .eq-modal-formula {
-  background: rgba(102,126,234,0.08);
-  border-color: rgba(102,126,234,0.15);
-}
-
-/* Reuse eq-detail inner styles inside modal body */
-.phys-modal-body .eq-detail-inner { padding: 0; }
-.phys-modal-body .eq-vars { margin-bottom: 14px; }
-.phys-modal-body .eq-section { margin-top: 12px; }
-
-/* ════════════════════════════
-   SYMBOLS MODAL SPECIFICS
-════════════════════════════ */
-.sym-modal-letters {
-  font-size: 48px;
-  font-weight: 700;
-  line-height: 1;
-  font-family: 'JetBrains Mono', monospace;
-  background: var(--physics-grad);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  gap: 5px;
   flex-shrink: 0;
-  letter-spacing: 0.05em;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
-.phys-modal-body .greek-detail { padding: 0; border: none; background: none; }
-.phys-modal-body .greek-detail-title {
+/* ── YEAR BADGE ── */
+.eq-year-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(0,0,0,0.05);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+[data-theme="dark"] .eq-year-badge {
+  background: rgba(255,255,255,0.07);
+}
+
+/* ── DIFFICULTY BADGE ── */
+.eq-difficulty-badge {
+  display: inline-block;
   font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: #9a8f8a;
+  padding: 3px 8px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.eq-diff-gcse         { background: rgba(34,197,94,0.12);  color: #16a34a; border: 1px solid rgba(34,197,94,0.25); }
+.eq-diff-alevel       { background: rgba(59,130,246,0.12); color: #2563eb; border: 1px solid rgba(59,130,246,0.25); }
+.eq-diff-undergraduate{ background: rgba(168,85,247,0.12); color: #7c3aed; border: 1px solid rgba(168,85,247,0.25); }
+.eq-diff-graduate     { background: rgba(239,68,68,0.12);  color: #dc2626; border: 1px solid rgba(239,68,68,0.25); }
+
+[data-theme="dark"] .eq-diff-gcse          { background: rgba(34,197,94,0.15);  color: #4ade80; border-color: rgba(34,197,94,0.3); }
+[data-theme="dark"] .eq-diff-alevel        { background: rgba(59,130,246,0.15); color: #60a5fa; border-color: rgba(59,130,246,0.3); }
+[data-theme="dark"] .eq-diff-undergraduate { background: rgba(168,85,247,0.15); color: #c084fc; border-color: rgba(168,85,247,0.3); }
+[data-theme="dark"] .eq-diff-graduate      { background: rgba(239,68,68,0.15);  color: #f87171; border-color: rgba(239,68,68,0.3); }
+
+/* ── FORMULA DISPLAY (card face) ── */
+.eq-formula-display {
+  text-align: center;
+  font-family: 'JetBrains Mono', 'Palatino Linotype', Georgia, serif;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, #1a1a3e 0%, #2d2060 100%);
+  border-radius: 10px;
+  color: #f0edff;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 16px rgba(108,99,255,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+  word-break: break-word;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-theme="dark"] .eq-formula-display {
+  background: linear-gradient(135deg, #0f0f2e 0%, #1e1450 100%);
+  box-shadow: 0 4px 16px rgba(108,99,255,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* ── DESC ── */
+.eq-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+/* ── TAGS (card face — max 3) ── */
+.eq-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
   margin-bottom: 10px;
 }
-[data-theme="dark"] .phys-modal-body .greek-detail-title { color: #6b6382; }
 
-.phys-modal-body .greek-detail ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.eq-tag {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: rgba(108,99,255,0.08);
+  color: #6c63ff;
+  border: 1px solid rgba(108,99,255,0.18);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .eq-tag {
+  background: rgba(108,99,255,0.15);
+  color: #a78bfa;
+  border-color: rgba(108,99,255,0.25);
+}
+
+/* ── EXPAND HINT ── */
+.eq-expand-hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: auto;
+  padding-top: 8px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  user-select: none;
+}
+
+.eq-card:hover .eq-expand-hint,
+.eq-card.expanded .eq-expand-hint {
+  opacity: 1;
+  color: #6c63ff;
+}
+
+.eq-chevron {
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.eq-card.expanded .eq-chevron {
+  transform: rotate(180deg);
+}
+
+/* ── EXPANDED DETAIL WRAPPER ── */
+.eq-detail {
+  display: none;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.eq-card.expanded .eq-detail {
+  display: block;
+}
+
+/* ── INNER WRAPPER ── */
+.eq-detail-inner {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
 }
 
-.phys-modal-body .greek-detail li {
-  font-size: 14px;
-  color: #5a4f4a;
+/* ── KATEX GLOBAL OVERFLOW FIX ── */
+.eq-meta-item .katex-display,
+.eq-katex-block .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
+}
+
+.eq-meta-item .katex,
+.eq-si-unit .katex,
+.eq-si-sym .katex,
+.eq-meta-dim .katex {
+  font-size: 1.1em;
+}
+
+/* ── KATEX FORMULA BLOCK (expanded) ── */
+.eq-katex-block {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  background: rgba(26,26,62,0.06);
+  border-left: 3px solid #6c63ff;
+  border-radius: 0 10px 10px 0;
+  padding: 18px 22px;
+  margin-bottom: 16px;
+  font-size: 1.35em;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   line-height: 1.6;
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: rgba(102,126,234,0.05);
-  border: 1px solid rgba(102,126,234,0.1);
-}
-[data-theme="dark"] .phys-modal-body .greek-detail li {
-  color: #c8c0e0;
-  background: rgba(102,126,234,0.08);
-  border-color: rgba(102,126,234,0.16);
 }
 
-/* ── NO MODAL ON MOBILE ── */
-@media (max-width: 768px) {
-  .phys-modal-overlay { display: none !important; }
+[data-theme="dark"] .eq-katex-block {
+  background: rgba(108,99,255,0.09);
+}
+
+/* ── VARIABLE LEGEND ── */
+.eq-vars {
+  background: rgba(108,99,255,0.05);
+  border: 1px solid rgba(108,99,255,0.12);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+[data-theme="dark"] .eq-vars {
+  background: rgba(108,99,255,0.09);
+}
+
+.eq-vars-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #6c63ff;
+  margin-bottom: 8px;
+}
+
+.var-row {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(108,99,255,0.08);
+}
+
+.var-row:last-child { border-bottom: none; }
+
+.var-sym {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: #5a4fc0;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .var-sym { color: #a78bfa; }
+
+.var-desc {
+  font-size: 13px;
+  color: var(--text-sec);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* ── META ROW (dimensions + SI units) ── */
+.eq-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.eq-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0,0,0,0.03);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  flex: 1 1 140px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .eq-meta-item {
+  background: rgba(255,255,255,0.04);
+}
+
+.eq-meta-key {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.eq-meta-val {
+  font-size: 13.5px;
+  color: var(--text);
+  white-space: normal;
+  word-break: break-word;
+  overflow-x: auto;
+  line-height: 1.6;
+}
+
+/* Dimensions — KaTeX rendered, no monospace override */
+.eq-meta-dim {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.eq-meta-dim-note {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.4;
+  display: block;
+  margin-top: 3px;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Hide the long dimension note on mobile — too much noise */
+@media (max-width: 640px) {
+  .eq-meta-dim-note {
+    display: none;
+  }
+}
+
+/* ── SI UNITS TABLE ── */
+.eq-si-table {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.eq-si-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 2px;
+  flex-wrap: nowrap;
+}
+
+.eq-si-sym {
+  font-weight: 600;
+  color: #5a4fc0;
+  min-width: 40px;
+  flex-shrink: 0;
+  line-height: 1;
+  font-size: 15px;
+}
+
+[data-theme="dark"] .eq-si-sym {
+  color: #a78bfa;
+}
+
+.eq-si-arrow {
+  color: var(--text-muted);
+  font-size: 13px;
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.eq-si-unit {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1;
+  word-break: break-word;
+  min-width: 0;
+  font-weight: 500;
+}
+
+/* ── SECTIONS ── */
+.eq-section {
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.eq-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.eq-section-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #6c63ff;
+  margin-bottom: 7px;
+}
+
+.eq-section-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.eq-section-body {
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--text-sec);
+}
+
+/* ── EXAMPLE BOX ── */
+.eq-example-box {
+  background: rgba(34,197,94,0.06);
+  border-left: 3px solid rgba(34,197,94,0.5);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--text-sec);
+}
+
+[data-theme="dark"] .eq-example-box {
+  background: rgba(34,197,94,0.08);
+  border-left-color: rgba(74,222,128,0.4);
+}
+
+/* ── DERIVATION BOX ── */
+.eq-derivation-box {
+  background: rgba(59,130,246,0.06);
+  border-left: 3px solid rgba(59,130,246,0.4);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  line-height: 1.9;
+  color: var(--text-sec);
+  font-family: inherit;
+  word-break: break-word;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .eq-derivation-box {
+  background: rgba(59,130,246,0.09);
+  border-left-color: rgba(96,165,250,0.4);
+}
+
+/* KaTeX inside derivation box — allow scrolling on narrow cards */
+.eq-derivation-box .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+
+/* ── SECTION MODIFIERS ── */
+.eq-section--deep .eq-section-label   { color: #d97706; }
+.eq-section--deep .eq-section-icon svg{ stroke: #d97706; }
+
+.eq-section--history .eq-section-label   { color: #6b7280; }
+.eq-section--history .eq-section-icon svg{ stroke: #6b7280; }
+
+.eq-section--importance .eq-section-label   { color: #059669; }
+.eq-section--importance .eq-section-icon svg{ stroke: #059669; }
+
+.eq-section--misconception .eq-section-label   { color: #dc2626; }
+.eq-section--misconception .eq-section-icon svg{ stroke: #dc2626; }
+
+.eq-section--misconception .eq-section-body {
+  background: rgba(239,68,68,0.05);
+  border-left: 3px solid rgba(239,68,68,0.35);
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+}
+
+[data-theme="dark"] .eq-section--misconception .eq-section-body {
+  background: rgba(239,68,68,0.08);
+}
+
+.eq-section--math .eq-section-label   { color: #7c3aed; }
+.eq-section--math .eq-section-icon svg{ stroke: #7c3aed; }
+
+/* ── KATEX INLINE (mathematical form) ── */
+.eq-katex-inline {
+  font-size: 1.1em;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+
+/* ── RELATED EQUATIONS CHIPS ── */
+.eq-related-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.eq-related-chip {
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: rgba(108,99,255,0.08);
+  color: #6c63ff;
+  border: 1px solid rgba(108,99,255,0.2);
+  cursor: default;
+  transition: background 0.15s;
+}
+
+.eq-related-chip:hover {
+  background: rgba(108,99,255,0.15);
+}
+
+[data-theme="dark"] .eq-related-chip {
+  background: rgba(108,99,255,0.15);
+  color: #a78bfa;
+  border-color: rgba(108,99,255,0.3);
+}
+
+/* ── ALL TAGS (in detail) ── */
+.eq-all-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── DIFFICULTY FILTER BAR ── */
+.eq-difficulty-filters {
+  margin-bottom: 20px;
+  margin-top: -10px;
+}
+
+/* ── SEARCH BAR ── */
+.eq-controls {
+  margin-bottom: 20px;
+}
+
+/* ── DARK MODE ADJUSTMENTS ── */
+[data-theme="dark"] .eq-branch-btn {
+  background: rgba(255,255,255,0.05);
+}
+
+
+
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  .eq-formula-display {
+    font-size: 15px;
+    padding: 12px 10px;
+    min-height: 48px;
+    overflow-x: auto;
+    justify-content: flex-start;
+    white-space: nowrap;
+  }
+
+  .eq-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* ── MOBILE: KaTeX block (integral / mathematical form) ── */
+  .eq-katex-block {
+    padding: 12px 10px;
+    font-size: 0.95em;    /* down from 1.35em — prevents card blowout */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ── MOBILE: KaTeX display inside any block must scroll, not overflow ── */
+  .eq-katex-block .katex-display,
+  .eq-derivation-box .katex-display,
+  .eq-meta-item .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    padding-bottom: 4px; /* room for scroll indicator */
+  }
+
+  /* ── MOBILE: expanded card detail — cap height, make it scrollable ── */
+  .eq-card.expanded .eq-detail {
+    max-height: 70vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* ── MOBILE: section body text — no horizontal bleed ── */
+  .eq-section-body {
+    font-size: 13px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* ── MOBILE: derivation box ── */
+  .eq-derivation-box {
+    font-size: 12.5px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ── MOBILE: SI unit rows — wrap gracefully ── */
+  .eq-si-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .eq-si-sym {
+    min-width: 32px;
+    font-size: 13px;
+  }
+
+  .eq-si-unit {
+    font-size: 13px;
+  }
+
+  /* ── MOBILE: variable legend ── */
+  .var-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .var-sym {
+    min-width: unset;
+  }
+
+  .eq-meta-item {
+    min-width: 100%;
+    flex: 1 1 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .eq-card-badges {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+  }
+
+  /* ── MOBILE: example + misconception boxes ── */
+  .eq-example-box,
+  .eq-section--misconception .eq-section-body {
+    font-size: 12.5px;
+    padding: 8px 12px;
+  }
 }
