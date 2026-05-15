@@ -8,45 +8,10 @@
 //   Search runs only on a pre-built lightweight index, never on long prose.
 //   Debounce prevents re-renders on every keystroke.
 //
-// HOW TO USE (for any section):
-//
-//   import { createLazySection } from './lazyRenderer.js';
-//
-//   createLazySection({
-//     data:          CONSTANTS,           // your data array
-//     gridId:        'constants-grid',    // container element id
-//     searchId:      'const-search',      // search input id (optional)
-//     filtersId:     'const-filters',     // filter bar id (optional)
-//     filterKey:     'category',          // which field to filter by
-//
-//     // Fields searched on EVERY keystroke — keep these SHORT fields only
-//     searchFields:  ['name', 'symbol', 'category', 'description'],
-//
-//     // Renders the visible card shell — NO long prose here
-//     renderCard: (item, index) => `
-//       <div class="glass-card const-card" data-lazy-idx="${index}">
-//         <div class="const-symbol">${item.symbol}</div>
-//         <div class="const-name">${item.name}</div>
-//         <div class="const-detail"></div>   <!-- always leave this empty -->
-//       </div>
-//     `,
-//
-//     // Renders detail content — only called when a card is actually opened
-//     renderDetail: (item) => `
-//       <p>${item.whatItSays}</p>
-//       <p>${item.deepMeaning}</p>
-//     `,
-//
-//     // CSS selector for the clickable toggle target inside a card
-//     // Defaults to the card itself if omitted
-//     toggleSelector: null,
-//
-//     // CSS selector for elements that should NOT trigger expand (e.g. copy buttons)
-//     ignoreSelector: '.const-copy-btn',
-//
-//     // Callback fired after a card expands, receives (cardEl, item)
-//     onExpand: null,
-//   });
+// FIX #01 — onExpand can return `true` to signal it has taken full ownership
+//   of the expand action (e.g. opening a modal on mobile). When it does, the
+//   in-card expanded class + detail injection are suppressed, preventing the
+//   double-UI bug where both the bottom-sheet AND in-card expand fired at once.
 // =============================================================================
 
 const DEBOUNCE_MS = 200;
@@ -93,13 +58,11 @@ export function createLazySection(config) {
     return;
   }
 
-  // Build search index ONCE — only from short summary fields
   const searchIndex = buildSearchIndex(data, searchFields);
 
   let activeFilter = 'All';
   let searchQuery  = '';
 
-  // ── RENDER ──────────────────────────────────────────────────────────────────
   function render() {
     const grid = document.getElementById(gridId);
     if (!grid) return;
@@ -118,16 +81,13 @@ export function createLazySection(config) {
       return;
     }
 
-    // Render ONLY the summary shell — detail div is empty
     grid.innerHTML = indices.map((globalIdx, i) => {
       const html = renderCard(data[globalIdx], globalIdx, i);
-      // Inject data-lazy-idx if renderCard didn't include it
       return html.includes('data-lazy-idx')
         ? html
         : html.replace(/^(<\w+)/, `$1 data-lazy-idx="${globalIdx}"`);
     }).join('');
 
-    // FIX 1 — Batch-render KaTeX on all visible card faces at once
     if (window.renderMathInElement) {
       renderMathInElement(grid, {
         delimiters: [
@@ -138,17 +98,13 @@ export function createLazySection(config) {
       });
     }
 
-    // Wire expand + lazy detail injection
     grid.querySelectorAll('[data-lazy-idx]').forEach(card => {
       const toggle = () => {
         const willExpand = !card.classList.contains('expanded');
 
-        // ── CLOSE OTHER EXPANDED CARDS (with scroll-anchor fix) ─────────────
         if (willExpand) {
-          // 1. Snapshot card's position BEFORE any layout change
           const cardRectBefore = card.getBoundingClientRect();
 
-          // 2. Collapse all other open cards
           grid.querySelectorAll('[data-lazy-idx].expanded').forEach(other => {
             if (other !== card) {
               other.classList.remove('expanded');
@@ -156,7 +112,6 @@ export function createLazySection(config) {
             }
           });
 
-          // 3. Compensate for layout shift: keep clicked card at same visual position
           const cardRectAfter = card.getBoundingClientRect();
           const shift = cardRectAfter.top - cardRectBefore.top;
           if (shift !== 0) {
@@ -164,7 +119,13 @@ export function createLazySection(config) {
           }
         }
 
-        // ── LAZY INJECTION: runs exactly once per card ──────────────────────
+        // FIX #01 — Fire onExpand first; if it returns true, it owns this
+        // interaction entirely (e.g. opening a modal). Skip in-card expand.
+        if (willExpand && onExpand) {
+          const handled = onExpand(card, data[Number(card.dataset.lazyIdx)]);
+          if (handled === true) return; // modal took over — do nothing further
+        }
+
         if (willExpand && !card.dataset.lazyLoaded) {
           const idx      = Number(card.dataset.lazyIdx);
           const detailEl = card.querySelector('.const-detail, .eq-detail, .lazy-detail');
@@ -172,7 +133,6 @@ export function createLazySection(config) {
             detailEl.innerHTML = renderDetail(data[idx], idx);
           }
           card.dataset.lazyLoaded = 'true';
-          if (onExpand) onExpand(card, data[idx]);
         }
 
         card.classList.toggle('expanded', willExpand);
@@ -199,7 +159,6 @@ export function createLazySection(config) {
 
   const debouncedRender = debounce(render, DEBOUNCE_MS);
 
-  // ── FILTER BAR ───────────────────────────────────────────────────────────────
   if (filtersId && filterKey) {
     const filtersEl = document.getElementById(filtersId);
     if (filtersEl) {
@@ -214,12 +173,11 @@ export function createLazySection(config) {
         filtersEl.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         activeFilter = btn.dataset.cat;
-        render(); // filter clicks render immediately, no debounce needed
+        render();
       });
     }
   }
 
-  // ── SEARCH INPUT ─────────────────────────────────────────────────────────────
   if (searchId) {
     const searchEl = document.getElementById(searchId);
     if (searchEl) {
@@ -230,10 +188,7 @@ export function createLazySection(config) {
     }
   }
 
-  // Initial render
   render();
-
-  // Return render fn so caller can trigger a re-render if needed
   return { render };
 }
 
@@ -255,6 +210,9 @@ export function createLazySection(config) {
 //     renderDetail: (item) => `...`,
 //
 //     ignoreSelector: null,
+//
+//     // onExpand can return `true` to take full ownership (suppresses in-card expand)
+//     onExpand: (cardEl, item) => { ... return true; },
 //   });
 // =============================================================================
 
@@ -284,7 +242,6 @@ export function createLazyTabSection(config) {
   let activeFilter  = 'All';
   let searchQuery   = '';
 
-  // Build per-branch search indices once — includes tags array flattened in
   const searchIndices = {};
   branches.forEach(branch => {
     searchIndices[branch] = (data[branch] || []).map(item => {
@@ -304,7 +261,6 @@ export function createLazyTabSection(config) {
     const index       = searchIndices[branch] || [];
     const q           = searchQuery.toLowerCase().trim();
 
-    // Apply difficulty filter and search query together
     const items = branchItems.filter((item, i) => {
       const matchFilter = !filterKey || activeFilter === 'All' || item[filterKey] === activeFilter;
       const matchSearch = !q || (index[i] && index[i].includes(q));
@@ -326,7 +282,6 @@ export function createLazyTabSection(config) {
         : html.replace(/^(<\w+)/, `$1 data-lazy-branch="${branch}" data-lazy-idx="${i}"`);
     }).join('');
 
-    // FIX 1 — Batch-render KaTeX on all visible card faces at once
     if (window.renderMathInElement) {
       renderMathInElement(grid, {
         delimiters: [
@@ -341,12 +296,9 @@ export function createLazyTabSection(config) {
       const toggle = () => {
         const willExpand = !card.classList.contains('expanded');
 
-        // ── CLOSE OTHER EXPANDED CARDS (with scroll-anchor fix) ─────────────
         if (willExpand) {
-          // 1. Snapshot card's position BEFORE any layout change
           const cardRectBefore = card.getBoundingClientRect();
 
-          // 2. Collapse all other open cards
           grid.querySelectorAll('[data-lazy-idx].expanded').forEach(other => {
             if (other !== card) {
               other.classList.remove('expanded');
@@ -358,7 +310,6 @@ export function createLazyTabSection(config) {
             }
           });
 
-          // 3. Compensate for layout shift: keep clicked card at same visual position
           const cardRectAfter = card.getBoundingClientRect();
           const shift = cardRectAfter.top - cardRectBefore.top;
           if (shift !== 0) {
@@ -366,7 +317,15 @@ export function createLazyTabSection(config) {
           }
         }
 
-        // LAZY INJECTION: runs exactly once per card
+        // FIX #01 — Fire onExpand BEFORE in-card logic.
+        // If onExpand returns true, it has taken full ownership (e.g. modal
+        // opened on mobile). Skip in-card expand entirely to prevent double-UI.
+        if (willExpand && onExpand) {
+          const handled = onExpand(card, items[Number(card.dataset.lazyIdx)]);
+          if (handled === true) return; // suppressed — modal owns this interaction
+        }
+
+        // ── LAZY INJECTION: runs exactly once per card ──────────────────────
         if (willExpand && !card.dataset.lazyLoaded) {
           const idx      = Number(card.dataset.lazyIdx);
           const detailEl = card.querySelector('.eq-detail, .lazy-detail');
@@ -374,7 +333,6 @@ export function createLazyTabSection(config) {
             detailEl.innerHTML = renderDetail(items[idx], idx);
           }
           card.dataset.lazyLoaded = 'true';
-          // Re-render KaTeX for newly injected content
           if (window.renderMathInElement) {
             renderMathInElement(card, {
               delimiters: [
@@ -388,9 +346,6 @@ export function createLazyTabSection(config) {
 
         card.classList.toggle('expanded', willExpand);
         card.setAttribute('aria-expanded', String(willExpand));
-
-        // Fire onExpand AFTER card state is updated, only when expanding
-        if (willExpand && onExpand) onExpand(card, items[Number(card.dataset.lazyIdx)]);
       };
 
       card.addEventListener('click', e => {
@@ -434,7 +389,6 @@ export function createLazyTabSection(config) {
   if (filtersId && filterKey) {
     const filtersEl = document.getElementById(filtersId);
     if (filtersEl) {
-      // Collect all unique values across all branches in the defined order
       const ordered = ['All', 'GCSE', 'A-Level', 'Undergraduate', 'Graduate'];
       const allValues = new Set(
         Object.values(data).flat().map(item => item[filterKey]).filter(Boolean)
