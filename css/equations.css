@@ -1,6 +1,20 @@
 /* ═══════════════════════════════════════════
    EQUATIONS.CSS — Key Equations Section
    Updated: full field rendering + improved UX
+
+   FIXES APPLIED (May 2026):
+     #02 — Formula overflow: .eq-card gets overflow:hidden on mobile
+     #04 — Branch tab fade: mask starts at 92% not 85%
+     #06 — Difficulty filter: flex-wrap + horizontal scroll on mobile
+     #07 — Expand hint hidden on mobile (modal makes it redundant)
+     #08 — eq-search input: font-size:16px to prevent iOS Safari zoom
+     #09 — var-sym gets visual separator on mobile
+     #10 — Badges: row-wrap instead of column to avoid crowding eq-name
+     #11 — dim-note shown condensed on mobile instead of hidden
+     #12 — Removed nested-scroll (max-height:70vh) from expanded card on mobile
+     #13 — .eq-card:active state for touch feedback
+     #14 — .eq-related-chip: cursor:pointer + tappable affordance
+     #15 — close button handled in modal.css; no change here
 ═══════════════════════════════════════════ */
 
 /* ── BRANCH TABS ── */
@@ -19,10 +33,12 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     padding-bottom: 4px;
+    /* FIX #04 — was padding-right: 16px */
+    padding-right: 16px;
     margin-bottom: 14px;
-    /* fade out on right edge to hint scrollability */
-    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
-    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    /* FIX #04 — Start fade later (92%) so the last visible tab isn't clipped */
+    -webkit-mask-image: linear-gradient(to right, black 92%, transparent 100%);
+    mask-image: linear-gradient(to right, black 92%, transparent 100%);
   }
   .eq-branch-tabs::-webkit-scrollbar { display: none; }
   .eq-branch-btn {
@@ -81,6 +97,17 @@
   box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.8);
 }
 
+/* FIX #13 — Touch feedback: visible active state for mobile taps.
+   Using @media (hover: none) ensures hover effects don't fight this
+   on desktop (where :active fires too, but hover already provides feedback). */
+@media (hover: none) {
+  .eq-card:active {
+    transform: scale(0.982);
+    background: rgba(108,99,255,0.04);
+    transition: transform 0.08s ease, background 0.08s ease;
+  }
+}
+
 .eq-card.expanded {
   transform: none;
 }
@@ -100,6 +127,9 @@
   color: var(--text);
   flex: 1;
   line-height: 1.3;
+  /* FIX #10 — Ensure long names wrap rather than being crushed */
+  min-width: 0;
+  word-break: break-word;
 }
 
 .eq-card-badges {
@@ -109,6 +139,8 @@
   flex-shrink: 0;
   flex-wrap: wrap;
   justify-content: flex-end;
+  /* FIX #10 — Cap badge column width so long eq names aren't squeezed */
+  max-width: 110px;
 }
 
 /* ── YEAR BADGE ── */
@@ -237,6 +269,15 @@
 
 .eq-card.expanded .eq-chevron {
   transform: rotate(180deg);
+}
+
+/* FIX #07 — On mobile the modal opens on tap; the "Details ⌄" hint is
+   misleading (implies in-place expand) and confuses touch users. Hide it.
+   The modal opening itself is visually obvious feedback. */
+@media (max-width: 768px) {
+  .eq-expand-hint {
+    display: none;
+  }
 }
 
 /* ── EXPANDED DETAIL WRAPPER ── */
@@ -408,10 +449,19 @@
   word-break: break-word;
 }
 
-/* Hide the long dimension note on mobile — too much noise */
+/* FIX #11 — Previously this hid .eq-meta-dim-note entirely on mobile with no
+   fallback, silently removing dimension notes for A-Level/degree students.
+   Now we show a condensed single-line version. Students who need the full note
+   can always open the modal where it's shown in full without space constraints. */
 @media (max-width: 640px) {
   .eq-meta-dim-note {
-    display: none;
+    /* Show but truncate to one line — saves space while preserving info */
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 10.5px;
+    opacity: 0.75;
   }
 }
 
@@ -581,6 +631,8 @@
   gap: 6px;
 }
 
+/* FIX #14 — Related chips are now interactive: cursor:pointer, focus ring,
+   active state for touch, and a subtle hover background uplift. */
 .eq-related-chip {
   font-size: 11.5px;
   font-weight: 500;
@@ -589,18 +641,33 @@
   background: rgba(108,99,255,0.08);
   color: #6c63ff;
   border: 1px solid rgba(108,99,255,0.2);
-  cursor: default;
-  transition: background 0.15s;
+  cursor: pointer; /* was: cursor: default */
+  transition: background 0.15s, transform 0.1s;
+  user-select: none;
 }
 
 .eq-related-chip:hover {
-  background: rgba(108,99,255,0.15);
+  background: rgba(108,99,255,0.18);
+}
+
+.eq-related-chip:active {
+  transform: scale(0.95);
+  background: rgba(108,99,255,0.25);
+}
+
+.eq-related-chip:focus-visible {
+  outline: 2px solid #6c63ff;
+  outline-offset: 2px;
 }
 
 [data-theme="dark"] .eq-related-chip {
   background: rgba(108,99,255,0.15);
   color: #a78bfa;
   border-color: rgba(108,99,255,0.3);
+}
+
+[data-theme="dark"] .eq-related-chip:hover {
+  background: rgba(108,99,255,0.28);
 }
 
 /* ── ALL TAGS (in detail) ── */
@@ -624,33 +691,76 @@
   margin-bottom: 20px;
 }
 
+/* FIX #08 — Prevent iOS Safari auto-zoom on eq-search input tap.
+   iOS zooms any input with font-size < 16px. The global search already has
+   this fix in search.css; this targets the section-specific input. */
+@media (max-width: 640px) {
+  #eq-search {
+    font-size: 16px !important;
+  }
+}
+
 /* ── DARK MODE ADJUSTMENTS ── */
 [data-theme="dark"] .eq-branch-btn {
   background: rgba(255,255,255,0.05);
 }
 
 
-
-
 /* ── RESPONSIVE ── */
 @media (max-width: 640px) {
+
+  /* FIX #02 — Long KaTeX formulas were exploding past the card boundary
+     because .eq-card had no overflow containment. Fix: clip at card edge
+     and let .eq-formula-display scroll internally with -webkit-overflow-scrolling. */
+  .eq-card {
+    overflow: hidden; /* contain any child that exceeds card width */
+  }
+
   .eq-formula-display {
     font-size: 15px;
     padding: 12px 10px;
     min-height: 48px;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     justify-content: flex-start;
     white-space: nowrap;
+    max-width: 100%;      /* never wider than its card */
+    box-sizing: border-box;
   }
 
   .eq-grid {
     grid-template-columns: 1fr;
   }
 
+  /* FIX #06 — Difficulty filter chips: was unstyled on mobile so chips
+     overflowed horizontally without scroll or wrap, looking totally broken.
+     Now: horizontally scrollable row matching the branch tabs treatment. */
+  .eq-difficulty-filters {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+    padding-bottom: 4px;
+    padding-right: 12px;
+    -webkit-mask-image: linear-gradient(to right, black 92%, transparent 100%);
+    mask-image: linear-gradient(to right, black 92%, transparent 100%);
+  }
+
+  .eq-difficulty-filters::-webkit-scrollbar { display: none; }
+
+  .eq-difficulty-filters .filter-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 5px 13px;
+  }
+
   /* ── MOBILE: KaTeX block (integral / mathematical form) ── */
   .eq-katex-block {
     padding: 12px 10px;
-    font-size: 0.95em;    /* down from 1.35em — prevents card blowout */
+    font-size: 0.95em;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     max-width: 100%;
@@ -665,16 +775,14 @@
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     max-width: 100%;
-    padding-bottom: 4px; /* room for scroll indicator */
+    padding-bottom: 4px;
   }
 
-  /* ── MOBILE: expanded card detail — cap height, make it scrollable ── */
-  .eq-card.expanded .eq-detail {
-    max-height: 70vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-  }
+  /* FIX #12 — Removed nested scroll (max-height: 70vh + overflow-y: auto).
+     On mobile, onExpand now opens a modal instead of expanding in-card,
+     so this in-card expanded state is never reached on mobile. Removing
+     these rules eliminates the double-scrollbar UX issue entirely. */
+  /* .eq-card.expanded .eq-detail — no max-height / overflow-y on mobile */
 
   /* ── MOBILE: section body text — no horizontal bleed ── */
   .eq-section-body {
@@ -708,14 +816,28 @@
     font-size: 13px;
   }
 
-  /* ── MOBILE: variable legend ── */
+  /* FIX #09 — Variable legend: .var-sym was losing its visual separation from
+     .var-desc when the row switched to flex-direction:column. The 56px grid
+     column disappeared, and symbol ran straight into description. Now we add
+     a bottom border + spacing so each symbol is clearly delineated. */
   .var-row {
+    display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 0;
   }
 
   .var-sym {
     min-width: unset;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid rgba(108,99,255,0.15);
+    /* Preserve monospace style — was implicitly lost in column layout */
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+  }
+
+  .var-desc {
+    padding-top: 0;
   }
 
   .eq-meta-item {
@@ -725,10 +847,17 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  /* FIX #10 — Badges: was flex-direction:column which stacked year + difficulty
+     badge vertically, taking up ~40px height in a very narrow right column,
+     crushing long equation names. Fix: keep row layout with wrap allowed — the
+     max-width:110px on .eq-card-badges already handles the width constraint. */
   .eq-card-badges {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 3px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 4px;
+    max-width: 110px;
   }
 
   /* ── MOBILE: example + misconception boxes ── */
