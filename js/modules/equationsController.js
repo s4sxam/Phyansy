@@ -313,6 +313,9 @@ function initModal() {
   function closeModal() {
     overlay.classList.remove('show');
     document.body.style.overflow = '';
+    // Reset any drag transform
+    box.style.transform = '';
+    box.style.opacity   = '';
   }
 
   closeBtn.addEventListener('click', closeModal);
@@ -320,6 +323,91 @@ function initModal() {
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && overlay.classList.contains('show')) closeModal();
   });
+
+  // ── DRAG TO DISMISS / FULLSCREEN (mobile) ───────────────────────────────
+  const box = overlay.querySelector('.phys-modal-box');
+  let dragStartY   = 0;
+  let dragDeltaY   = 0;
+  let isDragging   = false;
+  let isFullscreen = false;
+  const DISMISS_THRESHOLD   = 120; // px down → close
+  const FULLSCREEN_THRESHOLD = 80; // px up → fullscreen
+
+  function onDragStart(e) {
+    const touch  = e.touches ? e.touches[0] : e;
+    const boxTop = box.getBoundingClientRect().top;
+    // Allow drag from handle area (top 48px) OR when scrolled to top
+    if (touch.clientY - boxTop > 48 && box.scrollTop > 0) return;
+    isDragging = true;
+    dragStartY = touch.clientY;
+    dragDeltaY = 0;
+    box.style.transition = 'none';
+  }
+
+  function onDragMove(e) {
+    if (!isDragging) return;
+    const touch = e.touches ? e.touches[0] : e;
+    dragDeltaY = touch.clientY - dragStartY;
+
+    if (dragDeltaY > 0) {
+      // Dragging DOWN — follow finger, fade slightly
+      if (isFullscreen) return; // don't dismiss from fullscreen, only shrink
+      const progress = Math.min(dragDeltaY / DISMISS_THRESHOLD, 1);
+      box.style.transform = `translateY(${dragDeltaY}px)`;
+      box.style.opacity   = String(1 - progress * 0.4);
+    } else {
+      // Dragging UP — resist slightly (rubber band)
+      const resistance = dragDeltaY * 0.25;
+      box.style.transform = `translateY(${resistance}px)`;
+      box.style.opacity   = '1';
+    }
+  }
+
+  function setFullscreen(on) {
+    isFullscreen = on;
+    box.style.transition = 'max-height 0.3s cubic-bezier(0.32,0.72,0,1), border-radius 0.3s';
+    if (on) {
+      box.style.maxHeight    = '100vh';
+      box.style.borderRadius = '0';
+    } else {
+      box.style.maxHeight    = '92vh';
+      box.style.borderRadius = '20px 20px 0 0';
+    }
+    setTimeout(() => { box.style.transition = ''; }, 320);
+  }
+
+  function onDragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    box.style.transition = '';
+
+    if (dragDeltaY >= DISMISS_THRESHOLD && !isFullscreen) {
+      // Swipe DOWN enough → close
+      box.style.transform = `translateY(100%)`;
+      box.style.opacity   = '0';
+      setTimeout(closeModal, 220);
+    } else if (dragDeltaY <= -FULLSCREEN_THRESHOLD && !isFullscreen) {
+      // Swipe UP enough → fullscreen
+      box.style.transform = '';
+      box.style.opacity   = '';
+      setFullscreen(true);
+    } else if (dragDeltaY >= FULLSCREEN_THRESHOLD && isFullscreen) {
+      // Swipe DOWN in fullscreen → back to sheet
+      box.style.transform = '';
+      box.style.opacity   = '';
+      setFullscreen(false);
+    } else {
+      // Snap back
+      box.style.transform = '';
+      box.style.opacity   = '';
+    }
+  }
+
+  if (box) {
+    box.addEventListener('touchstart', onDragStart, { passive: true });
+    box.addEventListener('touchmove',  onDragMove,  { passive: true });
+    box.addEventListener('touchend',   onDragEnd);
+  }
 
   return { openModal };
 }
