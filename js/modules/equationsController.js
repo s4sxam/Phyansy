@@ -245,13 +245,13 @@ function buildDetailHTML(eq) {
 
   const sections = [
     eq.whatItSays    && section(ICONS.whatItSays,    'What It Says',        mathify(eq.whatItSays)),
-    eq.example       && section(ICONS.example,       'Example',              `<div class="eq-example-box">${mathify(eq.example)}</div>`, 'example'),
-    eq.derivation    && section(ICONS.derivation,    'Derivation',           `<div class="eq-derivation-box">${mathify(eq.derivation)}</div>`, 'derivation'),
-    eq.deepMeaning   && section(ICONS.deepMeaning,   'Deep Meaning',         mathify(eq.deepMeaning), 'deep'),
-    eq.integralForm  && section(ICONS.math,          'Mathematical Form',    `<div class="eq-katex-block">\\[${eq.integralForm}\\]</div>`, 'math'),
-    eq.whoDiscovered && section(ICONS.history,       'History',              mathify(eq.whoDiscovered), 'history'),
-    eq.whyItMatters  && section(ICONS.whyItMatters,  'Why It Matters',       mathify(eq.whyItMatters), 'importance'),
-    eq.misconception && section(ICONS.misconception, 'Common Misconception', mathify(eq.misconception), 'misconception'),
+    eq.example       && section(ICONS.example,       'Example',             `<div class="eq-example-box">${mathify(eq.example)}</div>`, 'example'),
+    eq.derivation    && section(ICONS.derivation,    'Derivation',          `<div class="eq-derivation-box">${mathify(eq.derivation)}</div>`, 'derivation'),
+    eq.deepMeaning   && section(ICONS.deepMeaning,   'Deep Meaning',        mathify(eq.deepMeaning), 'deep'),
+    eq.integralForm  && section(ICONS.math,          'Mathematical Form',   `<div class="eq-katex-block">\\[${eq.integralForm}\\]</div>`, 'math'),
+    eq.whoDiscovered && section(ICONS.history,       'History',             mathify(eq.whoDiscovered), 'history'),
+    eq.whyItMatters  && section(ICONS.whyItMatters,  'Why It Matters',      mathify(eq.whyItMatters), 'importance'),
+    eq.misconception && section(ICONS.misconception, 'Common Misconception',mathify(eq.misconception), 'misconception'),
     relatedHtml,
   ].filter(Boolean).join('');
 
@@ -372,9 +372,10 @@ export function initEquations() {
     renderDetail: (eq) => buildDetailHTML(eq),
 
     onExpand: (cardEl, eq) => {
-      // Desktop → modal, keep card collapsed
-      if (isDesktop() && modal) {
+      // Both mobile and desktop → open modal
+      if (modal) {
         modal.openModal(eq);
+        // Immediately collapse the card so it doesn't look expanded
         requestAnimationFrame(() => {
           cardEl.classList.remove('expanded');
           cardEl.setAttribute('aria-expanded', 'false');
@@ -384,23 +385,7 @@ export function initEquations() {
           const chv = cardEl.querySelector('.eq-chevron');
           if (chv) chv.style.transform = '';
         });
-        return;
       }
-
-      // Mobile → expand-in-card
-      if (window.renderMathInElement) {
-        renderMathInElement(cardEl, {
-          delimiters: [
-            { left: '\\(', right: '\\)', display: false },
-            { left: '\\[', right: '\\]', display: true },
-          ],
-          throwOnError: false,
-        });
-      }
-      const label = cardEl.querySelector('.eq-expand-label');
-      if (label) label.textContent = 'Collapse';
-      const chevron = cardEl.querySelector('.eq-chevron');
-      if (chevron) chevron.style.transform = 'rotate(180deg)';
     },
   });
 }
