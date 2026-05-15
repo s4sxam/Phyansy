@@ -1,6 +1,13 @@
 // =============================================================================
 // constantsController.js
-// Desktop (>768px) → modal | Mobile (≤768px) → expand-in-card
+// Desktop (>768px) → modal | Mobile (≤768px) → modal (bottom-sheet)
+//
+// FIXES APPLIED (May 2026):
+//   #20 — Mobile now opens bottom-sheet modal (ported from equations):
+//           • iOS scroll lock via position:fixed body trick (was overflow:hidden)
+//           • Drag-to-dismiss with fullscreen snap gesture
+//           • In-card expand fully suppressed on mobile (return true → lazyRenderer)
+//           • Sticky close button and safe-area padding inherited from modal.css
 // =============================================================================
 
 import { CONSTANTS } from '../data/constantsData.js';
@@ -42,7 +49,7 @@ function buildDetailHTML(c) {
   return rows + divider + blocks;
 }
 
-// ── MODAL (desktop only) ──────────────────────────────────────────────────────
+// ── MODAL (desktop + mobile bottom-sheet) ────────────────────────────────────
 
 function initModal() {
   const overlay  = document.getElementById('const-modal');
@@ -55,6 +62,115 @@ function initModal() {
   const copyBtn  = document.getElementById('const-modal-copy');
 
   if (!overlay) return null;
+
+  const box = overlay.querySelector('.phys-modal-box');
+
+  // ── FIX #20 — iOS Safari scroll lock (ported from equationsController) ──────
+  // `body { overflow: hidden }` does NOT prevent background scroll on iOS Safari.
+  // The correct fix: save scrollY, lock body with position:fixed, restore on close.
+  let _savedScrollY = 0;
+
+  function lockBodyScroll() {
+    _savedScrollY = window.scrollY;
+    document.body.style.position  = 'fixed';
+    document.body.style.top       = `-${_savedScrollY}px`;
+    document.body.style.width     = '100%';
+    document.body.style.overflowY = 'scroll'; // prevents layout shift from scrollbar disappearing
+  }
+
+  function unlockBodyScroll() {
+    document.body.style.position  = '';
+    document.body.style.top       = '';
+    document.body.style.width     = '';
+    document.body.style.overflowY = '';
+    window.scrollTo({ top: _savedScrollY, behavior: 'instant' });
+  }
+
+  // ── FIX #20 — Drag-to-dismiss (ported from equationsController) ─────────────
+  let dragStartY   = 0;
+  let dragDeltaY   = 0;
+  let isDragging   = false;
+  let isFullscreen = false;
+  const DISMISS_THRESHOLD    = 120; // px downward → close
+  const FULLSCREEN_THRESHOLD = 80;  // px upward  → fullscreen snap
+
+  function setFullscreen(on) {
+    isFullscreen = on;
+    box.style.transition = 'max-height 0.3s cubic-bezier(0.32,0.72,0,1), border-radius 0.3s';
+    if (on) {
+      box.style.maxHeight    = '100vh';
+      box.style.borderRadius = '0';
+    } else {
+      box.style.maxHeight    = '92vh';
+      box.style.borderRadius = '20px 20px 0 0';
+    }
+    setTimeout(() => { box.style.transition = ''; }, 320);
+  }
+
+  function onDragStart(e) {
+    const touch  = e.touches ? e.touches[0] : e;
+    const boxTop = box.getBoundingClientRect().top;
+    if (touch.clientY - boxTop > 64) return; // only the top 64px drag zone
+    if (box.scrollTop > 0) return;            // don't steal scroll from content
+    isDragging = true;
+    dragStartY = touch.clientY;
+    dragDeltaY = 0;
+    box.style.transition = 'none';
+  }
+
+  function onDragMove(e) {
+    if (!isDragging) return;
+    const touch = e.touches ? e.touches[0] : e;
+    dragDeltaY = touch.clientY - dragStartY;
+    e.preventDefault();
+
+    if (dragDeltaY > 0) {
+      if (isFullscreen) return;
+      const progress = Math.min(dragDeltaY / DISMISS_THRESHOLD, 1);
+      box.style.transform = `translateY(${dragDeltaY}px)`;
+      box.style.opacity   = String(1 - progress * 0.4);
+    } else {
+      // Upward drag — rubber-band resistance
+      const resistance = dragDeltaY * 0.25;
+      box.style.transform = `translateY(${resistance}px)`;
+      box.style.opacity   = '1';
+    }
+  }
+
+  function onDragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    box.style.transition = '';
+
+    if (dragDeltaY >= DISMISS_THRESHOLD && !isFullscreen) {
+      // Fling down → close
+      box.style.transform = 'translateY(100%)';
+      box.style.opacity   = '0';
+      setTimeout(closeModal, 220);
+    } else if (dragDeltaY <= -FULLSCREEN_THRESHOLD && !isFullscreen) {
+      // Fling up → fullscreen snap
+      box.style.transform = '';
+      box.style.opacity   = '';
+      setFullscreen(true);
+    } else if (dragDeltaY >= FULLSCREEN_THRESHOLD && isFullscreen) {
+      // Fling down from fullscreen → restore sheet
+      box.style.transform = '';
+      box.style.opacity   = '';
+      setFullscreen(false);
+    } else {
+      // Incomplete drag → snap back
+      box.style.transform = '';
+      box.style.opacity   = '';
+    }
+  }
+
+  if (box) {
+    box.addEventListener('touchstart', onDragStart, { passive: true });
+    box.addEventListener('touchmove',  onDragMove,  { passive: false });
+    box.addEventListener('touchend',   onDragEnd);
+  }
+
+  // ── OPEN / CLOSE ─────────────────────────────────────────────────────────────
 
   function openModal(c) {
     symbolEl.textContent = c.symbol;
@@ -82,13 +198,25 @@ function initModal() {
     };
 
     overlay.classList.add('show');
-    document.body.style.overflow = 'hidden';
+    lockBodyScroll(); // FIX #20 — iOS-safe scroll lock
+
+    // Reset sheet state on every open
+    isFullscreen = false;
+    box.style.transform    = '';
+    box.style.opacity      = '';
+    box.style.maxHeight    = '';
+    box.style.borderRadius = '';
+    box.scrollTop = 0;
     closeBtn.focus();
   }
 
   function closeModal() {
     overlay.classList.remove('show');
-    document.body.style.overflow = '';
+    unlockBodyScroll(); // FIX #20
+    if (box) {
+      box.style.transform = '';
+      box.style.opacity   = '';
+    }
   }
 
   closeBtn.addEventListener('click', closeModal);
@@ -161,18 +289,23 @@ export function initConstants() {
         });
       }
 
-      // Desktop → modal, keep card collapsed
-      if (isDesktop() && modal) {
+      // FIX #20 — All screen sizes → modal (bottom-sheet on mobile, centred on desktop).
+      // On desktop: card is collapsed via requestAnimationFrame so it doesn't
+      //   linger in expanded state behind the modal (existing behaviour preserved).
+      // On mobile: returning true signals lazyRenderer to skip its own in-card
+      //   expand logic entirely — the same `return true` contract used by
+      //   equationsController (see lazyRenderer.js line ~125).
+      if (modal) {
         modal.openModal(c);
-        requestAnimationFrame(() => {
-          card.classList.remove('expanded');
-          card.setAttribute('aria-expanded', 'false');
-          card.dataset.lazyLoaded = '';
-        });
-        return;
+        if (isDesktop()) {
+          requestAnimationFrame(() => {
+            card.classList.remove('expanded');
+            card.setAttribute('aria-expanded', 'false');
+            card.dataset.lazyLoaded = '';
+          });
+        }
+        return !isDesktop(); // true on mobile → lazyRenderer skips in-card expand
       }
-
-      // Mobile → expand-in-card (lazyRenderer handles the rest naturally)
     },
   });
 }
