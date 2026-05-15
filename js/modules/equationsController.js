@@ -283,6 +283,15 @@ function initModal() {
 
   if (!overlay) return null;
 
+  // ── DRAG TO DISMISS / FULLSCREEN (mobile) ───────────────────────────────
+  const box = overlay.querySelector('.phys-modal-box');
+  let dragStartY   = 0;
+  let dragDeltaY   = 0;
+  let isDragging   = false;
+  let isFullscreen = false;
+  const DISMISS_THRESHOLD   = 120; // px down → close
+  const FULLSCREEN_THRESHOLD = 80; // px up → fullscreen
+
   function openModal(eq) {
     titleEl.textContent = eq.name;
 
@@ -307,6 +316,13 @@ function initModal() {
 
     overlay.classList.add('show');
     document.body.style.overflow = 'hidden';
+    // Reset sheet state on every open
+    isFullscreen = false;
+    box.style.transform    = '';
+    box.style.opacity      = '';
+    box.style.maxHeight    = '';
+    box.style.borderRadius = '';
+    box.scrollTop = 0;
     closeBtn.focus();
   }
 
@@ -314,8 +330,10 @@ function initModal() {
     overlay.classList.remove('show');
     document.body.style.overflow = '';
     // Reset any drag transform
-    box.style.transform = '';
-    box.style.opacity   = '';
+    if (box) {
+      box.style.transform = '';
+      box.style.opacity   = '';
+    }
   }
 
   closeBtn.addEventListener('click', closeModal);
@@ -324,20 +342,13 @@ function initModal() {
     if (e.key === 'Escape' && overlay.classList.contains('show')) closeModal();
   });
 
-  // ── DRAG TO DISMISS / FULLSCREEN (mobile) ───────────────────────────────
-  const box = overlay.querySelector('.phys-modal-box');
-  let dragStartY   = 0;
-  let dragDeltaY   = 0;
-  let isDragging   = false;
-  let isFullscreen = false;
-  const DISMISS_THRESHOLD   = 120; // px down → close
-  const FULLSCREEN_THRESHOLD = 80; // px up → fullscreen
-
   function onDragStart(e) {
     const touch  = e.touches ? e.touches[0] : e;
     const boxTop = box.getBoundingClientRect().top;
-    // Allow drag from handle area (top 48px) OR when scrolled to top
-    if (touch.clientY - boxTop > 48 && box.scrollTop > 0) return;
+    // Allow drag only from the handle area (top 48px). If content is scrolled,
+    // don't hijack — let the user scroll back to top first.
+    if (touch.clientY - boxTop > 48) return;
+    if (box.scrollTop > 0) return;
     isDragging = true;
     dragStartY = touch.clientY;
     dragDeltaY = 0;
@@ -348,6 +359,9 @@ function initModal() {
     if (!isDragging) return;
     const touch = e.touches ? e.touches[0] : e;
     dragDeltaY = touch.clientY - dragStartY;
+
+    // Prevent page scroll while we're handling the dismiss gesture
+    e.preventDefault();
 
     if (dragDeltaY > 0) {
       // Dragging DOWN — follow finger, fade slightly
@@ -405,7 +419,7 @@ function initModal() {
 
   if (box) {
     box.addEventListener('touchstart', onDragStart, { passive: true });
-    box.addEventListener('touchmove',  onDragMove,  { passive: true });
+    box.addEventListener('touchmove',  onDragMove,  { passive: false });
     box.addEventListener('touchend',   onDragEnd);
   }
 
@@ -463,16 +477,6 @@ export function initEquations() {
       // Both mobile and desktop → open modal
       if (modal) {
         modal.openModal(eq);
-        // Immediately collapse the card so it doesn't look expanded
-        requestAnimationFrame(() => {
-          cardEl.classList.remove('expanded');
-          cardEl.setAttribute('aria-expanded', 'false');
-          cardEl.dataset.lazyLoaded = '';
-          const lbl = cardEl.querySelector('.eq-expand-label');
-          if (lbl) lbl.textContent = 'Details';
-          const chv = cardEl.querySelector('.eq-chevron');
-          if (chv) chv.style.transform = '';
-        });
       }
     },
   });
