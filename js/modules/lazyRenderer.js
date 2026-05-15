@@ -374,11 +374,23 @@ export function createLazyTabSection(config) {
             detailEl.innerHTML = renderDetail(items[idx], idx);
           }
           card.dataset.lazyLoaded = 'true';
-          if (onExpand) onExpand(card, items[idx]);
+          // Re-render KaTeX for newly injected content
+          if (window.renderMathInElement) {
+            renderMathInElement(card, {
+              delimiters: [
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true },
+              ],
+              throwOnError: false,
+            });
+          }
         }
 
         card.classList.toggle('expanded', willExpand);
         card.setAttribute('aria-expanded', String(willExpand));
+
+        // Fire onExpand AFTER card state is updated, only when expanding
+        if (willExpand && onExpand) onExpand(card, items[Number(card.dataset.lazyIdx)]);
       };
 
       card.addEventListener('click', e => {
