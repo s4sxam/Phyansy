@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- viewport-fit=cover: required for env(safe-area-inset-*) to return real
+       values on iPhones with home indicator (iPhone X and later). Without this
+       the env() calls in modal.css evaluate to 0 and fix #18 has no effect. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Phyansy — Interactive Physics Reference</title>
   <meta name="description" content="An interactive physics reference for high-school and university students. Constants, equations, symbols, units, and calculator.">
   <meta name="author" content="Tanay (s4sxam)">
