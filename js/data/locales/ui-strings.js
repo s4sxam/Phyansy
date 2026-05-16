@@ -737,7 +737,7 @@ export const LANG_META = [
   { code: 'hi', label: 'Hindi',      native: 'हिन्दी',      flag: '🇮🇳' },
   { code: 'ar', label: 'Arabic',     native: 'العربية',    flag: '🇸🇦' },
   { code: 'fr', label: 'French',     native: 'Français',   flag: '🇫🇷' },
-  { code: 'bn', label: 'Bengali',    native: 'বাংলা',       flag: '🇧🇩' },
+  { code: 'bn', label: 'Bengali',    native: 'বাংলা',       flag: '🇮🇳' },
   { code: 'pt', label: 'Portuguese', native: 'Português',  flag: '🇧🇷' },
   { code: 'ru', label: 'Russian',    native: 'Русский',    flag: '🇷🇺' },
   { code: 'ja', label: 'Japanese',   native: '日本語',      flag: '🇯🇵' },
