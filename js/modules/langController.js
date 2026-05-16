@@ -13,7 +13,7 @@
 // IMPORTANT: formulas, variable symbols, SI units — NEVER translated.
 // =============================================================================
 
-import { UI_STRINGS, RTL_LANGS, CJK_LANGS } from '../data/locales/ui-strings.js';
+import { UI_STRINGS, RTL_LANGS, CJK_LANGS, INDIC_LANGS } from '../data/locales/ui-strings.js';
 
 const LANG_KEY      = 'quantra_lang';
 const CACHE_KEY_PFX = 'phyansy_trans_';
@@ -42,6 +42,7 @@ function _hash(str) {
 export function getCurrentLang() { return _currentLang; }
 export function isRTL(lang = _currentLang) { return RTL_LANGS.has(lang); }
 export function isCJK(lang = _currentLang) { return CJK_LANGS.has(lang); }
+export function isIndic(lang = _currentLang) { return INDIC_LANGS.has(lang); }
 export function onLangChange(cb) { _subscribers.push(cb); }
 
 export function t(key, lang = _currentLang) {
@@ -78,8 +79,43 @@ function _applyLangToDOM(lang) {
   } else {
     html.removeAttribute('data-cjk');
   }
+  // Indic scripts (Hindi, Bengali, Tamil, Telugu, Marathi) need Noto Sans loaded.
+  // We lazy-load only the font subset needed for the chosen script — not all at once.
+  // Each subset is < 60KB woff2. We set data-indic so lang.css can apply the stack.
+  if (INDIC_LANGS.has(lang)) {
+    html.setAttribute('data-indic', lang);
+    _loadIndicFont(lang);
+  } else {
+    html.removeAttribute('data-indic');
+  }
   html.setAttribute('lang', lang);
   _applyStaticStrings(lang);
+}
+
+// ── Lazy Indic font loader ────────────────────────────────────────────────────
+// Loads the Google Fonts Noto Sans subset for the given Indic script.
+// Called at most once per script per session (Set tracks loaded scripts).
+// Font requests are tiny woff2 subsets (40–80KB) — no perceptible delay.
+const _loadedIndicFonts = new Set();
+function _loadIndicFont(lang) {
+  if (_loadedIndicFonts.has(lang)) return;
+  _loadedIndicFonts.add(lang);
+
+  // Google Fonts API query for each Indic script subset
+  const fontMap = {
+    hi: 'Noto+Sans:ital,wght@0,400;0,500;0,700&subset=devanagari',
+    mr: 'Noto+Sans:ital,wght@0,400;0,500;0,700&subset=devanagari',
+    bn: 'Noto+Sans+Bengali:wght@400;500;700',
+    ta: 'Noto+Sans+Tamil:wght@400;500;700',
+    te: 'Noto+Sans+Telugu:wght@400;500;700',
+  };
+  const query = fontMap[lang];
+  if (!query) return;
+
+  const link = document.createElement('link');
+  link.rel  = 'stylesheet';
+  link.href = `https://fonts.googleapis.com/css2?family=${query}&display=swap`;
+  document.head.appendChild(link);
 }
 
 function _applyStaticStrings(lang) {
@@ -108,6 +144,51 @@ export const TRANSLATABLE_FIELDS = [
   'whatItSays', 'simpleExample', 'deepMeaning', 'whyItMatters',
   'example', 'derivation', 'whoDiscovered', 'misconception', 'desc',
 ];
+
+// ── translateVars ─────────────────────────────────────────────────────────────
+// Translates the .d (description) field of equation variable rows.
+// Keeps the .s (symbol) field always in English — it's always a Latin/Greek letter.
+//
+// vars:  array of { s: 'F', d: 'Force in Newtons' }
+// lang:  target language code
+// Returns: array of { s, d } with translated d values
+// ─────────────────────────────────────────────────────────────────────────────
+export async function translateVars(vars, lang) {
+  if (lang === 'en' || !vars || vars.length === 0) return vars;
+
+  // Build a flat object: { VAR_0: 'Force in Newtons', VAR_1: 'Mass in kg', ... }
+  const toTranslate = {};
+  const cached      = {};
+
+  vars.forEach((v, i) => {
+    if (!v.d) return;
+    const cacheKey = `${lang}:${_hash(v.d)}`;
+    const stored   = _sessionCache.get(cacheKey) ?? _readTranslationCache(cacheKey);
+    if (stored !== null) {
+      cached[i] = stored;
+      if (!_sessionCache.has(cacheKey)) _sessionCache.set(cacheKey, stored);
+    } else {
+      toTranslate[`VAR_${i}`] = v.d;
+    }
+  });
+
+  let apiResult = {};
+  if (Object.keys(toTranslate).length > 0) {
+    apiResult = await _callTranslationAPI(toTranslate, lang, '');
+    // Write results to cache
+    Object.entries(apiResult).forEach(([key, text]) => {
+      const i         = parseInt(key.replace('VAR_', ''), 10);
+      const cacheKey  = `${lang}:${_hash(vars[i].d)}`;
+      _sessionCache.set(cacheKey, text);
+      _writeTranslationCache(cacheKey, text);
+    });
+  }
+
+  return vars.map((v, i) => ({
+    s: v.s, // symbol always stays in English
+    d: cached[i] ?? (apiResult[`VAR_${i}`] || v.d),
+  }));
+}
 
 export async function translateContent(obj, fields, lang) {
   if (lang === 'en') return Object.fromEntries(fields.map(f => [f, obj[f]]));
@@ -190,7 +271,7 @@ export async function translateBatch(items, lang) {
           resultMap.get(id)[field] = stored;
           _sessionCache.set(cacheKey, stored);
         } else {
-          const flatKey = `ITEM_${id}__${field}`;
+          const flatKey = `ITEM_${id.replace(/[^A-Za-z0-9]/g, '_')}__${field}`;
           toTranslate[flatKey] = text;
           keyMeta[flatKey]     = { id, field, cacheKey };
         }
@@ -257,6 +338,7 @@ const LANG_NAMES = {
   es: 'Spanish', zh: 'Simplified Chinese', hi: 'Hindi', ar: 'Arabic',
   fr: 'French',  bn: 'Bengali', pt: 'Portuguese', ru: 'Russian',
   ja: 'Japanese', de: 'German',
+  ta: 'Tamil', te: 'Telugu', mr: 'Marathi',
 };
 
 // ─── Gemini Flash (free tier) ─────────────────────────────────────────────────
@@ -305,7 +387,11 @@ Equation context: "${equationName}"`;
         }],
         generationConfig: {
           responseMimeType: 'application/json',
-          maxOutputTokens: 2000,
+          // 8192 tokens: a full equation modal has up to 8 prose fields,
+          // each up to ~300 words. 2000 was catastrophically low — it caused
+          // Gemini to truncate mid-JSON, making JSON.parse throw and silently
+          // falling back to English on every modal open. 8192 is safe headroom.
+          maxOutputTokens: 8192,
         },
       }),
     });
