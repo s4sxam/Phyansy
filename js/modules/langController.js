@@ -188,6 +188,15 @@ const LANG_NAMES = {
   ja: 'Japanese', de: 'German',
 };
 
+// ─── Gemini Flash (free tier) ─────────────────────────────────────────────────
+// Get your key at: https://aistudio.google.com → "Get API key" (free, no CC needed)
+// DO NOT commit this key to a public repo — move it to an env variable or a
+// thin serverless proxy (e.g. Cloudflare Worker) before going to production.
+const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE';
+const GEMINI_ENDPOINT =
+  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${AIzaSyB5M-Cr9QS25JfyZhHW_jbWA7RK7EE9cgg}`;
+// ─────────────────────────────────────────────────────────────────────────────
+
 async function _callTranslationAPI(fieldsToTranslate, lang, equationName) {
   const targetLang = LANG_NAMES[lang] || lang;
   const fieldList = Object.entries(fieldsToTranslate)
@@ -213,22 +222,40 @@ OUTPUT: {"field1": "translated text", "field2": "translated text"}
 Equation context: "${equationName}"`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch(GEMINI_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: `Translate these fields into ${targetLang}. Return only JSON.\n\n${fieldList}` }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        contents: [{
+          parts: [{
+            text: `${fieldList}\n\nTranslate into ${targetLang}. Return only JSON.`,
+          }],
+        }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          maxOutputTokens: 2000,
+        },
       }),
     });
 
-    if (!response.ok) { console.warn('[Phyansy translate] API', response.status); return {}; }
+    if (!response.ok) {
+      const errBody = await response.text().catch(() => '');
+      console.warn('[Phyansy translate] Gemini API error', response.status, errBody);
+      return {};
+    }
 
     const data = await response.json();
-    const rawText = data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '';
-    const clean = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+    // Gemini structure: candidates[0].content.parts[0].text
+    // responseMimeType: 'application/json' guarantees clean JSON — no markdown fences.
+    // Light trim guard kept for edge-case whitespace.
+    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+    const clean   = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+    if (!clean) {
+      console.warn('[Phyansy translate] Empty response from Gemini');
+      return {};
+    }
+
     const parsed = JSON.parse(clean);
 
     const safeResult = {};
