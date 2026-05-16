@@ -17,11 +17,11 @@ import { UI_STRINGS, RTL_LANGS, CJK_LANGS, INDIC_LANGS } from '../data/locales/u
 
 const LANG_KEY      = 'quantra_lang';
 const CACHE_KEY_PFX = 'phyansy_trans_';
-// v2: bumped from v1 because the old maxOutputTokens:2000 limit caused Gemini
-// to truncate mid-JSON, which wrote empty/partial results into v1 cache keys.
-// Those poisoned entries would silently serve English forever even after deploy.
-// v2 keys are a clean slate — old v1 keys are ignored and naturally expire.
-const CACHE_VERSION = 'v2';
+// v3: bumped from v2 because the old direct Gemini call was blocked by HTTP-referrer
+// restrictions (403 "Host not in allowlist"), which wrote empty results into v2 cache
+// keys. Those poisoned entries would silently serve English forever even after the
+// proxy fix. v3 is a clean slate — all old v1/v2 keys are ignored and naturally expire.
+const CACHE_VERSION = 'v3';
 
 let _currentLang   = 'en';
 const _subscribers = [];
