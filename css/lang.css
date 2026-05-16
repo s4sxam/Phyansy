@@ -1,0 +1,622 @@
+/* ═══════════════════════════════════════════════════════════════
+   LANG.CSS — Language Picker + RTL Layout + CJK Typography
+   Phyansy — Made by Tanay (s4sxam)
+
+   SECTIONS:
+     1. Globe button (nav)
+     2. Picker panel + backdrop
+     3. Language option grid
+     4. RTL layout overrides (Arabic)
+     5. CJK typography adjustments (Chinese, Japanese)
+     6. Translation loading state
+     7. Dark mode overrides
+     8. Responsive
+═══════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════
+   1. GLOBE BUTTON
+══════════════════════════════════════════ */
+
+.lang-globe-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.6);
+  color: var(--text-sec);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+
+.lang-globe-btn:hover {
+  background: var(--physics-soft);
+  color: #667eea;
+  border-color: rgba(102,126,234,0.3);
+}
+
+.lang-globe-btn.active {
+  background: var(--physics-soft);
+  color: #667eea;
+  border-color: rgba(102,126,234,0.4);
+  box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+}
+
+.lang-globe-code {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+[data-theme="dark"] .lang-globe-btn {
+  background: rgba(255,255,255,0.05);
+  border-color: var(--border);
+  color: var(--text-sec);
+}
+[data-theme="dark"] .lang-globe-btn:hover,
+[data-theme="dark"] .lang-globe-btn.active {
+  background: rgba(102,126,234,0.15);
+  color: #a88fff;
+  border-color: rgba(168,143,255,0.3);
+}
+
+/* ══════════════════════════════════════════
+   2. PICKER PANEL + BACKDROP
+══════════════════════════════════════════ */
+
+.lang-picker-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 498;
+}
+
+.lang-picker-backdrop.open {
+  display: block;
+}
+
+.lang-picker-panel {
+  display: none;
+  position: fixed;
+  top: 68px; /* nav height (60px) + 8px gap */
+  right: 20px;
+  z-index: 499;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  background: var(--bg, #fdfbf7);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.16), 0 8px 20px rgba(0,0,0,0.08);
+  overflow: hidden;
+  animation: lang-panel-in 0.2s cubic-bezier(0.34, 1.3, 0.64, 1);
+  transform-origin: top right;
+}
+
+.lang-picker-panel.open {
+  display: block;
+}
+
+/* RTL: anchor panel to left instead of right */
+[data-dir="rtl"] .lang-picker-panel {
+  right: auto;
+  left: 20px;
+  transform-origin: top left;
+}
+
+@keyframes lang-panel-in {
+  from { opacity: 0; transform: scale(0.92) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+[data-theme="dark"] .lang-picker-panel {
+  background: #1a1826;
+  border-color: rgba(255,255,255,0.09);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 8px 20px rgba(0,0,0,0.35);
+}
+
+.lang-picker-inner {
+  padding: 16px;
+}
+
+/* ── Header ── */
+.lang-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.lang-picker-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+
+.lang-picker-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.04);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.lang-picker-close:hover {
+  background: rgba(0,0,0,0.08);
+  color: var(--text);
+}
+[data-theme="dark"] .lang-picker-close {
+  background: rgba(255,255,255,0.05);
+}
+
+/* ── Note ── */
+.lang-picker-note {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  padding: 8px 10px;
+  background: var(--physics-soft);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(102,126,234,0.12);
+}
+
+/* ── Footer ── */
+.lang-picker-footer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  font-size: 10.5px;
+  color: var(--text-muted);
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  opacity: 0.8;
+}
+
+/* ══════════════════════════════════════════
+   3. LANGUAGE OPTION GRID
+══════════════════════════════════════════ */
+
+.lang-picker-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.6);
+  color: var(--text-sec);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  position: relative;
+}
+
+.lang-option:hover {
+  border-color: rgba(102,126,234,0.35);
+  background: var(--physics-soft);
+  color: var(--text);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(102,126,234,0.12);
+}
+
+.lang-option.active {
+  border-color: rgba(102,126,234,0.5);
+  background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.08));
+  color: #667eea;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(102,126,234,0.18);
+}
+
+[data-theme="dark"] .lang-option {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.07);
+  color: var(--text-sec);
+}
+[data-theme="dark"] .lang-option:hover {
+  background: rgba(102,126,234,0.12);
+  border-color: rgba(168,143,255,0.3);
+  color: var(--text);
+}
+[data-theme="dark"] .lang-option.active {
+  background: rgba(102,126,234,0.18);
+  border-color: rgba(168,143,255,0.4);
+  color: #a88fff;
+}
+
+.lang-option-flag {
+  font-size: 17px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.lang-option-native {
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+/* English "Default" badge */
+.lang-option-badge {
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: rgba(102,126,234,0.12);
+  color: #667eea;
+  white-space: nowrap;
+}
+[data-theme="dark"] .lang-option-badge {
+  background: rgba(168,143,255,0.15);
+  color: #a88fff;
+}
+
+/* ══════════════════════════════════════════
+   4. RTL LAYOUT (Arabic — dir="rtl")
+══════════════════════════════════════════ */
+
+/*
+ * Full RTL layout: when data-dir="rtl" is set on <html>, all flexbox and
+ * directional properties flip automatically because of dir="rtl" on the
+ * HTML element itself. We only need to handle cases where we used explicit
+ * left/right values that need manual mirroring.
+ *
+ * Why data-dir and not just [dir="rtl"]?
+ * Some browsers have slightly inconsistent cascade with [dir] selectors
+ * inside Shadow DOM. data-dir is our own safe hook with guaranteed specificity.
+ */
+
+/* Nav: brand margin flips */
+[data-dir="rtl"] .nav-brand {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+/* Modal close button: flip from top-right to top-left */
+[data-dir="rtl"] .phys-modal-close {
+  float: left;
+}
+
+/* Section icon: margin direction */
+[data-dir="rtl"] .section-header {
+  text-align: right;
+}
+
+/* Filter buttons: right-align */
+[data-dir="rtl"] .filter-btns {
+  justify-content: flex-end;
+}
+
+/* Detail rows inside modals */
+[data-dir="rtl"] .detail-block-label {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+/* Equation section labels */
+[data-dir="rtl"] .eq-section-label {
+  flex-direction: row-reverse;
+}
+
+/* Variable rows */
+[data-dir="rtl"] .var-row {
+  flex-direction: row-reverse;
+}
+
+/* Toast: RTL text */
+[data-dir="rtl"] #toast {
+  direction: rtl;
+}
+
+/* Modal header: flip symbol+meta layout */
+[data-dir="rtl"] .phys-modal-header {
+  flex-direction: row-reverse;
+}
+
+/* Eq modal header: right-aligned */
+[data-dir="rtl"] .eq-modal-header {
+  align-items: flex-end;
+}
+
+/* Const card layout */
+[data-dir="rtl"] .const-card-top {
+  flex-direction: row-reverse;
+}
+
+/* Nav tab overflow scroll */
+[data-dir="rtl"] nav {
+  flex-direction: row-reverse;
+}
+[data-dir="rtl"] .nav-brand {
+  order: 10; /* push brand to far right in RTL */
+}
+
+/* Units table: right-aligned headers */
+[data-dir="rtl"] .units-table th,
+[data-dir="rtl"] .units-table td {
+  text-align: right;
+}
+
+/* Prefix scale chips */
+[data-dir="rtl"] .prefix-scale {
+  direction: rtl;
+}
+
+/* Search input: icon mirrors to right side */
+[data-dir="rtl"] .search-wrap svg {
+  left: auto;
+  right: 12px;
+}
+[data-dir="rtl"] .search-input {
+  padding: 10px 40px 10px 16px;
+}
+
+/* Lang picker grid: RTL text align */
+[data-dir="rtl"] .lang-option {
+  text-align: right;
+  flex-direction: row-reverse;
+}
+
+/* Section sub-text */
+[data-dir="rtl"] .section-sub {
+  text-align: right;
+}
+
+/* Equation cards */
+[data-dir="rtl"] .eq-card-header {
+  flex-direction: row-reverse;
+}
+[data-dir="rtl"] .eq-expand-hint {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+/* Symbols grid */
+[data-dir="rtl"] .phys-modal-meta {
+  text-align: right;
+}
+
+/* ══════════════════════════════════════════
+   5. CJK TYPOGRAPHY (Chinese + Japanese)
+══════════════════════════════════════════ */
+
+/*
+ * CJK characters are square-shaped — each glyph occupies roughly the same
+ * horizontal space as vertical. This means standard Inter line-height (1.5)
+ * feels cramped. Japanese students specifically noted this: fonts render
+ * larger and need line-height adjustment. 1.75 → 1.85 is the right range.
+ *
+ * Font stack: prefer system CJK fonts, fall back to web-safe CJK, then generic.
+ * We do NOT import Google CJK fonts (they are 2-5MB per weight) — system fonts
+ * on any modern device (Windows, macOS, iOS, Android) are excellent.
+ */
+
+[data-cjk="true"] body {
+  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans',
+               'Noto Sans CJK SC', 'Noto Sans CJK JP', 'Source Han Sans',
+               -apple-system, sans-serif;
+}
+
+/* Modal body prose — where deep explanations live */
+[data-cjk="true"] .phys-modal-body .detail-block-text {
+  line-height: 1.85;
+  font-size: 13.5px;   /* CJK characters visually larger at same px size */
+  letter-spacing: 0.03em;
+}
+
+[data-cjk="true"] .phys-modal-body .detail-val {
+  line-height: 1.75;
+}
+
+/* Card descriptions */
+[data-cjk="true"] .const-desc,
+[data-cjk="true"] .eq-desc {
+  line-height: 1.75;
+  font-size: 13px;
+}
+
+/* Section subtitles */
+[data-cjk="true"] .section-sub {
+  line-height: 1.65;
+}
+
+/* Equation section prose */
+[data-cjk="true"] .eq-section-body {
+  line-height: 1.85;
+  font-size: 13.5px;
+}
+
+/* Modal note */
+[data-cjk="true"] .lang-picker-note {
+  line-height: 1.65;
+  font-size: 11px;
+}
+
+/* Japanese specifically: slightly looser tracking */
+html[lang="ja"][data-cjk="true"] .phys-modal-body .detail-block-text {
+  letter-spacing: 0.04em;
+}
+
+/* ══════════════════════════════════════════
+   6. TRANSLATION LOADING STATE
+══════════════════════════════════════════ */
+
+/*
+ * When AI translation is in progress, the modal body shows a subtle shimmer.
+ * The .phys-modal-body gets class "translating" added by the controller.
+ */
+
+.phys-modal-body.translating {
+  position: relative;
+  pointer-events: none;
+}
+
+.phys-modal-body.translating::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(102,126,234,0.06) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: lang-shimmer 1.4s ease infinite;
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+@keyframes lang-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Translation badge — shown at bottom of modal body during/after translation */
+.lang-translated-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 14px;
+  padding: 4px 9px;
+  border-radius: 99px;
+  background: var(--physics-soft);
+  border: 1px solid rgba(102,126,234,0.1);
+  opacity: 0;
+  animation: lang-badge-in 0.3s ease 0.2s forwards;
+}
+
+@keyframes lang-badge-in {
+  to { opacity: 1; }
+}
+
+.lang-translated-badge svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* Translation error state */
+.lang-trans-error {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 6px 0;
+  opacity: 0.75;
+}
+
+/* ══════════════════════════════════════════
+   7. DARK MODE OVERRIDES (lang-specific)
+══════════════════════════════════════════ */
+
+[data-theme="dark"] .lang-picker-note {
+  background: rgba(102,126,234,0.1);
+  border-color: rgba(102,126,234,0.2);
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .lang-picker-footer {
+  border-color: rgba(255,255,255,0.07);
+}
+
+[data-theme="dark"] .lang-picker-title {
+  color: var(--text);
+}
+
+[data-theme="dark"] .phys-modal-body.translating::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(168,143,255,0.08) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+}
+
+[data-theme="dark"] .lang-translated-badge {
+  background: rgba(102,126,234,0.12);
+  border-color: rgba(102,126,234,0.2);
+  color: var(--text-muted);
+}
+
+/* ══════════════════════════════════════════
+   8. RESPONSIVE
+══════════════════════════════════════════ */
+
+@media (max-width: 600px) {
+  .lang-picker-panel {
+    top: auto;
+    bottom: 80px; /* above mobile footer area */
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-width: none;
+    transform-origin: bottom right;
+  }
+
+  [data-dir="rtl"] .lang-picker-panel {
+    right: 12px;
+    left: 12px;
+    transform-origin: bottom left;
+  }
+
+  @keyframes lang-panel-in {
+    from { opacity: 0; transform: scale(0.94) translateY(10px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0); }
+  }
+
+  .lang-globe-btn {
+    padding: 0 8px;
+    height: 32px;
+  }
+
+  .lang-globe-code {
+    display: none; /* on very small screens, show only globe icon */
+  }
+
+  .lang-picker-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+  }
+
+  .lang-option {
+    padding: 8px 9px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .lang-picker-grid {
+    grid-template-columns: 1fr;
+  }
+}
