@@ -467,6 +467,101 @@ html[lang="ja"][data-cjk="true"] .phys-modal-body .detail-block-text {
 }
 
 /* ══════════════════════════════════════════
+   5b. INDIC TYPOGRAPHY
+       Bengali (bn), Hindi (mr, hi), Tamil (ta), Telugu (te)
+══════════════════════════════════════════ */
+
+/*
+ * Indic scripts (Devanagari, Bengali, Tamil, Telugu) have complex rendering:
+ *   • Conjunct consonants and vowel matras require generous line-height (≥1.8)
+ *   • Standard Inter has poor Indic coverage — glyphs fall back to ugly system fonts
+ *   • We lazy-load Noto Sans per-script (40–80KB woff2) via langController.js
+ *   • Font stack: Noto Sans script-variant → system Indic fonts → generic sans
+ *
+ * The [data-indic] attribute is set by langController._applyLangToDOM()
+ * to the current language code (e.g. data-indic="bn"), so we can target
+ * specific scripts when needed.
+ */
+
+/* ── Bengali (Arjun's language — Class 12, West Bengal) ── */
+html[data-indic="bn"] body,
+html[data-indic="bn"] {
+  font-family: 'Noto Sans Bengali', 'Vrinda', 'Akaash', 'Shonar Bangla',
+               'Kalpurush', system-ui, sans-serif;
+}
+
+/* ── Hindi / Marathi — Devanagari ── */
+html[data-indic="hi"] body,
+html[data-indic="hi"],
+html[data-indic="mr"] body,
+html[data-indic="mr"] {
+  font-family: 'Noto Sans', 'Mangal', 'Kokila', 'Aparajita',
+               'Noto Sans Devanagari', system-ui, sans-serif;
+}
+
+/* ── Tamil ── */
+html[data-indic="ta"] body,
+html[data-indic="ta"] {
+  font-family: 'Noto Sans Tamil', 'Latha', 'Vijaya', 'Tamil MN',
+               system-ui, sans-serif;
+}
+
+/* ── Telugu ── */
+html[data-indic="te"] body,
+html[data-indic="te"] {
+  font-family: 'Noto Sans Telugu', 'Gautami', 'Vani',
+               system-ui, sans-serif;
+}
+
+/* ── Shared Indic adjustments ────────────────────────────────────────────── */
+/*
+ * Indic scripts need more generous line-height than Latin because of
+ * vowel markers (matras) that extend above and below the base line.
+ * 1.8–1.9 is the accepted best practice for Indic body text at 14–16px.
+ */
+[data-indic] body {
+  line-height: 1.8;
+}
+
+[data-indic] .phys-modal-body .detail-block-text,
+[data-indic] .phys-modal-body .eq-section-body {
+  line-height: 1.9;
+  font-size: 14px;   /* Indic glyphs need slightly larger px to be comfortable */
+  letter-spacing: 0;  /* Indic script should have 0 letter-spacing — each glyph clusters */
+}
+
+[data-indic] .phys-modal-body .detail-val {
+  line-height: 1.8;
+}
+
+[data-indic] .const-desc,
+[data-indic] .eq-desc {
+  line-height: 1.8;
+  font-size: 13.5px;
+}
+
+[data-indic] .section-sub {
+  line-height: 1.7;
+  font-size: 13.5px;
+}
+
+[data-indic] .lang-picker-note {
+  line-height: 1.7;
+  font-size: 11.5px;
+}
+
+/* Variable descriptions in the modal (var-desc) */
+[data-indic] .var-desc {
+  line-height: 1.75;
+}
+
+/* Nav items and section headers in Indic */
+[data-indic] .tab-btn,
+[data-indic] .section-title {
+  letter-spacing: 0;
+}
+
+/* ══════════════════════════════════════════
    6. TRANSLATION LOADING STATE
 ══════════════════════════════════════════ */
 
