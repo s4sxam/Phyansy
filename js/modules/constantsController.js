@@ -15,7 +15,7 @@ import { createLazySection } from './lazyRenderer.js';
 import { showToast } from './toastController.js';
 import {
   getCurrentLang, onLangChange,
-  translateContent, TRANSLATABLE_FIELDS, t,
+  translateContent, translateBatch, TRANSLATABLE_FIELDS, t,
 } from './langController.js';
 
 const ICONS = {
@@ -264,6 +264,51 @@ function initModal() {
 export function initConstants() {
   const modal = initModal();
 
+  // ── CARD TRANSLATION ON LANGUAGE CHANGE ────────────────────────────────────
+  async function _translateVisibleCards(lang) {
+    const grid = document.getElementById('constants-grid');
+    if (!grid) return;
+    const cards = [...grid.querySelectorAll('[data-lazy-idx]')];
+    if (cards.length === 0) return;
+
+    if (lang === 'en') {
+      cards.forEach(card => {
+        const idx = Number(card.dataset.lazyIdx);
+        const c   = CONSTANTS[idx];
+        if (!c) return;
+        const nameEl = card.querySelector('.const-name');
+        const descEl = card.querySelector('.const-desc');
+        if (nameEl) nameEl.textContent = c.name;
+        if (descEl) descEl.textContent = c.description;
+      });
+      return;
+    }
+
+    const batchItems = cards.map(card => {
+      const idx = Number(card.dataset.lazyIdx);
+      const c   = CONSTANTS[idx];
+      if (!c) return null;
+      return { id: String(idx), fields: { name: c.name, desc: c.description } };
+    }).filter(Boolean);
+
+    cards.forEach(c => c.classList.add('translating'));
+    try {
+      const resultMap = await translateBatch(batchItems, lang);
+      cards.forEach(card => {
+        const result = resultMap.get(String(card.dataset.lazyIdx));
+        if (!result) return;
+        const nameEl = card.querySelector('.const-name');
+        const descEl = card.querySelector('.const-desc');
+        if (nameEl && result.name) nameEl.textContent = result.name;
+        if (descEl && result.desc) descEl.textContent = result.desc;
+      });
+    } finally {
+      cards.forEach(c => c.classList.remove('translating'));
+    }
+  }
+
+  onLangChange(lang => { _translateVisibleCards(lang); });
+
   createLazySection({
     data:           CONSTANTS,
     gridId:         'constants-grid',
@@ -339,4 +384,18 @@ export function initConstants() {
       }
     },
   });
+
+  const _cGrid = document.getElementById('constants-grid');
+  if (_cGrid) {
+    const _initLang = getCurrentLang();
+    if (_initLang !== 'en') _translateVisibleCards(_initLang);
+
+    let _rerenderTimer = null;
+    new MutationObserver(() => {
+      const l = getCurrentLang();
+      if (l === 'en') return;
+      clearTimeout(_rerenderTimer);
+      _rerenderTimer = setTimeout(() => _translateVisibleCards(l), 100);
+    }).observe(_cGrid, { childList: true });
+  }
 }
