@@ -342,90 +342,44 @@ function _pruneTranslationCache() {
   } catch {}
 }
 
-const LANG_NAMES = {
-  es: 'Spanish', zh: 'Simplified Chinese', hi: 'Hindi', ar: 'Arabic',
-  fr: 'French',  bn: 'Bengali', pt: 'Portuguese', ru: 'Russian',
-  ja: 'Japanese', de: 'German',
-  ta: 'Tamil', te: 'Telugu', mr: 'Marathi',
-};
-
-// ─── Gemini Flash (free tier) ─────────────────────────────────────────────────
-// Get your key at: https://aistudio.google.com → "Get API key" (free, no CC needed)
-// DO NOT commit this key to a public repo — move it to an env variable or a
-// thin serverless proxy (e.g. Cloudflare Worker) before going to production.
-const GEMINI_API_KEY = 'AIzaSyB5M-Cr9QS25JfyZhHW_jbWA7RK7EE9cgg';
-const GEMINI_ENDPOINT =
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+// ─── Translation proxy endpoint ───────────────────────────────────────────────
+// The Gemini API key lives ONLY in the server-side environment variable
+// GEMINI_API_KEY. The browser never sees it, so it cannot be stolen or
+// restricted by HTTP-referrer allowlists in Google Cloud Console.
+//
+// • Vercel deploy  → /api/translate.js   handles POST /api/translate
+// • Netlify deploy → /netlify/functions/translate.js + netlify.toml redirect
+//
+// Both expose the same URL path so this client code never needs to change.
 // ─────────────────────────────────────────────────────────────────────────────
+const TRANSLATE_ENDPOINT = '/api/translate';
 
 async function _callTranslationAPI(fieldsToTranslate, lang, equationName) {
-  const targetLang = LANG_NAMES[lang] || lang;
-  const fieldList = Object.entries(fieldsToTranslate)
-    .map(([field, text]) => `--- FIELD: ${field} ---\n${text}`)
-    .join('\n\n');
-
-  const systemPrompt = `You are a precise physics education translator. Translate physics explanations into ${targetLang} for students.
-
-STRICT RULES:
-1. Translate ONLY the natural-language prose.
-2. LaTeX inside \\( \\) or \\[ \\] must be copied EXACTLY as-is. Never modify LaTeX.
-3. Equation names stay in English.
-4. Variable symbols (F, m, a, v, E, p, T, etc.) stay in English/Latin.
-5. SI unit names (Newton, Joule, Tesla, Pascal, etc.) stay in English.
-6. Physicist names (Newton, Einstein, Planck, Faraday, etc.) stay in English.
-7. Physics branch names stay in English.
-8. Numbers and operators are never changed.
-9. Preserve paragraph structure.
-10. Return ONLY valid JSON. No preamble, no markdown fences.
-
-OUTPUT: {"field1": "translated text", "field2": "translated text"}
-
-Equation context: "${equationName}"`;
-
   try {
-    const response = await fetch(GEMINI_ENDPOINT, {
-      method: 'POST',
+    const response = await fetch(TRANSLATE_ENDPOINT, {
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents: [{
-          parts: [{
-            text: `${fieldList}\n\nTranslate into ${targetLang}. Return only JSON.`,
-          }],
-        }],
-        generationConfig: {
-          responseMimeType: 'application/json',
-          // 8192 tokens: a full equation modal has up to 8 prose fields,
-          // each up to ~300 words. 2000 was catastrophically low — it caused
-          // Gemini to truncate mid-JSON, making JSON.parse throw and silently
-          // falling back to English on every modal open. 8192 is safe headroom.
-          maxOutputTokens: 8192,
-        },
+        fields:       fieldsToTranslate,
+        lang,
+        equationName: equationName || '',
       }),
     });
 
     if (!response.ok) {
       const errBody = await response.text().catch(() => '');
-      console.warn('[Phyansy translate] Gemini API error', response.status, errBody);
+      console.warn('[Phyansy translate] Proxy error', response.status, errBody);
       return {};
     }
 
-    const data = await response.json();
-    // Gemini structure: candidates[0].content.parts[0].text
-    // responseMimeType: 'application/json' guarantees clean JSON — no markdown fences.
-    // Light trim guard kept for edge-case whitespace.
-    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
-    const clean   = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
-    if (!clean) {
-      console.warn('[Phyansy translate] Empty response from Gemini');
-      return {};
-    }
+    const parsed = await response.json();
 
-    const parsed = JSON.parse(clean);
-
+    // Only return fields that were requested and are valid non-empty strings
     const safeResult = {};
     Object.keys(fieldsToTranslate).forEach(field => {
-      if (parsed[field] && typeof parsed[field] === 'string') safeResult[field] = parsed[field];
+      if (parsed[field] && typeof parsed[field] === 'string') {
+        safeResult[field] = parsed[field];
+      }
     });
     return safeResult;
   } catch (err) {
