@@ -27,7 +27,7 @@
 //   are served locally without touching this proxy at all.
 // =============================================================================
 
-export const config = { runtime: 'nodejs20.x' };
+export const config = { runtime: 'nodejs' };
 
 // Allowed language codes — reject unknown codes early so we never forward
 // garbage to Gemini.
