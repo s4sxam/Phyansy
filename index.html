@@ -30,6 +30,7 @@
   <link rel="stylesheet" href="css/modal.css">
   <link rel="stylesheet" href="css/cookie.css">
   <link rel="stylesheet" href="css/search.css">
+  <link rel="stylesheet" href="css/lang.css">
 
   <!-- Prevent flash of wrong theme -->
   <script>
@@ -58,11 +59,11 @@
     Phyansy
   </div>
 
-  <button class="tab-btn active" data-tab="constants"  aria-pressed="true">Constants</button>
-  <button class="tab-btn"        data-tab="equations"  aria-pressed="false">Equations</button>
-  <button class="tab-btn"        data-tab="symbols"    aria-pressed="false">Symbols</button>
-  <button class="tab-btn"        data-tab="units"      aria-pressed="false">Units</button>
-  <button class="tab-btn"        data-tab="calculator" aria-pressed="false">Calculator</button>
+  <button class="tab-btn active" data-tab="constants"  aria-pressed="true"  data-i18n="nav_constants">Constants</button>
+  <button class="tab-btn"        data-tab="equations"  aria-pressed="false" data-i18n="nav_equations">Equations</button>
+  <button class="tab-btn"        data-tab="symbols"    aria-pressed="false" data-i18n="nav_symbols">Symbols</button>
+  <button class="tab-btn"        data-tab="units"      aria-pressed="false" data-i18n="nav_units">Units</button>
+  <button class="tab-btn"        data-tab="calculator" aria-pressed="false" data-i18n="nav_calculator">Calculator</button>
 
   <!-- Dark mode toggle -->
   <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
@@ -115,8 +116,8 @@
   ════════════════════════════════ -->
   <section id="sec-constants" class="section active" aria-label="Physical Constants">
     <div class="section-header">
-      <h1 class="section-title">Physical Constants</h1>
-      <p class="section-sub">Fundamental constants of the universe — click any card to expand</p>
+      <h1 class="section-title" data-i18n="sec_constants_title">Physical Constants</h1>
+      <p class="section-sub" data-i18n="sec_constants_sub">Fundamental constants of the universe — click any card to expand</p>
     </div>
     <div class="controls">
       <input type="search" id="const-search" aria-hidden="true" style="display:none">
@@ -130,8 +131,8 @@
   ════════════════════════════════ -->
   <section id="sec-equations" class="section" aria-label="Key Equations">
     <div class="section-header">
-      <h1 class="section-title">Key Equations</h1>
-      <p class="section-sub">Essential formulas across all branches of physics — click to see variable legend</p>
+      <h1 class="section-title" data-i18n="sec_equations_title">Key Equations</h1>
+      <p class="section-sub" data-i18n="sec_equations_sub">Essential formulas across all branches of physics — click to see variable legend</p>
     </div>
     <input type="search" id="eq-search" aria-hidden="true" style="display:none">
     <div class="eq-branch-tabs" id="eq-branch-tabs" role="tablist" aria-label="Physics branch"></div>
@@ -144,13 +145,13 @@
   ════════════════════════════════ -->
   <section id="sec-symbols" class="section" aria-label="Symbols Reference">
     <div class="section-header">
-      <h1 class="section-title">Symbols Reference</h1>
-      <p class="section-sub">Greek alphabet and mathematical notation used in physics</p>
+      <h1 class="section-title" data-i18n="sec_symbols_title">Symbols Reference</h1>
+      <p class="section-sub" data-i18n="sec_symbols_sub">Greek alphabet and mathematical notation used in physics</p>
     </div>
     <input type="search" id="sym-search" aria-hidden="true" style="display:none">
     <div class="symbols-sub-tabs" role="tablist" aria-label="Symbol category">
-      <button class="sym-sub-btn active" data-sym="greek" role="tab" aria-selected="true">Greek Alphabet</button>
-      <button class="sym-sub-btn" data-sym="math" role="tab" aria-selected="false">Math Symbols</button>
+      <button class="sym-sub-btn active" data-sym="greek" role="tab" aria-selected="true" data-i18n="sym_greek">Greek Alphabet</button>
+      <button class="sym-sub-btn" data-sym="math" role="tab" aria-selected="false" data-i18n="sym_math">Math Symbols</button>
     </div>
     <div id="sym-greek">
       <div class="greek-grid" id="greek-grid" role="list"></div>
@@ -165,40 +166,40 @@
   ════════════════════════════════ -->
   <section id="sec-units" class="section" aria-label="Units and Measurement">
     <div class="section-header">
-      <h1 class="section-title">Units &amp; Measurement</h1>
-      <p class="section-sub">SI base units, derived units, and metric prefixes — click any symbol to copy</p>
+      <h1 class="section-title" data-i18n="sec_units_title">Units &amp; Measurement</h1>
+      <p class="section-sub" data-i18n="sec_units_sub">SI base units, derived units, and metric prefixes — click any symbol to copy</p>
     </div>
 
     <input type="search" id="unit-search" aria-hidden="true" style="display:none">
 
     <div class="units-section">
-      <h2 class="units-section-title">SI Base Units</h2>
+      <h2 class="units-section-title" data-i18n="units_si_base">SI Base Units</h2>
       <div class="glass-card units-table-wrapper">
         <table class="units-table" id="si-table" aria-label="SI Base Units"></table>
       </div>
     </div>
 
     <div class="units-section">
-      <h2 class="units-section-title">Common Derived Units</h2>
+      <h2 class="units-section-title" data-i18n="units_derived">Common Derived Units</h2>
       <div class="glass-card units-table-wrapper">
         <table class="units-table" id="derived-table" aria-label="Common Derived Units"></table>
       </div>
     </div>
 
     <div class="units-section">
-      <h2 class="units-section-title">Non-SI Units (Widely Used in Physics)</h2>
+      <h2 class="units-section-title" data-i18n="units_non_si">Non-SI Units (Widely Used in Physics)</h2>
       <div class="glass-card units-table-wrapper">
         <table class="units-table" id="non-si-table" aria-label="Non-SI Units Widely Used in Physics"></table>
       </div>
     </div>
 
     <div class="units-section">
-      <h2 class="units-section-title">Metric Prefixes</h2>
+      <h2 class="units-section-title" data-i18n="units_prefixes">Metric Prefixes</h2>
       <div class="units-search-bar">
         <span class="units-search-icon" aria-hidden="true">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </span>
-        <input id="prefix-search" type="search" placeholder="Filter prefixes — name, symbol, or exponent…" aria-label="Filter metric prefixes">
+        <input id="prefix-search" type="search" placeholder="Filter prefixes — name, symbol, or exponent…" aria-label="Filter metric prefixes" data-i18n-placeholder="units_prefix_filter">
       </div>
       <div class="prefix-scale" id="prefix-scale" role="list" aria-label="Metric Prefixes"></div>
     </div>
@@ -209,22 +210,22 @@
   ════════════════════════════════ -->
   <section id="sec-calculator" class="section" aria-label="Physics Calculator">
     <div class="section-header">
-      <h1 class="section-title">Physics Calculator</h1>
-      <p class="section-sub">Pick an equation, choose what to solve for, enter known values</p>
+      <h1 class="section-title" data-i18n="sec_calc_title">Physics Calculator</h1>
+      <p class="section-sub" data-i18n="sec_calc_sub">Pick an equation, choose what to solve for, enter known values</p>
     </div>
     <div class="calc-layout">
       <div class="glass-card calc-picker">
-        <label for="calc-eq-select">Equation</label>
+        <label for="calc-eq-select" data-i18n="calc_equation_label">Equation</label>
         <select class="calc-select" id="calc-eq-select" aria-label="Select equation"></select>
-        <div class="calc-solve-label">Solve for</div>
+        <div class="calc-solve-label" data-i18n="calc_solve_for">Solve for</div>
         <div class="calc-var-checks" id="calc-var-checks" role="radiogroup" aria-label="Variable to solve for"></div>
       </div>
       <div class="glass-card calc-panel">
         <div class="calc-eq-display" id="calc-eq-display" aria-live="polite">—</div>
         <div class="calc-inputs" id="calc-inputs"></div>
-        <button class="calc-btn" id="calc-go-btn" aria-label="Calculate result">Calculate</button>
+        <button class="calc-btn" id="calc-go-btn" aria-label="Calculate result" data-i18n="calc_btn">Calculate</button>
         <div class="calc-result" id="calc-result" aria-live="polite" aria-atomic="true">
-          <div class="calc-result-label">Result</div>
+          <div class="calc-result-label" data-i18n="calc_result_label">Result</div>
           <div class="calc-result-val" id="calc-result-val"></div>
           <div class="calc-result-unit" id="calc-result-unit"></div>
           <div class="calc-result-explain" id="calc-result-explain"></div>
