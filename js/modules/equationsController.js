@@ -12,6 +12,10 @@
 
 import { EQUATIONS } from '../data/equationsData.js';
 import { createLazyTabSection } from './lazyRenderer.js';
+import {
+  getCurrentLang, onLangChange,
+  translateContent, TRANSLATABLE_FIELDS, t,
+} from './langController.js';
 
 const ICONS = {
   whatItSays:    `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
@@ -277,18 +281,8 @@ function initModal() {
     window.scrollTo({ top: _savedScrollY, behavior: 'instant' });
   }
 
-  function openModal(eq) {
-    titleEl.textContent = eq.name;
-
-    const diffSlug = eq.difficulty ? eq.difficulty.toLowerCase().replace(/[^a-z]/g, '') : '';
-    badgesEl.innerHTML = [
-      eq.year       ? `<span class="eq-year-badge">${eq.year}</span>` : '',
-      eq.difficulty ? `<span class="eq-difficulty-badge eq-diff-${diffSlug}">${eq.difficulty}</span>` : '',
-    ].join('');
-
-    formulaEl.innerHTML = `\\(${eq.formulaLatex || eq.formula}\\)`;
-    bodyEl.innerHTML    = buildDetailHTML(eq);
-
+  function _renderAndKatex(eq) {
+    bodyEl.innerHTML = buildDetailHTML(eq);
     if (window.renderMathInElement) {
       renderMathInElement(overlay, {
         delimiters: [
@@ -298,8 +292,7 @@ function initModal() {
         throwOnError: false,
       });
     }
-
-    // FIX #14 — Wire related chips inside modal body after content is rendered
+    // FIX #14 — Wire related chips
     bodyEl.querySelectorAll('.eq-related-chip[data-eq-name]').forEach(chip => {
       chip.addEventListener('click', () => _openRelatedEquation(chip.dataset.eqName));
       chip.addEventListener('keydown', e => {
@@ -309,6 +302,21 @@ function initModal() {
         }
       });
     });
+  }
+
+  async function openModal(eq) {
+    titleEl.textContent = eq.name;
+
+    const diffSlug = eq.difficulty ? eq.difficulty.toLowerCase().replace(/[^a-z]/g, '') : '';
+    badgesEl.innerHTML = [
+      eq.year       ? `<span class="eq-year-badge">${eq.year}</span>` : '',
+      eq.difficulty ? `<span class="eq-difficulty-badge eq-diff-${diffSlug}">${eq.difficulty}</span>` : '',
+    ].join('');
+
+    formulaEl.innerHTML = `\\(${eq.formulaLatex || eq.formula}\\)`;
+
+    // Render English content immediately — never leave blank
+    _renderAndKatex(eq);
 
     overlay.classList.add('show');
     lockBodyScroll(); // FIX #03
@@ -321,6 +329,36 @@ function initModal() {
     box.style.borderRadius = '';
     box.scrollTop = 0;
     closeBtn.focus();
+
+    // ── AI Translation (non-English only) ────────────────────────────────────
+    const lang = getCurrentLang();
+    if (lang !== 'en') {
+      // Show shimmer while translating
+      bodyEl.classList.add('translating');
+
+      try {
+        const translated = await translateContent(eq, TRANSLATABLE_FIELDS, lang);
+
+        // Merge translated fields back into a shallow copy — never mutate original data
+        const translatedEq = { ...eq, ...translated };
+        _renderAndKatex(translatedEq);
+
+        // Append "AI translated" badge
+        const badge = document.createElement('div');
+        badge.className = 'lang-translated-badge';
+        badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>${t('lang_ai_powered')}</span>`;
+        bodyEl.appendChild(badge);
+
+      } catch {
+        // Translation failed — silently keep English content (already rendered)
+        const errMsg = document.createElement('div');
+        errMsg.className = 'lang-trans-error';
+        errMsg.textContent = t('lang_translation_fail');
+        bodyEl.appendChild(errMsg);
+      } finally {
+        bodyEl.classList.remove('translating');
+      }
+    }
   }
 
   function closeModal() {
