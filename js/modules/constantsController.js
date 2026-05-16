@@ -13,6 +13,10 @@
 import { CONSTANTS } from '../data/constantsData.js';
 import { createLazySection } from './lazyRenderer.js';
 import { showToast } from './toastController.js';
+import {
+  getCurrentLang, onLangChange,
+  translateContent, TRANSLATABLE_FIELDS, t,
+} from './langController.js';
 
 const ICONS = {
   whatItSays: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
@@ -172,14 +176,8 @@ function initModal() {
 
   // ── OPEN / CLOSE ─────────────────────────────────────────────────────────────
 
-  function openModal(c) {
-    symbolEl.textContent = c.symbol;
-    nameEl.textContent   = c.name;
-    badgeEl.textContent  = c.category;
-    badgeEl.dataset.cat  = c.category;
-    valueEl.innerHTML    = `${c.value} <span style="color:var(--text-muted)">${c.unit}</span>`;
-    bodyEl.innerHTML     = buildDetailHTML(c);
-
+  function _renderConstBody(c) {
+    bodyEl.innerHTML = buildDetailHTML(c);
     if (window.renderMathInElement) {
       renderMathInElement(bodyEl, {
         delimiters: [
@@ -189,18 +187,28 @@ function initModal() {
         throwOnError: false,
       });
     }
+  }
+
+  async function openModal(c) {
+    symbolEl.textContent = c.symbol;
+    nameEl.textContent   = c.name;
+    badgeEl.textContent  = c.category;
+    badgeEl.dataset.cat  = c.category;
+    valueEl.innerHTML    = `${c.value} <span style="color:var(--text-muted)">${c.unit}</span>`;
+
+    // Render English immediately — never blank
+    _renderConstBody(c);
 
     copyBtn.onclick = () => {
       const exactVal = c.exact || c.value;
       const stripped = exactVal.replace(/<[^>]+>/g, '').replace(' (exact)', '');
       navigator.clipboard.writeText(stripped).catch(() => {});
-      showToast('Copied exact value!');
+      showToast(t('toast_copied'));
     };
 
     overlay.classList.add('show');
-    lockBodyScroll(); // FIX #20 — iOS-safe scroll lock
+    lockBodyScroll(); // FIX #20
 
-    // Reset sheet state on every open
     isFullscreen = false;
     box.style.transform    = '';
     box.style.opacity      = '';
@@ -208,6 +216,29 @@ function initModal() {
     box.style.borderRadius = '';
     box.scrollTop = 0;
     closeBtn.focus();
+
+    // ── AI Translation (non-English only) ────────────────────────────────────
+    const lang = getCurrentLang();
+    if (lang !== 'en') {
+      bodyEl.classList.add('translating');
+      try {
+        const constFields = ['whatItSays', 'simpleExample', 'deepMeaning', 'whyItMatters'];
+        const translated  = await translateContent(c, constFields, lang);
+        _renderConstBody({ ...c, ...translated });
+
+        const badge = document.createElement('div');
+        badge.className = 'lang-translated-badge';
+        badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>${t('lang_ai_powered')}</span>`;
+        bodyEl.appendChild(badge);
+      } catch {
+        const errMsg = document.createElement('div');
+        errMsg.className = 'lang-trans-error';
+        errMsg.textContent = t('lang_translation_fail');
+        bodyEl.appendChild(errMsg);
+      } finally {
+        bodyEl.classList.remove('translating');
+      }
+    }
   }
 
   function closeModal() {
