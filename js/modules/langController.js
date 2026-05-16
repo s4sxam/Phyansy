@@ -192,9 +192,9 @@ const LANG_NAMES = {
 // Get your key at: https://aistudio.google.com → "Get API key" (free, no CC needed)
 // DO NOT commit this key to a public repo — move it to an env variable or a
 // thin serverless proxy (e.g. Cloudflare Worker) before going to production.
-const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE';
+const GEMINI_API_KEY = 'AIzaSyB5M-Cr9QS25JfyZhHW_jbWA7RK7EE9cgg';
 const GEMINI_ENDPOINT =
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${AIzaSyB5M-Cr9QS25JfyZhHW_jbWA7RK7EE9cgg}`;
+  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function _callTranslationAPI(fieldsToTranslate, lang, equationName) {
