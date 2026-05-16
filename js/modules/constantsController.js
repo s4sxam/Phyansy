@@ -32,16 +32,16 @@ const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
 
 function buildDetailHTML(c) {
   const rows = [
-    c.exact        ? `<div class="detail-row"><div class="detail-label">Exact Value</div><div class="detail-val" style="font-family:'JetBrains Mono',monospace;font-size:12.5px">${c.exact}</div></div>` : '',
-    c.discoveredBy ? `<div class="detail-row"><div class="detail-label">Discovered By</div><div class="detail-val">${c.discoveredBy}</div></div>` : '',
-    c.formula      ? `<div class="detail-row"><div class="detail-label">Key Formula</div><div class="detail-val" style="font-family:'JetBrains Mono',monospace">${c.formula}</div></div>` : '',
+    c.exact        ? `<div class="detail-row"><div class="detail-label">${t('modal_exact_value')}</div><div class="detail-val" style="font-family:'JetBrains Mono',monospace;font-size:12.5px">${c.exact}</div></div>` : '',
+    c.discoveredBy ? `<div class="detail-row"><div class="detail-label">${t('modal_discovered_by')}</div><div class="detail-val">${c.discoveredBy}</div></div>` : '',
+    c.formula      ? `<div class="detail-row"><div class="detail-label">${t('modal_key_formula')}</div><div class="detail-val" style="font-family:'JetBrains Mono',monospace">${c.formula}</div></div>` : '',
   ].filter(Boolean).join('');
 
   const blocks = [
-    c.whatItSays    ? { label: 'What It Says',   icon: ICONS.whatItSays, text: c.whatItSays }    : null,
-    c.simpleExample ? { label: 'Simple Example', icon: ICONS.example,    text: c.simpleExample } : null,
-    c.deepMeaning   ? { label: 'Deep Meaning',   icon: ICONS.deep,       text: c.deepMeaning }   : null,
-    c.whyItMatters  ? { label: 'Why It Matters', icon: ICONS.matters,    text: c.whyItMatters }  : null,
+    c.whatItSays    ? { label: t('modal_what_it_says_c'), icon: ICONS.whatItSays, text: c.whatItSays }    : null,
+    c.simpleExample ? { label: t('modal_simple_example'), icon: ICONS.example,    text: c.simpleExample } : null,
+    c.deepMeaning   ? { label: t('modal_deep_meaning_c'), icon: ICONS.deep,       text: c.deepMeaning }   : null,
+    c.whyItMatters  ? { label: t('modal_why_it_matters_c'), icon: ICONS.matters,  text: c.whyItMatters }  : null,
   ].filter(Boolean).map(b => `
     <div class="detail-block">
       <div class="detail-block-label">${b.icon}${b.label}</div>
