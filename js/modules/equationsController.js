@@ -14,7 +14,7 @@ import { EQUATIONS } from '../data/equationsData.js';
 import { createLazyTabSection } from './lazyRenderer.js';
 import {
   getCurrentLang, onLangChange,
-  translateContent, translateBatch, TRANSLATABLE_FIELDS, t,
+  translateContent, translateBatch, translateVars, TRANSLATABLE_FIELDS, t,
 } from './langController.js';
 
 const ICONS = {
@@ -170,10 +170,10 @@ function section(icon, label, content, mod) {
   </div>`;
 }
 
-function buildDetailHTML(eq) {
+function buildDetailHTML(eq, translatedVars) {
   // FIX #14 — Related chips are now tappable: add data-eq-name and cursor:pointer
   const relatedHtml = Array.isArray(eq.relatedEquations) && eq.relatedEquations.length
-    ? section(ICONS.related, 'Related Equations',
+    ? section(ICONS.related, t('modal_related'),
         `<div class="eq-related-chips">${eq.relatedEquations.map(r =>
           `<span class="eq-related-chip" data-eq-name="${r}" role="button" tabindex="0" title="Open ${r}">${r}</span>`
         ).join('')}</div>`)
@@ -208,26 +208,29 @@ function buildDetailHTML(eq) {
   const metaHtml = metaItems.length ? `<div class="eq-meta-row">${metaItems.join('')}</div>` : '';
 
   const allTagsHtml = Array.isArray(eq.tags) && eq.tags.length
-    ? `<div class="eq-all-tags">${eq.tags.map(t => `<span class="eq-tag">${t}</span>`).join('')}</div>`
+    ? `<div class="eq-all-tags">${eq.tags.map(tag => `<span class="eq-tag">${tag}</span>`).join('')}</div>`
     : '';
 
+  // Use translated vars if provided, otherwise fall back to original eq.vars
+  const displayVars = translatedVars || eq.vars;
+
   const sections = [
-    eq.whatItSays    && section(ICONS.whatItSays,    'What It Says',        mathify(eq.whatItSays)),
-    eq.example       && section(ICONS.example,       'Example',             `<div class="eq-example-box">${mathify(eq.example)}</div>`, 'example'),
-    eq.derivation    && section(ICONS.derivation,    'Derivation',          `<div class="eq-derivation-box">${mathify(eq.derivation)}</div>`, 'derivation'),
-    eq.deepMeaning   && section(ICONS.deepMeaning,   'Deep Meaning',        mathify(eq.deepMeaning), 'deep'),
-    eq.integralForm  && section(ICONS.math,          'Mathematical Form',   `<div class="eq-katex-block">\\[${eq.integralForm}\\]</div>`, 'math'),
-    eq.whoDiscovered && section(ICONS.history,       'History',             mathify(eq.whoDiscovered), 'history'),
-    eq.whyItMatters  && section(ICONS.whyItMatters,  'Why It Matters',      mathify(eq.whyItMatters), 'importance'),
-    eq.misconception && section(ICONS.misconception, 'Common Misconception',mathify(eq.misconception), 'misconception'),
+    eq.whatItSays    && section(ICONS.whatItSays,    t('modal_what_it_says'),   mathify(eq.whatItSays)),
+    eq.example       && section(ICONS.example,       t('modal_example'),        `<div class="eq-example-box">${mathify(eq.example)}</div>`, 'example'),
+    eq.derivation    && section(ICONS.derivation,    t('modal_derivation'),     `<div class="eq-derivation-box">${mathify(eq.derivation)}</div>`, 'derivation'),
+    eq.deepMeaning   && section(ICONS.deepMeaning,   t('modal_deep_meaning'),   mathify(eq.deepMeaning), 'deep'),
+    eq.integralForm  && section(ICONS.math,          t('modal_math_form'),      `<div class="eq-katex-block">\\[${eq.integralForm}\\]</div>`, 'math'),
+    eq.whoDiscovered && section(ICONS.history,       t('modal_history'),        mathify(eq.whoDiscovered), 'history'),
+    eq.whyItMatters  && section(ICONS.whyItMatters,  t('modal_why_it_matters'), mathify(eq.whyItMatters), 'importance'),
+    eq.misconception && section(ICONS.misconception, t('modal_misconception'),  mathify(eq.misconception), 'misconception'),
     relatedHtml,
   ].filter(Boolean).join('');
 
   return `
     <div class="eq-detail-inner">
       <div class="eq-vars">
-        <div class="eq-vars-title">Variables</div>
-        ${eq.vars.map(v => `
+        <div class="eq-vars-title">${t('modal_variables')}</div>
+        ${displayVars.map(v => `
           <div class="var-row">
             <span class="var-sym">\\(${v.s}\\)</span>
             <span class="var-desc">${v.d}</span>
@@ -281,8 +284,8 @@ function initModal() {
     window.scrollTo({ top: _savedScrollY, behavior: 'instant' });
   }
 
-  function _renderAndKatex(eq) {
-    bodyEl.innerHTML = buildDetailHTML(eq);
+  function _renderAndKatex(eq, translatedVars) {
+    bodyEl.innerHTML = buildDetailHTML(eq, translatedVars);
     if (window.renderMathInElement) {
       renderMathInElement(overlay, {
         delimiters: [
@@ -337,11 +340,15 @@ function initModal() {
       bodyEl.classList.add('translating');
 
       try {
-        const translated = await translateContent(eq, TRANSLATABLE_FIELDS, lang);
+        // Translate prose fields and variable descriptions in parallel
+        const [translated, translatedVarsResult] = await Promise.all([
+          translateContent(eq, TRANSLATABLE_FIELDS, lang),
+          translateVars(eq.vars, lang),
+        ]);
 
         // Merge translated fields back into a shallow copy — never mutate original data
         const translatedEq = { ...eq, ...translated };
-        _renderAndKatex(translatedEq);
+        _renderAndKatex(translatedEq, translatedVarsResult);
 
         // Append "AI translated" badge
         const badge = document.createElement('div');
