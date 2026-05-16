@@ -14,7 +14,7 @@ import { EQUATIONS } from '../data/equationsData.js';
 import { createLazyTabSection } from './lazyRenderer.js';
 import {
   getCurrentLang, onLangChange,
-  translateContent, TRANSLATABLE_FIELDS, t,
+  translateContent, translateBatch, TRANSLATABLE_FIELDS, t,
 } from './langController.js';
 
 const ICONS = {
@@ -481,6 +481,57 @@ export function initEquations() {
   const stepMs    = isMobile ? 20 : 40;  // 20ms steps on mobile, 40ms on desktop
   const maxDelay  = isMobile ? 200 : 300; // hard cap so late cards aren't sluggish
 
+  // ── CARD TRANSLATION ON LANGUAGE CHANGE ────────────────────────────────────
+  // Batch-translates name + desc for all visible cards in one API call,
+  // then patches the DOM in-place — no flicker, no re-render.
+  async function _translateVisibleCards(lang) {
+    const grid = document.getElementById('eq-grid');
+    if (!grid) return;
+    const cards = [...grid.querySelectorAll('[data-lazy-idx]')];
+    if (cards.length === 0) return;
+
+    if (lang === 'en') {
+      cards.forEach(card => {
+        const branch = card.dataset.lazyBranch;
+        const idx    = Number(card.dataset.lazyIdx);
+        const eq     = (EQUATIONS[branch] || [])[idx];
+        if (!eq) return;
+        const nameEl = card.querySelector('.eq-name');
+        const descEl = card.querySelector('.eq-desc');
+        if (nameEl) nameEl.textContent = eq.name;
+        if (descEl) descEl.textContent = eq.desc;
+      });
+      return;
+    }
+
+    const batchItems = cards.map(card => {
+      const branch = card.dataset.lazyBranch;
+      const idx    = Number(card.dataset.lazyIdx);
+      const eq     = (EQUATIONS[branch] || [])[idx];
+      if (!eq) return null;
+      return { id: `${branch}::${idx}`, fields: { name: eq.name, desc: eq.desc } };
+    }).filter(Boolean);
+
+    cards.forEach(c => c.classList.add('translating'));
+    try {
+      const resultMap = await translateBatch(batchItems, lang);
+      cards.forEach(card => {
+        const id     = `${card.dataset.lazyBranch}::${card.dataset.lazyIdx}`;
+        const result = resultMap.get(id);
+        if (!result) return;
+        const nameEl = card.querySelector('.eq-name');
+        const descEl = card.querySelector('.eq-desc');
+        if (nameEl && result.name) nameEl.textContent = result.name;
+        if (descEl && result.desc) descEl.textContent = result.desc;
+      });
+    } finally {
+      cards.forEach(c => c.classList.remove('translating'));
+    }
+  }
+
+  // Subscribe: re-translate cards whenever language changes
+  onLangChange(lang => { _translateVisibleCards(lang); });
+
   createLazyTabSection({
     data:         EQUATIONS,
     tabsId:       'eq-branch-tabs',
@@ -540,4 +591,20 @@ export function initEquations() {
       return !isDesktop();
     },
   });
+
+  // Re-translate cards after tab switches / filter changes cause a re-render.
+  // MutationObserver watches the grid for new childList mutations.
+  const _eqGrid = document.getElementById('eq-grid');
+  if (_eqGrid) {
+    const _initLang = getCurrentLang();
+    if (_initLang !== 'en') _translateVisibleCards(_initLang);
+
+    let _rerenderTimer = null;
+    new MutationObserver(() => {
+      const l = getCurrentLang();
+      if (l === 'en') return;
+      clearTimeout(_rerenderTimer);
+      _rerenderTimer = setTimeout(() => _translateVisibleCards(l), 100);
+    }).observe(_eqGrid, { childList: true });
+  }
 }
