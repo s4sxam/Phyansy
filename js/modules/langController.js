@@ -149,6 +149,77 @@ export async function translateContent(obj, fields, lang) {
   return result;
 }
 
+// =============================================================================
+// translateBatch — translate card-level fields for many items in ONE API call.
+//
+// items: array of { id, fields: { fieldName: 'english text', ... } }
+// lang:  target language code
+//
+// Returns: Map<id, { fieldName: 'translated text', ... }>
+//
+// Architecture:
+//   • Check session + localStorage cache for each (id, field) pair first.
+//   • Collect only the uncached strings and send them as one batched payload.
+//   • The payload key is `ITEM_{id}__{field}` so Gemini returns a flat JSON
+//     that we can unpack back into per-item results.
+//   • Results written back to both caches exactly like translateContent.
+// =============================================================================
+export async function translateBatch(items, lang) {
+  if (lang === 'en' || !items || items.length === 0) {
+    const out = new Map();
+    items.forEach(({ id, fields }) => out.set(id, { ...fields }));
+    return out;
+  }
+
+  const resultMap = new Map();
+  items.forEach(({ id }) => resultMap.set(id, {}));
+
+  // ── 1. Resolve cache hits, collect misses ──────────────────────────────────
+  const toTranslate = {}; // flat key → original text
+  const keyMeta     = {}; // flat key → { id, field, cacheKey }
+
+  items.forEach(({ id, fields }) => {
+    Object.entries(fields).forEach(([field, text]) => {
+      if (!text) return;
+      const cacheKey = `${lang}:${_hash(text)}`;
+      if (_sessionCache.has(cacheKey)) {
+        resultMap.get(id)[field] = _sessionCache.get(cacheKey);
+      } else {
+        const stored = _readTranslationCache(cacheKey);
+        if (stored !== null) {
+          resultMap.get(id)[field] = stored;
+          _sessionCache.set(cacheKey, stored);
+        } else {
+          const flatKey = `ITEM_${id}__${field}`;
+          toTranslate[flatKey] = text;
+          keyMeta[flatKey]     = { id, field, cacheKey };
+        }
+      }
+    });
+  });
+
+  // ── 2. Single API call for all misses ─────────────────────────────────────
+  if (Object.keys(toTranslate).length > 0) {
+    const translated = await _callTranslationAPI(toTranslate, lang, '');
+    Object.entries(translated).forEach(([flatKey, text]) => {
+      if (!text || !keyMeta[flatKey]) return;
+      const { id, field, cacheKey } = keyMeta[flatKey];
+      resultMap.get(id)[field] = text;
+      _sessionCache.set(cacheKey, text);
+      _writeTranslationCache(cacheKey, text);
+    });
+  }
+
+  // ── 3. Fill untranslated fields with English fallback ─────────────────────
+  items.forEach(({ id, fields }) => {
+    Object.entries(fields).forEach(([field, text]) => {
+      if (text && !resultMap.get(id)[field]) resultMap.get(id)[field] = text;
+    });
+  });
+
+  return resultMap;
+}
+
 function _cacheStorageKey(cacheKey) {
   return `${CACHE_KEY_PFX}${CACHE_VERSION}_${cacheKey}`;
 }
