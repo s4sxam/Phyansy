@@ -17,7 +17,11 @@ import { UI_STRINGS, RTL_LANGS, CJK_LANGS, INDIC_LANGS } from '../data/locales/u
 
 const LANG_KEY      = 'quantra_lang';
 const CACHE_KEY_PFX = 'phyansy_trans_';
-const CACHE_VERSION = 'v1';
+// v2: bumped from v1 because the old maxOutputTokens:2000 limit caused Gemini
+// to truncate mid-JSON, which wrote empty/partial results into v1 cache keys.
+// Those poisoned entries would silently serve English forever even after deploy.
+// v2 keys are a clean slate — old v1 keys are ignored and naturally expire.
+const CACHE_VERSION = 'v2';
 
 let _currentLang   = 'en';
 const _subscribers = [];
@@ -199,11 +203,14 @@ export async function translateContent(obj, fields, lang) {
   fields.forEach(field => {
     if (!obj[field]) return;
     const cacheKey = `${lang}:${_hash(obj[field])}`;
-    if (_sessionCache.has(cacheKey)) {
-      result[field] = _sessionCache.get(cacheKey);
+    const sessionHit = _sessionCache.get(cacheKey);
+    if (sessionHit) {
+      // Only trust session cache if it holds a real non-empty string
+      result[field] = sessionHit;
     } else {
       const stored = _readTranslationCache(cacheKey);
-      if (stored !== null) {
+      if (stored) {
+        // Only trust localStorage cache if it holds a real non-empty string
         result[field] = stored;
         _sessionCache.set(cacheKey, stored);
       } else {
@@ -263,11 +270,12 @@ export async function translateBatch(items, lang) {
     Object.entries(fields).forEach(([field, text]) => {
       if (!text) return;
       const cacheKey = `${lang}:${_hash(text)}`;
-      if (_sessionCache.has(cacheKey)) {
-        resultMap.get(id)[field] = _sessionCache.get(cacheKey);
+      const sessionHit = _sessionCache.get(cacheKey);
+      if (sessionHit) {
+        resultMap.get(id)[field] = sessionHit;
       } else {
         const stored = _readTranslationCache(cacheKey);
-        if (stored !== null) {
+        if (stored) {
           resultMap.get(id)[field] = stored;
           _sessionCache.set(cacheKey, stored);
         } else {
