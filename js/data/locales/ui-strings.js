@@ -721,6 +721,198 @@ export const UI_STRINGS = {
 
     toast_copied: 'Exakter Wert kopiert!',
   },
+  // ── TAMIL ─────────────────────────────────────────────────────────────────────
+  ta: {
+    nav_constants:  'மாறிலிகள்',
+    nav_equations:  'சமன்பாடுகள்',
+    nav_symbols:    'சின்னங்கள்',
+    nav_units:      'அலகுகள்',
+    nav_calculator: 'கணிப்பான்',
+
+    sec_constants_title: 'இயற்பியல் மாறிலிகள்',
+    sec_constants_sub:   'பிரபஞ்சத்தின் அடிப்படை மாறிலிகள் — விரிவாக்க எந்த அட்டையையும் கிளிக் செய்யுங்கள்',
+    sec_equations_title: 'முக்கிய சமன்பாடுகள்',
+    sec_equations_sub:   'இயற்பியலின் அனைத்து கிளைகளிலும் உள்ள அவசியமான சூத்திரங்கள்',
+    sec_symbols_title:   'சின்னங்கள் குறிப்பு',
+    sec_symbols_sub:     'இயற்பியலில் பயன்படுத்தப்படும் கிரேக்க எழுத்துக்கள் மற்றும் கணித குறியீடுகள்',
+    sec_units_title:     'அலகுகள் மற்றும் அளவீடு',
+    sec_units_sub:       'SI அடிப்படை அலகுகள், வழிபெற்ற அலகுகள் மற்றும் மெட்ரிக் முன்னொட்டுகள்',
+    sec_calc_title:      'இயற்பியல் கணிப்பான்',
+    sec_calc_sub:        'ஒரு சமன்பாட்டை தேர்ந்தெடுக்கவும், எதை தீர்க்க வேண்டும் என்று தேர்வு செய்யுங்கள்',
+
+    modal_what_it_says:   'இது என்ன சொல்கிறது',
+    modal_example:        'உதாரணம்',
+    modal_derivation:     'வருவிப்பு',
+    modal_deep_meaning:   'ஆழமான பொருள்',
+    modal_math_form:      'கணித வடிவம்',
+    modal_history:        'வரலாறு',
+    modal_why_it_matters: 'ஏன் முக்கியம்',
+    modal_misconception:  'பொதுவான தவறான கருத்து',
+    modal_related:        'தொடர்புடைய சமன்பாடுகள்',
+    modal_variables:      'மாறிகள்',
+
+    modal_exact_value:    'சரியான மதிப்பு',
+    modal_discovered_by:  'கண்டுபிடித்தவர்',
+    modal_key_formula:    'முக்கிய சூத்திரம்',
+    modal_what_it_says_c: 'இது என்ன சொல்கிறது',
+    modal_simple_example: 'எளிய உதாரணம்',
+    modal_deep_meaning_c: 'ஆழமான பொருள்',
+    modal_why_it_matters_c: 'ஏன் முக்கியம்',
+    modal_copy_exact:     'சரியான மதிப்பை நகலெடு',
+
+    units_si_base:       'SI அடிப்படை அலகுகள்',
+    units_derived:       'பொதுவான வழிபெற்ற அலகுகள்',
+    units_non_si:        'SI அல்லாத அலகுகள் (இயற்பியலில் பரவலாக பயன்படுத்தப்படுகின்றன)',
+    units_prefixes:      'மெட்ரிக் முன்னொட்டுகள்',
+    units_prefix_filter: 'முன்னொட்டுகளை வடிகட்டவும் — பெயர், சின்னம் அல்லது அடுக்கு…',
+
+    sym_greek: 'கிரேக்க எழுத்துக்கள்',
+    sym_math:  'கணித சின்னங்கள்',
+
+    calc_equation_label: 'சமன்பாடு',
+    calc_solve_for:      'தீர்வு காண',
+    calc_btn:            'கணக்கிடு',
+    calc_result_label:   'முடிவு',
+
+    lang_btn_label:      'மொழி',
+    lang_picker_title:   'மொழியை தேர்ந்தெடுக்கவும்',
+    lang_english_label:  'இயற்பியல் சொற்கள் ஆங்கிலத்தில் இருக்கும்',
+    lang_note:           'சூத்திரங்கள், சின்னங்கள் மற்றும் மாறி பெயர்கள் ஆங்கிலத்தில் இருக்கும் — இயற்பியலின் உலகளாவிய மொழி. விளக்கங்கள் மொழிபெயர்க்கப்படும்.',
+    lang_ai_powered:     'AI மூலம் மொழிபெயர்க்கப்பட்ட விளக்கங்கள்',
+    lang_translating:    'மொழிபெயர்க்கிறது…',
+    lang_translation_fail: 'மொழிபெயர்ப்பு கிடைக்கவில்லை — ஆங்கிலம் காட்டப்படுகிறது',
+
+    toast_copied: 'சரியான மதிப்பு நகலெடுக்கப்பட்டது!',
+  },
+
+  // ── TELUGU ────────────────────────────────────────────────────────────────────
+  te: {
+    nav_constants:  'స్థిరాంకాలు',
+    nav_equations:  'సమీకరణాలు',
+    nav_symbols:    'చిహ్నాలు',
+    nav_units:      'యూనిట్లు',
+    nav_calculator: 'కాల్కులేటర్',
+
+    sec_constants_title: 'భౌతిక స్థిరాంకాలు',
+    sec_constants_sub:   'విశ్వం యొక్క ప్రాథమిక స్థిరాంకాలు — విస్తరించడానికి ఏదైనా కార్డుపై క్లిక్ చేయండి',
+    sec_equations_title: 'ముఖ్యమైన సమీకరణాలు',
+    sec_equations_sub:   'భౌతికశాస్త్రం యొక్క అన్ని శాఖలలో అవసరమైన సూత్రాలు',
+    sec_symbols_title:   'చిహ్నాల సూచిక',
+    sec_symbols_sub:     'భౌతికశాస్త్రంలో ఉపయోగించే గ్రీక్ అక్షరమాల మరియు గణిత సంకేతాలు',
+    sec_units_title:     'యూనిట్లు మరియు కొలత',
+    sec_units_sub:       'SI ప్రాథమిక యూనిట్లు, ఉత్పన్న యూనిట్లు మరియు మెట్రిక్ ఉపసర్గలు',
+    sec_calc_title:      'భౌతికశాస్త్ర కాల్కులేటర్',
+    sec_calc_sub:        'ఒక సమీకరణాన్ని ఎంచుకోండి, దేని కోసం పరిష్కరించాలో ఎంచుకోండి',
+
+    modal_what_it_says:   'ఇది ఏమి చెప్తుంది',
+    modal_example:        'ఉదాహరణ',
+    modal_derivation:     'నిరూపణ',
+    modal_deep_meaning:   'లోతైన అర్థం',
+    modal_math_form:      'గణిత రూపం',
+    modal_history:        'చరిత్ర',
+    modal_why_it_matters: 'ఎందుకు ముఖ్యమో',
+    modal_misconception:  'సాధారణ అపోహ',
+    modal_related:        'సంబంధిత సమీకరణాలు',
+    modal_variables:      'చరరాశులు',
+
+    modal_exact_value:    'ఖచ్చితమైన విలువ',
+    modal_discovered_by:  'కనుగొన్నవారు',
+    modal_key_formula:    'ముఖ్య సూత్రం',
+    modal_what_it_says_c: 'ఇది ఏమి చెప్తుంది',
+    modal_simple_example: 'సరళమైన ఉదాహరణ',
+    modal_deep_meaning_c: 'లోతైన అర్థం',
+    modal_why_it_matters_c: 'ఎందుకు ముఖ్యమో',
+    modal_copy_exact:     'ఖచ్చితమైన విలువను కాపీ చేయండి',
+
+    units_si_base:       'SI ప్రాథమిక యూనిట్లు',
+    units_derived:       'సాధారణ ఉత్పన్న యూనిట్లు',
+    units_non_si:        'SI కాని యూనిట్లు (భౌతికశాస్త్రంలో విస్తృతంగా ఉపయోగించబడతాయి)',
+    units_prefixes:      'మెట్రిక్ ఉపసర్గలు',
+    units_prefix_filter: 'ఉపసర్గలను వడపోయండి — పేరు, చిహ్నం లేదా ఘాతాంకం…',
+
+    sym_greek: 'గ్రీక్ అక్షరమాల',
+    sym_math:  'గణిత చిహ్నాలు',
+
+    calc_equation_label: 'సమీకరణం',
+    calc_solve_for:      'దేని కోసం పరిష్కరించాలి',
+    calc_btn:            'లెక్కించు',
+    calc_result_label:   'ఫలితం',
+
+    lang_btn_label:      'భాష',
+    lang_picker_title:   'భాషను ఎంచుకోండి',
+    lang_english_label:  'భౌతిక పదాలు ఆంగ్లంలో ఉంటాయి',
+    lang_note:           'సూత్రాలు, చిహ్నాలు మరియు చరరాశి పేర్లు ఆంగ్లంలో ఉంటాయి — భౌతికశాస్త్రం యొక్క సార్వత్రిక భాష. వివరణలు అనువదించబడతాయి.',
+    lang_ai_powered:     'AI ద్వారా అనువదించబడిన వివరణలు',
+    lang_translating:    'అనువదిస్తోంది…',
+    lang_translation_fail: 'అనువాదం అందుబాటులో లేదు — ఆంగ్లం చూపబడుతోంది',
+
+    toast_copied: 'ఖచ్చితమైన విలువ కాపీ చేయబడింది!',
+  },
+
+  // ── MARATHI ───────────────────────────────────────────────────────────────────
+  mr: {
+    nav_constants:  'स्थिरांक',
+    nav_equations:  'समीकरणे',
+    nav_symbols:    'चिन्हे',
+    nav_units:      'एकके',
+    nav_calculator: 'कॅल्क्युलेटर',
+
+    sec_constants_title: 'भौतिक स्थिरांक',
+    sec_constants_sub:   'विश्वाचे मूलभूत स्थिरांक — कोणत्याही कार्डावर क्लिक करा',
+    sec_equations_title: 'महत्त्वाची समीकरणे',
+    sec_equations_sub:   'भौतिकशास्त्राच्या सर्व शाखांमधील आवश्यक सूत्रे',
+    sec_symbols_title:   'चिन्ह संदर्भ',
+    sec_symbols_sub:     'भौतिकशास्त्रात वापरले जाणारे ग्रीक वर्णमाला आणि गणिती संकेत',
+    sec_units_title:     'एकके आणि मापन',
+    sec_units_sub:       'SI मूल एकके, व्युत्पन्न एकके आणि मेट्रिक उपसर्ग',
+    sec_calc_title:      'भौतिकशास्त्र कॅल्क्युलेटर',
+    sec_calc_sub:        'समीकरण निवडा, काय सोडवायचे ते निवडा, ज्ञात मूल्ये प्रविष्ट करा',
+
+    modal_what_it_says:   'हे काय सांगते',
+    modal_example:        'उदाहरण',
+    modal_derivation:     'व्युत्पत्ती',
+    modal_deep_meaning:   'खोल अर्थ',
+    modal_math_form:      'गणिती स्वरूप',
+    modal_history:        'इतिहास',
+    modal_why_it_matters: 'हे का महत्त्वाचे आहे',
+    modal_misconception:  'सामान्य गैरसमज',
+    modal_related:        'संबंधित समीकरणे',
+    modal_variables:      'चल राशी',
+
+    modal_exact_value:    'अचूक मूल्य',
+    modal_discovered_by:  'शोधकर्ता',
+    modal_key_formula:    'मुख्य सूत्र',
+    modal_what_it_says_c: 'हे काय सांगते',
+    modal_simple_example: 'साधे उदाहरण',
+    modal_deep_meaning_c: 'खोल अर्थ',
+    modal_why_it_matters_c: 'हे का महत्त्वाचे आहे',
+    modal_copy_exact:     'अचूक मूल्य कॉपी करा',
+
+    units_si_base:       'SI मूल एकके',
+    units_derived:       'सामान्य व्युत्पन्न एकके',
+    units_non_si:        'गैर-SI एकके (भौतिकशास्त्रात मोठ्या प्रमाणावर वापरली जातात)',
+    units_prefixes:      'मेट्रिक उपसर्ग',
+    units_prefix_filter: 'उपसर्ग फिल्टर करा — नाव, चिन्ह किंवा घातांक…',
+
+    sym_greek: 'ग्रीक वर्णमाला',
+    sym_math:  'गणिती चिन्हे',
+
+    calc_equation_label: 'समीकरण',
+    calc_solve_for:      'साठी सोडवा',
+    calc_btn:            'गणना करा',
+    calc_result_label:   'निकाल',
+
+    lang_btn_label:      'भाषा',
+    lang_picker_title:   'भाषा निवडा',
+    lang_english_label:  'भौतिकशास्त्राच्या संज्ञा इंग्रजीत राहतात',
+    lang_note:           'सूत्रे, चिन्हे आणि चल राशींची नावे इंग्रजीत राहतात — भौतिकशास्त्राची सार्वत्रिक भाषा. स्पष्टीकरणे अनुवादित केली जातात.',
+    lang_ai_powered:     'AI द्वारे अनुवादित स्पष्टीकरणे',
+    lang_translating:    'अनुवाद होत आहे…',
+    lang_translation_fail: 'अनुवाद उपलब्ध नाही — इंग्रजी दाखवत आहे',
+
+    toast_copied: 'अचूक मूल्य कॉपी केले!',
+  },
+
 };
 
 // ── RTL LANGUAGE CODES ────────────────────────────────────────────────────────
@@ -729,15 +921,21 @@ export const RTL_LANGS = new Set(['ar']);
 // ── CJK LANGUAGE CODES (need typography adjustments) ─────────────────────────
 export const CJK_LANGS = new Set(['zh', 'ja']);
 
+// ── INDIC LANGUAGE CODES (need Noto Indic font stack) ────────────────────────
+export const INDIC_LANGS = new Set(['hi', 'bn', 'ta', 'te', 'mr']);
+
 // ── LANGUAGE METADATA (for the picker UI) ────────────────────────────────────
 export const LANG_META = [
   { code: 'en', label: 'English',    native: 'English',    flag: '🌐' },
   { code: 'es', label: 'Spanish',    native: 'Español',    flag: '🇪🇸' },
   { code: 'zh', label: 'Chinese',    native: '中文',        flag: '🇨🇳' },
   { code: 'hi', label: 'Hindi',      native: 'हिन्दी',      flag: '🇮🇳' },
+  { code: 'bn', label: 'Bengali',    native: 'বাংলা',       flag: '🇮🇳' },
+  { code: 'ta', label: 'Tamil',      native: 'தமிழ்',       flag: '🇮🇳' },
+  { code: 'te', label: 'Telugu',     native: 'తెలుగు',      flag: '🇮🇳' },
+  { code: 'mr', label: 'Marathi',    native: 'मराठी',       flag: '🇮🇳' },
   { code: 'ar', label: 'Arabic',     native: 'العربية',    flag: '🇸🇦' },
   { code: 'fr', label: 'French',     native: 'Français',   flag: '🇫🇷' },
-  { code: 'bn', label: 'Bengali',    native: 'বাংলা',       flag: '🇮🇳' },
   { code: 'pt', label: 'Portuguese', native: 'Português',  flag: '🇧🇷' },
   { code: 'ru', label: 'Russian',    native: 'Русский',    flag: '🇷🇺' },
   { code: 'ja', label: 'Japanese',   native: '日本語',      flag: '🇯🇵' },
