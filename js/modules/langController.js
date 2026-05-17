@@ -342,50 +342,113 @@ function _pruneTranslationCache() {
   } catch {}
 }
 
-// ─── Translation proxy endpoint ───────────────────────────────────────────────
+// ── Client-side rate-limit backoff state ──────────────────────────────────────
+// When the server returns 429 (all models exhausted), we record when to retry.
+// Subsequent translation calls during the backoff period return {} immediately
+// without hitting the server — protecting quota for other students.
+let _rateLimitUntil = 0; // timestamp (ms) after which we can try again
+
+function _isClientBackingOff() {
+  return Date.now() < _rateLimitUntil;
+}
+
+function _setClientBackoff(retryAfterSeconds) {
+  // Add a small buffer (5s) so we don't hit the server right at the boundary
+  _rateLimitUntil = Date.now() + (retryAfterSeconds + 5) * 1000;
+}
+
+// ── In-flight deduplication ───────────────────────────────────────────────────
+// If two callers request translation of the same payload simultaneously,
+// we return the same Promise instead of firing two identical API requests.
+// Key: JSON.stringify of { fields keys sorted, lang }
+const _inFlight = new Map(); // key → Promise<{}>
+
+// ── Translation proxy endpoint ────────────────────────────────────────────────
 // The Gemini API key lives ONLY in the server-side environment variable
 // GEMINI_API_KEY. The browser never sees it, so it cannot be stolen or
 // restricted by HTTP-referrer allowlists in Google Cloud Console.
-//
-// • Vercel deploy  → /api/translate.js   handles POST /api/translate
-// • Netlify deploy → /netlify/functions/translate.js + netlify.toml redirect
-//
-// Both expose the same URL path so this client code never needs to change.
 // ─────────────────────────────────────────────────────────────────────────────
 const TRANSLATE_ENDPOINT = '/api/translate';
 
-async function _callTranslationAPI(fieldsToTranslate, lang, equationName) {
+// ── Toast helper — lazy import to avoid circular deps ────────────────────────
+// We import lazily so langController stays self-contained.
+async function _showRateLimitToast() {
   try {
-    const response = await fetch(TRANSLATE_ENDPOINT, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        fields:       fieldsToTranslate,
-        lang,
-        equationName: equationName || '',
-      }),
-    });
+    const { showToast } = await import('./toastController.js');
+    showToast('⏳ Translation busy — showing English for now. Try again in a minute.', 4000);
+  } catch {}
+}
 
-    if (!response.ok) {
-      const errBody = await response.text().catch(() => '');
-      console.warn('[Phyansy translate] Proxy error', response.status, errBody);
-      return {};
-    }
-
-    const parsed = await response.json();
-
-    // Only return fields that were requested and are valid non-empty strings
-    const safeResult = {};
-    Object.keys(fieldsToTranslate).forEach(field => {
-      if (parsed[field] && typeof parsed[field] === 'string') {
-        safeResult[field] = parsed[field];
-      }
-    });
-    return safeResult;
-  } catch (err) {
-    console.warn('[Phyansy translate] Failed:', err);
+async function _callTranslationAPI(fieldsToTranslate, lang, equationName) {
+  // ── Client-side backoff check ──────────────────────────────────────────────
+  // If we recently received a 429 from the server (all models exhausted),
+  // don't hammer the server during the backoff window. Return {} silently —
+  // the caller already falls back to English text.
+  if (_isClientBackingOff()) {
     return {};
   }
+
+  // ── In-flight deduplication ────────────────────────────────────────────────
+  // Build a stable key from the sorted field names and target language.
+  const dedupeKey = lang + ':' + Object.keys(fieldsToTranslate).sort().join(',');
+  if (_inFlight.has(dedupeKey)) {
+    // Another caller already fired this exact request — piggyback on it.
+    return _inFlight.get(dedupeKey);
+  }
+
+  const promise = (async () => {
+    try {
+      const response = await fetch(TRANSLATE_ENDPOINT, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fields:       fieldsToTranslate,
+          lang,
+          equationName: equationName || '',
+        }),
+      });
+
+      // ── 429: server-side quota exhausted across ALL models ──────────────────
+      if (response.status === 429) {
+        let retryAfter = 60;
+        try {
+          const errJson = await response.json();
+          if (errJson.retryAfter) retryAfter = errJson.retryAfter;
+        } catch {}
+        console.warn(`[Phyansy translate] All models quota-exhausted. Backing off for ${retryAfter}s.`);
+        _setClientBackoff(retryAfter);
+        // Show a friendly toast so students know it's temporary
+        _showRateLimitToast();
+        return {};
+      }
+
+      if (!response.ok) {
+        const errBody = await response.text().catch(() => '');
+        console.warn('[Phyansy translate] Proxy error', response.status, errBody);
+        return {};
+      }
+
+      const parsed = await response.json();
+
+      // Only return fields that were requested and are valid non-empty strings
+      const safeResult = {};
+      Object.keys(fieldsToTranslate).forEach(field => {
+        if (parsed[field] && typeof parsed[field] === 'string') {
+          safeResult[field] = parsed[field];
+        }
+      });
+      return safeResult;
+    } catch (err) {
+      console.warn('[Phyansy translate] Failed:', err);
+      return {};
+    } finally {
+      // Always clean up the in-flight entry so future calls can retry
+      _inFlight.delete(dedupeKey);
+    }
+  })();
+
+  _inFlight.set(dedupeKey, promise);
+  return promise;
 }
 
 export function emitTranslating(el) {
