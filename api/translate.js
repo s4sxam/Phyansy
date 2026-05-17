@@ -20,53 +20,63 @@
 //      Optionally restrict by IP (Vercel IPs) or leave unrestricted.
 //   4. Redeploy. Translation will work for every student on every browser.
 //
-// MODEL CASCADE (why we have multiple models):
-//   Free-tier Gemini has per-model RPM quotas. When many students hit the
-//   site at once, the primary model can return 429 (Too Many Requests).
-//   We cascade through models with separate quota pools so at least one
-//   succeeds. Models deprecated/removed from v1beta are never used.
+// MODEL CASCADE (why we have multiple models + correct names):
+//   Free-tier Gemini has per-model RPM AND daily quotas. When many students
+//   hit the site at once, we cascade through models with separate quota pools.
 //
-//   Current cascade order (all confirmed live on v1beta as of 2025-05):
-//     1. gemini-2.0-flash          — fastest, primary
-//     2. gemini-2.0-flash-lite     — lighter, separate quota pool
-//     3. gemini-2.5-flash-preview-05-20 — latest, separate quota pool
+//   Each model is tried on the v1beta endpoint. If v1beta returns 404 for a
+//   model, we automatically retry it on the v1 endpoint (stable GA models
+//   live there). This future-proofs the cascade as Google migrates models.
 //
-//   NOTE: gemini-1.5-flash was REMOVED from v1beta and will 404 — never use it.
+//   Current cascade (verified live, May 2026):
+//     1. gemini-2.0-flash          v1beta  — fastest, primary
+//     2. gemini-2.0-flash-lite     v1beta  — lighter, own quota pool
+//     3. gemini-2.5-flash-preview-04-17  v1beta — latest preview, own pool
+//     4. gemini-2.0-flash          v1      — same model, separate GA quota
+//
+//   DEAD models (404 on v1beta — never use):
+//     ✗ gemini-1.5-flash           — removed from v1beta
+//     ✗ gemini-1.5-flash-latest    — removed from v1beta
+//     ✗ gemini-2.5-flash-preview-05-20 — wrong name (404 confirmed in prod)
 //
 // RATE LIMITING:
-//   Gemini Flash free tier allows 15 RPM / 1,000,000 TPD per model.
+//   Gemini Flash free tier: 15 RPM / 1,000,000 TPD per model per key.
 //   Translation results are cached in each student's localStorage for 30 days,
 //   so repeat requests are served locally without hitting this proxy at all.
+//
+// QUOTA EXHAUSTION STRATEGY:
+//   When retryAfter is long (> SHORT_RETRY_THRESHOLD), we do NOT block the
+//   Vercel function waiting. We immediately cascade to the next model.
+//   Only if ALL models fail do we return 503 with the best retryAfter hint,
+//   letting the client handle the wait and auto-retry silently in background.
 // =============================================================================
 
 export const config = { runtime: 'nodejs' };
 
 // ── Model cascade ─────────────────────────────────────────────────────────────
-// Order matters: fastest/cheapest first. Each entry has its own quota pool on
-// Google's side, so a 429 on model[0] does NOT mean model[1] is also exhausted.
-//
-// NEVER add gemini-1.5-flash or gemini-1.5-pro — they are removed from v1beta
-// and will always return 404, wasting the student's time.
+// Each entry: { model, apiVersion }
+// apiVersion 'v1beta' is tried first. If a model 404s on v1beta, we do NOT
+// retry on v1 automatically — v1 and v1beta have different model availability.
+// Instead, each entry explicitly declares its version.
 const MODEL_CASCADE = [
-  'gemini-2.0-flash',
-  'gemini-2.0-flash-lite',
-  'gemini-2.5-flash-preview-05-20',
+  { model: 'gemini-2.0-flash',               apiVersion: 'v1beta' },
+  { model: 'gemini-2.0-flash-lite',          apiVersion: 'v1beta' },
+  { model: 'gemini-2.5-flash-preview-04-17', apiVersion: 'v1beta' },
+  { model: 'gemini-2.0-flash',               apiVersion: 'v1'     }, // GA endpoint, own quota
 ];
 
-// How long to wait before retrying the SAME model on a 429 (ms).
-// We only do one same-model retry if the server gives us a retryAfter hint
-// and it's short (≤ 8 s). Otherwise we immediately fall to the next model.
-const MAX_SAME_MODEL_RETRY_MS = 8_000;
+// On 429, only wait and retry the same model if retryAfter is this short.
+// If it's longer, we skip immediately to the next model — no point blocking
+// a Vercel function for 38+ seconds when another quota pool is free.
+const SHORT_RETRY_MS = 6_000;
 
-// Allowed language codes — reject unknown codes early so we never forward
-// garbage to Gemini.
+// Allowed language codes
 const ALLOWED_LANGS = new Set([
   'es', 'zh', 'hi', 'ar', 'fr', 'bn', 'pt', 'ru', 'ja', 'de',
   'ta', 'te', 'mr',
 ]);
 
-// Max size of the incoming JSON body (bytes). 32 KB is generous for a batch
-// of physics explanations; anything larger is almost certainly abuse.
+// Max body size: 32 KB is generous for a batch of physics explanations.
 const MAX_BODY_BYTES = 32 * 1024;
 
 // Language display names for the translation prompt
@@ -78,10 +88,11 @@ const LANG_NAMES = {
 };
 
 // ── Helper: call one Gemini model ─────────────────────────────────────────────
-// Returns: { ok: true, data } | { ok: false, status, retryAfter? }
-async function callGeminiModel(modelName, apiKey, systemPrompt, userText) {
+// Returns: { ok: true, data } | { ok: false, status, retryAfter?, skip }
+// skip=true means this model is permanently broken (404) — never try again
+async function callGeminiModel({ model, apiVersion }, apiKey, systemPrompt, userText) {
   const endpoint =
-    `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+    `https://generativelanguage.googleapis.com/${apiVersion}/models/${model}:generateContent?key=${apiKey}`;
 
   let res;
   try {
@@ -90,7 +101,7 @@ async function callGeminiModel(modelName, apiKey, systemPrompt, userText) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: systemPrompt }] },
-        contents: [{ parts: [{ text: userText }] }],
+        contents:          [{ parts: [{ text: userText }] }],
         generationConfig: {
           responseMimeType: 'application/json',
           maxOutputTokens:  8192,
@@ -98,53 +109,67 @@ async function callGeminiModel(modelName, apiKey, systemPrompt, userText) {
       }),
     });
   } catch (networkErr) {
-    console.error(`[translate] Network error reaching Gemini (${modelName}):`, networkErr.message);
+    console.error(`[translate] Network error (${model}/${apiVersion}):`, networkErr.message);
     return { ok: false, status: 502 };
   }
 
   if (res.ok) {
     try {
-      const data = await res.json();
-      return { ok: true, data };
+      return { ok: true, data: await res.json() };
     } catch {
       return { ok: false, status: 502 };
     }
   }
 
-  // Not OK — parse the error body to get retryAfter on 429
   const errText = await res.text().catch(() => '');
-  console.warn(`[translate] ${modelName} error ${res.status}:`, errText.slice(0, 300));
 
+  // 404 = model not found on this API version — permanent, skip it
+  if (res.status === 404) {
+    console.warn(`[translate] ${model} error 404: not found on ${apiVersion} — skipping permanently`);
+    return { ok: false, status: 404, skip: true };
+  }
+
+  // 429 = quota exhausted — extract retryAfter from response
   let retryAfter = null;
   if (res.status === 429) {
-    // Google returns retryDelay like "33s" in the error JSON
+    // Google embeds retryDelay in the error details array: { retryDelay: "38s" }
     try {
       const errJson = JSON.parse(errText);
-      const delay = errJson?.error?.details?.find(d => d['@type']?.includes('RetryInfo'))?.retryDelay;
-      if (delay) {
-        // retryDelay is "33s" or "PT33S" — extract the number
-        const secs = parseInt(delay.replace(/\D/g, ''), 10);
-        if (!isNaN(secs)) retryAfter = secs * 1000; // convert to ms
+      const details = errJson?.error?.details ?? [];
+      const retryInfo = details.find(d =>
+        d['@type']?.includes('RetryInfo') || d.retryDelay !== undefined
+      );
+      if (retryInfo?.retryDelay) {
+        const raw = String(retryInfo.retryDelay); // "38s" or "PT38S"
+        const secs = parseInt(raw.replace(/\D/g, ''), 10);
+        if (!isNaN(secs) && secs > 0) retryAfter = secs * 1000;
       }
     } catch {}
 
-    // Also check the Retry-After header (some Gemini variants send it)
-    const headerRetry = res.headers.get('Retry-After');
-    if (headerRetry && !retryAfter) {
-      const secs = parseInt(headerRetry, 10);
-      if (!isNaN(secs)) retryAfter = secs * 1000;
+    // Fallback: Retry-After HTTP header
+    if (!retryAfter) {
+      const h = res.headers.get('Retry-After');
+      if (h) {
+        const secs = parseInt(h, 10);
+        if (!isNaN(secs) && secs > 0) retryAfter = secs * 1000;
+      }
     }
 
-    console.warn(`[translate] ${modelName} quota exhausted (429), retryAfter=${retryAfter ? retryAfter / 1000 + 's' : 'unknown'}`);
+    console.warn(
+      `[translate] ${model} quota exhausted (429),`,
+      retryAfter ? `retryAfter=${retryAfter / 1000}s` : 'retryAfter=unknown'
+    );
+  } else {
+    console.warn(`[translate] ${model} error ${res.status}:`, errText.slice(0, 200));
   }
 
   return { ok: false, status: res.status, retryAfter };
 }
 
 // ── Helper: sleep ─────────────────────────────────────────────────────────────
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-// ── Helper: extract and parse translated JSON from Gemini response ─────────────
+// ── Helper: extract and validate JSON translation from Gemini response ─────────
 function extractTranslation(data, requestedFields) {
   const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
   const clean = rawText
@@ -158,11 +183,10 @@ function extractTranslation(data, requestedFields) {
   try {
     parsed = JSON.parse(clean);
   } catch {
-    console.warn('[translate] Gemini returned non-JSON:', clean.slice(0, 200));
+    console.warn('[translate] Non-JSON response from Gemini:', clean.slice(0, 200));
     return null;
   }
 
-  // Only return fields that were requested and are non-empty strings
   const safeResult = {};
   Object.keys(requestedFields).forEach(field => {
     if (parsed[field] && typeof parsed[field] === 'string') {
@@ -170,30 +194,22 @@ function extractTranslation(data, requestedFields) {
     }
   });
 
-  return safeResult;
+  return Object.keys(safeResult).length > 0 ? safeResult : null;
 }
 
 // ── Main handler ──────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
-  // ── CORS headers ─────────────────────────────────────────────────────────────
+  // ── CORS ──────────────────────────────────────────────────────────────────────
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') {
-    res.status(204).end();
-    return;
-  }
-
-  if (req.method !== 'POST') {
-    res.status(405).json({ error: 'Method not allowed' });
-    return;
-  }
+  if (req.method === 'OPTIONS') { res.status(204).end(); return; }
+  if (req.method !== 'POST')    { res.status(405).json({ error: 'Method not allowed' }); return; }
 
   // ── Environment guard ─────────────────────────────────────────────────────────
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    console.error('[translate] GEMINI_API_KEY environment variable is not set');
+    console.error('[translate] GEMINI_API_KEY not set');
     res.status(500).json({ error: 'Translation service is not configured.' });
     return;
   }
@@ -230,7 +246,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  // ── Build prompt (identical structure to what worked before) ──────────────────
+  // ── Build prompt ──────────────────────────────────────────────────────────────
   const targetLang = LANG_NAMES[lang] || lang;
   const eqName     = typeof equationName === 'string' ? equationName.slice(0, 200) : '';
 
@@ -259,63 +275,67 @@ Equation context: "${eqName}"`;
 
   const userText = `${fieldList}\n\nTranslate into ${targetLang}. Return only JSON.`;
 
-  // ── Model cascade with retry logic ────────────────────────────────────────────
-  // Strategy:
-  //   For each model in CASCADE:
-  //     1. Try the model.
-  //     2. On 429: if retryAfter is short (≤ MAX_SAME_MODEL_RETRY_MS), wait and
-  //        retry ONCE on the same model. Otherwise skip to the next model.
-  //     3. On 404: skip immediately (model removed from API).
-  //     4. On success: return the result.
-  //   If ALL models fail: return 503 with Retry-After so the client backs off.
+  // ── Model cascade ─────────────────────────────────────────────────────────────
+  //
+  // Rules:
+  //   • 404 → skip immediately (model dead on this API version)
+  //   • 429, retryAfter SHORT (≤ SHORT_RETRY_MS) → wait + retry once, then cascade
+  //   • 429, retryAfter LONG  (> SHORT_RETRY_MS) → skip immediately to next model
+  //     (38s+ wait inside a Vercel function = timeout risk + wastes everyone's time)
+  //   • Success + empty result → skip (Gemini hallucinated, try next)
+  //   • Success + valid JSON   → return 200 ✅
+  //   • All models failed      → 503 + Retry-After header
 
-  let lastRetryAfterSec = 60; // fallback hint to client if everything fails
+  let bestRetryAfterSec = 60; // hint to client when all models fail
 
-  for (let i = 0; i < MODEL_CASCADE.length; i++) {
-    const modelName = MODEL_CASCADE[i];
-    console.log(`[translate] Trying model: ${modelName}, lang: ${lang}`);
+  for (const entry of MODEL_CASCADE) {
+    const { model, apiVersion } = entry;
+    console.log(`[translate] Trying model: ${model} (${apiVersion}), lang: ${lang}`);
 
-    let result = await callGeminiModel(modelName, apiKey, systemPrompt, userText);
+    let result = await callGeminiModel(entry, apiKey, systemPrompt, userText);
 
-    // Same-model retry on 429 if the wait is short enough
-    if (!result.ok && result.status === 429 && result.retryAfter && result.retryAfter <= MAX_SAME_MODEL_RETRY_MS) {
-      console.log(`[translate] ${modelName}: waiting ${result.retryAfter}ms then retrying same model`);
+    // 404 = permanently broken on this endpoint — never retry
+    if (result.status === 404) continue;
+
+    // 429 with a SHORT retryAfter → wait and try this same model once more
+    if (
+      !result.ok &&
+      result.status === 429 &&
+      result.retryAfter &&
+      result.retryAfter <= SHORT_RETRY_MS
+    ) {
+      console.log(`[translate] ${model}: short wait ${result.retryAfter}ms, retrying...`);
       await sleep(result.retryAfter);
-      result = await callGeminiModel(modelName, apiKey, systemPrompt, userText);
+      result = await callGeminiModel(entry, apiKey, systemPrompt, userText);
     }
 
-    if (result.ok) {
-      const translation = extractTranslation(result.data, fields);
-
-      if (translation === null || Object.keys(translation).length === 0) {
-        // Gemini responded but gave us nothing useful — try next model
-        console.warn(`[translate] ${modelName} returned empty/unparseable result, trying next model`);
-        continue;
-      }
-
-      // ✅ Success
-      console.log(`[translate] ${modelName} succeeded for lang: ${lang}`);
-      res.status(200).json(translation);
-      return;
+    // Track the best retryAfter hint for the eventual 503 (if needed)
+    if (!result.ok && result.retryAfter) {
+      bestRetryAfterSec = Math.max(bestRetryAfterSec, Math.ceil(result.retryAfter / 1000));
     }
 
-    // 404 = model removed from API — skip silently (already logged in callGeminiModel)
-    // 429 = quota still exhausted after retry — move to next model
-    // 5xx = upstream error — move to next model
-    if (result.retryAfter) {
-      // Track the longest retryAfter seen for the client hint
-      lastRetryAfterSec = Math.max(lastRetryAfterSec, Math.ceil(result.retryAfter / 1000));
+    if (!result.ok) continue; // 429 long-wait, 5xx, network — cascade to next model
+
+    // Model responded — validate the translation
+    const translation = extractTranslation(result.data, fields);
+    if (!translation) {
+      console.warn(`[translate] ${model} gave empty/unparseable result — trying next`);
+      continue;
     }
+
+    // ✅ Success
+    console.log(`[translate] ${model} (${apiVersion}) succeeded for lang: ${lang}`);
+    res.status(200).json(translation);
+    return;
   }
 
   // ── All models failed ─────────────────────────────────────────────────────────
-  // Return 503 (Service Unavailable) with a Retry-After header.
-  // The client reads this header and waits before trying again, rather than
-  // hammering the endpoint and making the quota problem worse.
-  console.error(`[translate] All models exhausted for lang: ${lang}. Returning 503.`);
-  res.setHeader('Retry-After', String(lastRetryAfterSec));
+  // 503 + Retry-After: client will show English content immediately and
+  // silently retry in the background after the hint delay.
+  console.error(`[translate] All ${MODEL_CASCADE.length} model slots exhausted for lang: ${lang}. Returning 503.`);
+  res.setHeader('Retry-After', String(bestRetryAfterSec));
   res.status(503).json({
-    error: 'Translation service temporarily unavailable. Please try again shortly.',
-    retryAfter: lastRetryAfterSec,
+    error:      'Translation service temporarily unavailable due to quota. Please try again shortly.',
+    retryAfter: bestRetryAfterSec,
   });
 }
