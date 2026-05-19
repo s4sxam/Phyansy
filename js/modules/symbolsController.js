@@ -5,7 +5,7 @@
 
 import { GREEK, MATH_SYMBOLS } from '../data/symbolsData.js';
 import { createLazySection } from './lazyRenderer.js';
-import { getCurrentLang, onLangChange, translateBatch } from './langController.js';
+import { onLangChange } from './langController.js';
 
 const DESKTOP_BREAKPOINT = 768;
 const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
@@ -56,15 +56,13 @@ function initModal() {
 export function initSymbols() {
   const modal = initModal();
 
-  // ── CARD TRANSLATION ON LANGUAGE CHANGE ─────────────────────────────────
-  async function _translateGreekCards(lang) {
+  // Language changes: cards always show English content from data files.
+  // Translated content will come from i18n locale files when provided.
+  onLangChange(() => {
+    // Greek cards
     const grid = document.getElementById('greek-grid');
-    if (!grid) return;
-    const cards = [...grid.querySelectorAll('[data-lazy-idx]')];
-    if (cards.length === 0) return;
-
-    if (lang === 'en') {
-      cards.forEach(card => {
+    if (grid) {
+      grid.querySelectorAll('[data-lazy-idx]').forEach(card => {
         const idx = Number(card.dataset.lazyIdx);
         const g   = GREEK[idx];
         if (!g) return;
@@ -75,42 +73,11 @@ export function initSymbols() {
         if (pronEl)    pronEl.textContent    = g.pron;
         if (primaryEl) primaryEl.textContent = g.primary;
       });
-      return;
     }
-
-    const batchItems = cards.map(card => {
-      const idx = Number(card.dataset.lazyIdx);
-      const g   = GREEK[idx];
-      if (!g) return null;
-      return { id: String(idx), fields: { name: g.name, pron: g.pron, primary: g.primary } };
-    }).filter(Boolean);
-
-    cards.forEach(c => c.classList.add('translating'));
-    try {
-      const resultMap = await translateBatch(batchItems, lang);
-      cards.forEach(card => {
-        const result    = resultMap.get(String(card.dataset.lazyIdx));
-        if (!result) return;
-        const nameEl    = card.querySelector('.greek-name');
-        const pronEl    = card.querySelector('.greek-pron');
-        const primaryEl = card.querySelector('.greek-use');
-        if (nameEl    && result.name)    nameEl.textContent    = result.name;
-        if (pronEl    && result.pron)    pronEl.textContent    = result.pron;
-        if (primaryEl && result.primary) primaryEl.textContent = result.primary;
-      });
-    } finally {
-      cards.forEach(c => c.classList.remove('translating'));
-    }
-  }
-
-  async function _translateMathCards(lang) {
+    // Math symbol cards
     const mathGrid = document.getElementById('math-sym-grid');
-    if (!mathGrid) return;
-    const cards = [...mathGrid.querySelectorAll('.math-sym-card')];
-    if (cards.length === 0) return;
-
-    if (lang === 'en') {
-      cards.forEach((card, i) => {
+    if (mathGrid) {
+      mathGrid.querySelectorAll('.math-sym-card').forEach((card, i) => {
         const s = MATH_SYMBOLS[i];
         if (!s) return;
         const nameEl = card.querySelector('.math-sym-name');
@@ -118,34 +85,7 @@ export function initSymbols() {
         if (nameEl) nameEl.textContent = s.name;
         if (useEl)  useEl.textContent  = s.use;
       });
-      return;
     }
-
-    const batchItems = cards.map((card, i) => {
-      const s = MATH_SYMBOLS[i];
-      if (!s) return null;
-      return { id: `math_${i}`, fields: { name: s.name, use: s.use } };
-    }).filter(Boolean);
-
-    cards.forEach(c => c.classList.add('translating'));
-    try {
-      const resultMap = await translateBatch(batchItems, lang);
-      cards.forEach((card, i) => {
-        const result = resultMap.get(`math_${i}`);
-        if (!result) return;
-        const nameEl = card.querySelector('.math-sym-name');
-        const useEl  = card.querySelector('.math-sym-use');
-        if (nameEl && result.name) nameEl.textContent = result.name;
-        if (useEl  && result.use)  useEl.textContent  = result.use;
-      });
-    } finally {
-      cards.forEach(c => c.classList.remove('translating'));
-    }
-  }
-
-  onLangChange(lang => {
-    _translateGreekCards(lang);
-    _translateMathCards(lang);
   });
 
   createLazySection({
