@@ -19,6 +19,11 @@ import { CONSTANTS_HI } from '../data/constantsData.hi.js';
 import { CONSTANTS_JA } from '../data/constantsData.ja.js';
 import { CONSTANTS_MR } from '../data/constantsData.mr.js';
 import { CONSTANTS_ES } from '../data/constantsData.es.js';
+import { CONSTANTS_PT } from '../data/constantsData.pt.js';
+import { CONSTANTS_DE } from '../data/constantsData.de.js';
+import { CONSTANTS_RU } from '../data/constantsData.ru.js';
+import { CONSTANTS_TA } from '../data/constantsData.ta.js';
+import { CONSTANTS_TE } from '../data/constantsData.te.js';
 
 // ── Locale resolver ───────────────────────────────────────────────────────────
 const LOCALE_MAP = {
@@ -30,6 +35,11 @@ const LOCALE_MAP = {
   ja: CONSTANTS_JA,
   mr: CONSTANTS_MR,
   es: CONSTANTS_ES,
+  pt: CONSTANTS_PT,
+  de: CONSTANTS_DE,
+  ru: CONSTANTS_RU,
+  ta: CONSTANTS_TA,
+  te: CONSTANTS_TE,
 };
 function getLocalizedConstants(lang) {
   return LOCALE_MAP[lang] ?? CONSTANTS;
