@@ -11,6 +11,29 @@
 // =============================================================================
 
 import { CONSTANTS } from '../data/constantsData.js';
+import { CONSTANTS_BN } from '../data/constantsData.bn.js';
+import { CONSTANTS_AR } from '../data/constantsData.ar.js';
+import { CONSTANTS_ZH } from '../data/constantsData.zh.js';
+import { CONSTANTS_FR } from '../data/constantsData.fr.js';
+import { CONSTANTS_HI } from '../data/constantsData.hi.js';
+import { CONSTANTS_JA } from '../data/constantsData.ja.js';
+import { CONSTANTS_MR } from '../data/constantsData.mr.js';
+import { CONSTANTS_ES } from '../data/constantsData.es.js';
+
+// ── Locale resolver ───────────────────────────────────────────────────────────
+const LOCALE_MAP = {
+  bn: CONSTANTS_BN,
+  ar: CONSTANTS_AR,
+  zh: CONSTANTS_ZH,
+  fr: CONSTANTS_FR,
+  hi: CONSTANTS_HI,
+  ja: CONSTANTS_JA,
+  mr: CONSTANTS_MR,
+  es: CONSTANTS_ES,
+};
+function getLocalizedConstants(lang) {
+  return LOCALE_MAP[lang] ?? CONSTANTS;
+}
 import { createLazySection } from './lazyRenderer.js';
 import { showToast } from './toastController.js';
 import {
@@ -241,13 +264,14 @@ function initModal() {
 export function initConstants() {
   const modal = initModal();
 
-  // ── CARD LANGUAGE CHANGE — restore English content on language switch ─────
-  function _restoreCardText() {
+  // ── CARD LANGUAGE CHANGE — swap card text to localized data ────────────────
+  function _updateCardText(lang) {
     const grid = document.getElementById('constants-grid');
     if (!grid) return;
+    const data = getLocalizedConstants(lang);
     grid.querySelectorAll('[data-lazy-idx]').forEach(card => {
       const idx = Number(card.dataset.lazyIdx);
-      const c   = CONSTANTS[idx];
+      const c   = data[idx];
       if (!c) return;
       const nameEl = card.querySelector('.const-name');
       const descEl = card.querySelector('.const-desc');
@@ -256,7 +280,7 @@ export function initConstants() {
     });
   }
 
-  onLangChange(() => { _restoreCardText(); });
+  onLangChange(lang => { _updateCardText(lang); });
 
   createLazySection({
     data:           CONSTANTS,
@@ -321,7 +345,7 @@ export function initConstants() {
       //   expand logic entirely — the same `return true` contract used by
       //   equationsController (see lazyRenderer.js line ~125).
       if (modal) {
-        modal.openModal(c);
+        modal.openModal(getLocalizedConstants(getCurrentLang())[idx] ?? c);
         if (isDesktop()) {
           requestAnimationFrame(() => {
             card.classList.remove('expanded');
@@ -337,14 +361,13 @@ export function initConstants() {
   const _cGrid = document.getElementById('constants-grid');
   if (_cGrid) {
     const _initLang = getCurrentLang();
-    if (_initLang !== 'en') _translateVisibleCards(_initLang);
+    if (_initLang !== 'en') _updateCardText(_initLang);
 
     let _rerenderTimer = null;
     new MutationObserver(() => {
       const l = getCurrentLang();
-      if (l === 'en') return;
       clearTimeout(_rerenderTimer);
-      _rerenderTimer = setTimeout(() => _translateVisibleCards(l), 100);
+      _rerenderTimer = setTimeout(() => _updateCardText(l), 100);
     }).observe(_cGrid, { childList: true });
   }
 }
