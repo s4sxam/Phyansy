@@ -212,8 +212,8 @@ function initModal() {
   }
 
   async function openModal(c) {
-    symbolEl.textContent = c.symbol;
-    nameEl.textContent   = c.name;
+    symbolEl.innerHTML = c.symbol;
+    nameEl.innerHTML   = c.name;
     badgeEl.textContent  = c.category;
     badgeEl.dataset.cat  = c.category;
     valueEl.innerHTML    = `${c.value} <span style="color:var(--text-muted)">${c.unit}</span>`;
@@ -275,7 +275,7 @@ export function initConstants() {
       if (!c) return;
       const nameEl = card.querySelector('.const-name');
       const descEl = card.querySelector('.const-desc');
-      if (nameEl) nameEl.textContent = c.name;
+      if (nameEl) nameEl.innerHTML = c.name;
       if (descEl) descEl.textContent = c.description;
     });
   }
