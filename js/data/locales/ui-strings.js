@@ -74,9 +74,7 @@ export const UI_STRINGS = {
     lang_picker_title:   'Choose Language',
     lang_english_label:  'Physics Terms Stay in English',
     lang_note:           'Formulas, symbols, and variable names remain in English — the universal language of physics. Explanations are translated.',
-    lang_ai_powered:     'Explanations translated by AI',
     lang_translating:    'Translating…',
-    lang_translation_fail: 'Translation unavailable — showing English',
 
     // Toast
     toast_copied: 'Copied exact value!',
@@ -139,9 +137,7 @@ export const UI_STRINGS = {
     lang_picker_title:   'Elegir Idioma',
     lang_english_label:  'Términos físicos en inglés',
     lang_note:           'Las fórmulas, símbolos y nombres de variables permanecen en inglés — el idioma universal de la física. Las explicaciones se traducen.',
-    lang_ai_powered:     'Explicaciones traducidas por IA',
     lang_translating:    'Traduciendo…',
-    lang_translation_fail: 'Traducción no disponible — mostrando inglés',
 
     toast_copied: '¡Valor exacto copiado!',
   },
@@ -203,9 +199,7 @@ export const UI_STRINGS = {
     lang_picker_title:   '选择语言',
     lang_english_label:  '物理术语保留英文',
     lang_note:           '公式、符号和变量名保留英文 — 物理学的通用语言。解释说明将被翻译。',
-    lang_ai_powered:     '解释由AI翻译',
     lang_translating:    '正在翻译…',
-    lang_translation_fail: '翻译不可用 — 显示英文',
 
     toast_copied: '已复制精确值！',
   },
@@ -267,9 +261,7 @@ export const UI_STRINGS = {
     lang_picker_title:   'भाषा चुनें',
     lang_english_label:  'भौतिकी शब्द अंग्रेज़ी में रहेंगे',
     lang_note:           'सूत्र, प्रतीक और चर नाम अंग्रेज़ी में रहेंगे — भौतिकी की सार्वभौमिक भाषा। व्याख्याएँ अनुवादित होंगी।',
-    lang_ai_powered:     'AI द्वारा अनुवादित व्याख्याएँ',
     lang_translating:    'अनुवाद हो रहा है…',
-    lang_translation_fail: 'अनुवाद उपलब्ध नहीं — अंग्रेज़ी दिखाई जा रही है',
 
     toast_copied: 'सटीक मान कॉपी किया गया!',
   },
@@ -331,9 +323,7 @@ export const UI_STRINGS = {
     lang_picker_title:   'اختر اللغة',
     lang_english_label:  'مصطلحات الفيزياء تبقى بالإنجليزية',
     lang_note:           'تبقى الصيغ والرموز وأسماء المتغيرات بالإنجليزية — اللغة العالمية للفيزياء. يتم ترجمة الشروح.',
-    lang_ai_powered:     'الشروح مترجمة بالذكاء الاصطناعي',
     lang_translating:    'جارٍ الترجمة…',
-    lang_translation_fail: 'الترجمة غير متاحة — يتم عرض الإنجليزية',
 
     toast_copied: 'تم نسخ القيمة الدقيقة!',
   },
@@ -395,9 +385,7 @@ export const UI_STRINGS = {
     lang_picker_title:   'Choisir la Langue',
     lang_english_label:  'Termes physiques en anglais',
     lang_note:           'Les formules, symboles et noms de variables restent en anglais — la langue universelle de la physique. Les explications sont traduites.',
-    lang_ai_powered:     'Explications traduites par IA',
     lang_translating:    'Traduction en cours…',
-    lang_translation_fail: 'Traduction indisponible — affichage en anglais',
 
     toast_copied: 'Valeur exacte copiée !',
   },
@@ -459,9 +447,7 @@ export const UI_STRINGS = {
     lang_picker_title:   'ভাষা বেছে নিন',
     lang_english_label:  'পদার্থবিজ্ঞানের পরিভাষা ইংরেজিতে থাকবে',
     lang_note:           'সূত্র, প্রতীক এবং চল রাশির নাম ইংরেজিতে থাকবে — পদার্থবিজ্ঞানের সর্বজনীন ভাষা। ব্যাখ্যাগুলো অনুবাদিত হবে।',
-    lang_ai_powered:     'AI দ্বারা অনুবাদিত ব্যাখ্যা',
     lang_translating:    'অনুবাদ হচ্ছে…',
-    lang_translation_fail: 'অনুবাদ পাওয়া যাচ্ছে না — ইংরেজি দেখানো হচ্ছে',
 
     toast_copied: 'সঠিক মান কপি করা হয়েছে!',
   },
@@ -523,9 +509,7 @@ export const UI_STRINGS = {
     lang_picker_title:   'Escolher Idioma',
     lang_english_label:  'Termos físicos em inglês',
     lang_note:           'Fórmulas, símbolos e nomes de variáveis permanecem em inglês — a língua universal da física. As explicações são traduzidas.',
-    lang_ai_powered:     'Explicações traduzidas por IA',
     lang_translating:    'Traduzindo…',
-    lang_translation_fail: 'Tradução indisponível — exibindo inglês',
 
     toast_copied: 'Valor exato copiado!',
   },
@@ -587,9 +571,7 @@ export const UI_STRINGS = {
     lang_picker_title:   'Выбор Языка',
     lang_english_label:  'Физические термины — на английском',
     lang_note:           'Формулы, символы и названия переменных остаются на английском — универсальном языке физики. Объяснения переводятся.',
-    lang_ai_powered:     'Объяснения переведены ИИ',
     lang_translating:    'Перевод…',
-    lang_translation_fail: 'Перевод недоступен — показывается английский',
 
     toast_copied: 'Точное значение скопировано!',
   },
@@ -651,9 +633,7 @@ export const UI_STRINGS = {
     lang_picker_title:   '言語を選択',
     lang_english_label:  '物理用語は英語のまま',
     lang_note:           '公式・記号・変数名は英語のまま — 物理学の共通言語。解説は翻訳されます。',
-    lang_ai_powered:     'AIによる解説翻訳',
     lang_translating:    '翻訳中…',
-    lang_translation_fail: '翻訳できません — 英語で表示',
 
     toast_copied: '厳密値をコピーしました！',
   },
@@ -715,9 +695,7 @@ export const UI_STRINGS = {
     lang_picker_title:   'Sprache wählen',
     lang_english_label:  'Physikalische Begriffe bleiben englisch',
     lang_note:           'Formeln, Symbole und Variablennamen bleiben englisch — die universelle Sprache der Physik. Erklärungen werden übersetzt.',
-    lang_ai_powered:     'Erklärungen KI-übersetzt',
     lang_translating:    'Übersetzung läuft…',
-    lang_translation_fail: 'Übersetzung nicht verfügbar — Englisch wird angezeigt',
 
     toast_copied: 'Exakter Wert kopiert!',
   },
@@ -778,9 +756,7 @@ export const UI_STRINGS = {
     lang_picker_title:   'மொழியை தேர்ந்தெடுக்கவும்',
     lang_english_label:  'இயற்பியல் சொற்கள் ஆங்கிலத்தில் இருக்கும்',
     lang_note:           'சூத்திரங்கள், சின்னங்கள் மற்றும் மாறி பெயர்கள் ஆங்கிலத்தில் இருக்கும் — இயற்பியலின் உலகளாவிய மொழி. விளக்கங்கள் மொழிபெயர்க்கப்படும்.',
-    lang_ai_powered:     'AI மூலம் மொழிபெயர்க்கப்பட்ட விளக்கங்கள்',
     lang_translating:    'மொழிபெயர்க்கிறது…',
-    lang_translation_fail: 'மொழிபெயர்ப்பு கிடைக்கவில்லை — ஆங்கிலம் காட்டப்படுகிறது',
 
     toast_copied: 'சரியான மதிப்பு நகலெடுக்கப்பட்டது!',
   },
@@ -842,9 +818,7 @@ export const UI_STRINGS = {
     lang_picker_title:   'భాషను ఎంచుకోండి',
     lang_english_label:  'భౌతిక పదాలు ఆంగ్లంలో ఉంటాయి',
     lang_note:           'సూత్రాలు, చిహ్నాలు మరియు చరరాశి పేర్లు ఆంగ్లంలో ఉంటాయి — భౌతికశాస్త్రం యొక్క సార్వత్రిక భాష. వివరణలు అనువదించబడతాయి.',
-    lang_ai_powered:     'AI ద్వారా అనువదించబడిన వివరణలు',
     lang_translating:    'అనువదిస్తోంది…',
-    lang_translation_fail: 'అనువాదం అందుబాటులో లేదు — ఆంగ్లం చూపబడుతోంది',
 
     toast_copied: 'ఖచ్చితమైన విలువ కాపీ చేయబడింది!',
   },
@@ -906,9 +880,7 @@ export const UI_STRINGS = {
     lang_picker_title:   'भाषा निवडा',
     lang_english_label:  'भौतिकशास्त्राच्या संज्ञा इंग्रजीत राहतात',
     lang_note:           'सूत्रे, चिन्हे आणि चल राशींची नावे इंग्रजीत राहतात — भौतिकशास्त्राची सार्वत्रिक भाषा. स्पष्टीकरणे अनुवादित केली जातात.',
-    lang_ai_powered:     'AI द्वारे अनुवादित स्पष्टीकरणे',
     lang_translating:    'अनुवाद होत आहे…',
-    lang_translation_fail: 'अनुवाद उपलब्ध नाही — इंग्रजी दाखवत आहे',
 
     toast_copied: 'अचूक मूल्य कॉपी केले!',
   },
