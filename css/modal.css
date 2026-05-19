@@ -87,7 +87,7 @@
 .phys-modal-close {
   position: sticky;
   top: 14px;
-  float: right;
+  float: inline-end;
   margin-bottom: -52px; /* collapse float's reserved space below the button */
   background: rgba(0,0,0,0.05);
   border: 1px solid rgba(0,0,0,0.09);
