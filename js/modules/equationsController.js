@@ -13,8 +13,7 @@
 import { EQUATIONS } from '../data/equationsData.js';
 import { createLazyTabSection } from './lazyRenderer.js';
 import {
-  getCurrentLang, onLangChange,
-  translateContent, translateBatch, translateVars, TRANSLATABLE_FIELDS, t,
+  getCurrentLang, onLangChange, t,
 } from './langController.js';
 
 const ICONS = {
@@ -333,39 +332,6 @@ function initModal() {
     box.scrollTop = 0;
     closeBtn.focus();
 
-    // ── AI Translation (non-English only) ────────────────────────────────────
-    const lang = getCurrentLang();
-    if (lang !== 'en') {
-      // Show shimmer while translating
-      bodyEl.classList.add('translating');
-
-      try {
-        // Translate prose fields and variable descriptions in parallel
-        const [translated, translatedVarsResult] = await Promise.all([
-          translateContent(eq, TRANSLATABLE_FIELDS, lang),
-          translateVars(eq.vars, lang),
-        ]);
-
-        // Merge translated fields back into a shallow copy — never mutate original data
-        const translatedEq = { ...eq, ...translated };
-        _renderAndKatex(translatedEq, translatedVarsResult);
-
-        // Append "AI translated" badge
-        const badge = document.createElement('div');
-        badge.className = 'lang-translated-badge';
-        badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>${t('lang_ai_powered')}</span>`;
-        bodyEl.appendChild(badge);
-
-      } catch {
-        // Translation failed — silently keep English content (already rendered)
-        const errMsg = document.createElement('div');
-        errMsg.className = 'lang-trans-error';
-        errMsg.textContent = t('lang_translation_fail');
-        bodyEl.appendChild(errMsg);
-      } finally {
-        bodyEl.classList.remove('translating');
-      }
-    }
   }
 
   function closeModal() {
@@ -488,56 +454,23 @@ export function initEquations() {
   const stepMs    = isMobile ? 20 : 40;  // 20ms steps on mobile, 40ms on desktop
   const maxDelay  = isMobile ? 200 : 300; // hard cap so late cards aren't sluggish
 
-  // ── CARD TRANSLATION ON LANGUAGE CHANGE ────────────────────────────────────
-  // Batch-translates name + desc for all visible cards in one API call,
-  // then patches the DOM in-place — no flicker, no re-render.
-  async function _translateVisibleCards(lang) {
+  // ── CARD LANGUAGE CHANGE — restore English content on language switch ─────
+  function _restoreCardText() {
     const grid = document.getElementById('eq-grid');
     if (!grid) return;
-    const cards = [...grid.querySelectorAll('[data-lazy-idx]')];
-    if (cards.length === 0) return;
-
-    if (lang === 'en') {
-      cards.forEach(card => {
-        const branch = card.dataset.lazyBranch;
-        const idx    = Number(card.dataset.lazyIdx);
-        const eq     = (EQUATIONS[branch] || [])[idx];
-        if (!eq) return;
-        const nameEl = card.querySelector('.eq-name');
-        const descEl = card.querySelector('.eq-desc');
-        if (nameEl) nameEl.textContent = eq.name;
-        if (descEl) descEl.textContent = eq.desc;
-      });
-      return;
-    }
-
-    const batchItems = cards.map(card => {
+    grid.querySelectorAll('[data-lazy-idx]').forEach(card => {
       const branch = card.dataset.lazyBranch;
       const idx    = Number(card.dataset.lazyIdx);
       const eq     = (EQUATIONS[branch] || [])[idx];
-      if (!eq) return null;
-      return { id: `${branch}::${idx}`, fields: { name: eq.name, desc: eq.desc } };
-    }).filter(Boolean);
-
-    cards.forEach(c => c.classList.add('translating'));
-    try {
-      const resultMap = await translateBatch(batchItems, lang);
-      cards.forEach(card => {
-        const id     = `${card.dataset.lazyBranch}::${card.dataset.lazyIdx}`;
-        const result = resultMap.get(id);
-        if (!result) return;
-        const nameEl = card.querySelector('.eq-name');
-        const descEl = card.querySelector('.eq-desc');
-        if (nameEl && result.name) nameEl.textContent = result.name;
-        if (descEl && result.desc) descEl.textContent = result.desc;
-      });
-    } finally {
-      cards.forEach(c => c.classList.remove('translating'));
-    }
+      if (!eq) return;
+      const nameEl = card.querySelector('.eq-name');
+      const descEl = card.querySelector('.eq-desc');
+      if (nameEl) nameEl.textContent = eq.name;
+      if (descEl) descEl.textContent = eq.desc;
+    });
   }
 
-  // Subscribe: re-translate cards whenever language changes
-  onLangChange(lang => { _translateVisibleCards(lang); });
+  onLangChange(() => { _restoreCardText(); });
 
   createLazyTabSection({
     data:         EQUATIONS,
