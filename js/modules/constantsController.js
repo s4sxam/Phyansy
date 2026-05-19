@@ -54,9 +54,9 @@ const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
 
 function buildDetailHTML(c) {
   const rows = [
-    c.exact        ? `<div class="detail-row"><div class="detail-label">${t('modal_exact_value')}</div><div class="detail-val" style="font-family:'JetBrains Mono',monospace;font-size:12.5px">${c.exact}</div></div>` : '',
-    c.discoveredBy ? `<div class="detail-row"><div class="detail-label">${t('modal_discovered_by')}</div><div class="detail-val">${c.discoveredBy}</div></div>` : '',
-    c.formula      ? `<div class="detail-row"><div class="detail-label">${t('modal_key_formula')}</div><div class="detail-val" style="font-family:'JetBrains Mono',monospace">${c.formula}</div></div>` : '',
+    c.exact        ? `<div class="detail-row"><div class="detail-label">${t('modal_exact_value')}</div><div class="detail-val" dir="ltr" style="unicode-bidi:isolate;font-family:'JetBrains Mono',monospace;font-size:12.5px">${c.exact}</div></div>` : '',
+    c.discoveredBy ? `<div class="detail-row"><div class="detail-label">${t('modal_discovered_by')}</div><div class="detail-val" dir="ltr" style="unicode-bidi:isolate">${c.discoveredBy}</div></div>` : '',
+    c.formula      ? `<div class="detail-row"><div class="detail-label">${t('modal_key_formula')}</div><div class="detail-val" dir="ltr" style="unicode-bidi:isolate;font-family:'JetBrains Mono',monospace">${c.formula}</div></div>` : '',
   ].filter(Boolean).join('');
 
   const blocks = [
@@ -216,7 +216,7 @@ function initModal() {
     nameEl.innerHTML   = c.name;
     badgeEl.textContent  = c.category;
     badgeEl.dataset.cat  = c.category;
-    valueEl.innerHTML    = `${c.value} <span style="color:var(--text-muted)">${c.unit}</span>`;
+    valueEl.innerHTML    = `<span dir="ltr" style="unicode-bidi:isolate">${c.value} <span style="color:var(--text-muted)">${c.unit}</span></span>`;
 
     // Render English immediately — never blank
     _renderConstBody(c);
@@ -306,7 +306,7 @@ export function initConstants() {
         </div>
 
         <div class="const-name">${c.name}</div>
-        <div class="const-value">${c.value} <span style="color:var(--text-muted)">${c.unit}</span></div>
+        <div class="const-value" dir="ltr" style="unicode-bidi:isolate">${c.value} <span style="color:var(--text-muted)">${c.unit}</span></div>
         <div class="const-desc">${c.description}</div>
 
         <button class="const-copy-btn" aria-label="Copy ${c.name}">
