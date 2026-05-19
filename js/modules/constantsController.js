@@ -14,8 +14,7 @@ import { CONSTANTS } from '../data/constantsData.js';
 import { createLazySection } from './lazyRenderer.js';
 import { showToast } from './toastController.js';
 import {
-  getCurrentLang, onLangChange,
-  translateContent, translateBatch, TRANSLATABLE_FIELDS, t,
+  getCurrentLang, onLangChange, t,
 } from './langController.js';
 
 const ICONS = {
@@ -217,28 +216,6 @@ function initModal() {
     box.scrollTop = 0;
     closeBtn.focus();
 
-    // ── AI Translation (non-English only) ────────────────────────────────────
-    const lang = getCurrentLang();
-    if (lang !== 'en') {
-      bodyEl.classList.add('translating');
-      try {
-        const constFields = ['whatItSays', 'simpleExample', 'deepMeaning', 'whyItMatters'];
-        const translated  = await translateContent(c, constFields, lang);
-        _renderConstBody({ ...c, ...translated });
-
-        const badge = document.createElement('div');
-        badge.className = 'lang-translated-badge';
-        badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>${t('lang_ai_powered')}</span>`;
-        bodyEl.appendChild(badge);
-      } catch {
-        const errMsg = document.createElement('div');
-        errMsg.className = 'lang-trans-error';
-        errMsg.textContent = t('lang_translation_fail');
-        bodyEl.appendChild(errMsg);
-      } finally {
-        bodyEl.classList.remove('translating');
-      }
-    }
   }
 
   function closeModal() {
@@ -264,50 +241,22 @@ function initModal() {
 export function initConstants() {
   const modal = initModal();
 
-  // ── CARD TRANSLATION ON LANGUAGE CHANGE ────────────────────────────────────
-  async function _translateVisibleCards(lang) {
+  // ── CARD LANGUAGE CHANGE — restore English content on language switch ─────
+  function _restoreCardText() {
     const grid = document.getElementById('constants-grid');
     if (!grid) return;
-    const cards = [...grid.querySelectorAll('[data-lazy-idx]')];
-    if (cards.length === 0) return;
-
-    if (lang === 'en') {
-      cards.forEach(card => {
-        const idx = Number(card.dataset.lazyIdx);
-        const c   = CONSTANTS[idx];
-        if (!c) return;
-        const nameEl = card.querySelector('.const-name');
-        const descEl = card.querySelector('.const-desc');
-        if (nameEl) nameEl.textContent = c.name;
-        if (descEl) descEl.textContent = c.description;
-      });
-      return;
-    }
-
-    const batchItems = cards.map(card => {
+    grid.querySelectorAll('[data-lazy-idx]').forEach(card => {
       const idx = Number(card.dataset.lazyIdx);
       const c   = CONSTANTS[idx];
-      if (!c) return null;
-      return { id: String(idx), fields: { name: c.name, desc: c.description } };
-    }).filter(Boolean);
-
-    cards.forEach(c => c.classList.add('translating'));
-    try {
-      const resultMap = await translateBatch(batchItems, lang);
-      cards.forEach(card => {
-        const result = resultMap.get(String(card.dataset.lazyIdx));
-        if (!result) return;
-        const nameEl = card.querySelector('.const-name');
-        const descEl = card.querySelector('.const-desc');
-        if (nameEl && result.name) nameEl.textContent = result.name;
-        if (descEl && result.desc) descEl.textContent = result.desc;
-      });
-    } finally {
-      cards.forEach(c => c.classList.remove('translating'));
-    }
+      if (!c) return;
+      const nameEl = card.querySelector('.const-name');
+      const descEl = card.querySelector('.const-desc');
+      if (nameEl) nameEl.textContent = c.name;
+      if (descEl) descEl.textContent = c.description;
+    });
   }
 
-  onLangChange(lang => { _translateVisibleCards(lang); });
+  onLangChange(() => { _restoreCardText(); });
 
   createLazySection({
     data:           CONSTANTS,
