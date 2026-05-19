@@ -1,31 +1,23 @@
 // =============================================================================
-// langController.js — Phyansy i18n System (Phase 2 — Multi-language)
+// langController.js — Phyansy i18n System
 // Made by Tanay (s4sxam)
 //
 // ARCHITECTURE:
-//   • Static UI strings  — nav, section headers, modal labels (instant, no AI)
-//   • AI-translated text — whatItSays, deepMeaning, whyItMatters, etc. (on-demand)
+//   • Static UI strings  — nav, section headers, modal labels (instant, from files)
+//   • Content strings    — supplied via i18n locale files per language
 //   • Physics terms stay in English always — universal language of physics
 //   • RTL full layout support (Arabic)
 //   • CJK typography adjustments (Chinese, Japanese)
-//   • Two-tier cache: session memory (Map) + localStorage (30-day expiry)
 //
 // IMPORTANT: formulas, variable symbols, SI units — NEVER translated.
 // =============================================================================
 
 import { UI_STRINGS, RTL_LANGS, CJK_LANGS, INDIC_LANGS } from '../data/locales/ui-strings.js';
 
-const LANG_KEY      = 'quantra_lang';
-const CACHE_KEY_PFX = 'phyansy_trans_';
-// v3: bumped from v2 because the old direct Gemini call was blocked by HTTP-referrer
-// restrictions (403 "Host not in allowlist"), which wrote empty results into v2 cache
-// keys. Those poisoned entries would silently serve English forever even after the
-// proxy fix. v3 is a clean slate — all old v1/v2 keys are ignored and naturally expire.
-const CACHE_VERSION = 'v3';
+const LANG_KEY = 'quantra_lang';
 
 let _currentLang   = 'en';
 const _subscribers = [];
-const _sessionCache = new Map();
 
 function _read(key, fallback = null) {
   try { const v = localStorage.getItem(key); return v !== null ? v : fallback; }
@@ -33,14 +25,6 @@ function _read(key, fallback = null) {
 }
 function _write(key, value) {
   try { localStorage.setItem(key, value); } catch {}
-}
-function _remove(key) {
-  try { localStorage.removeItem(key); } catch {}
-}
-function _hash(str) {
-  let h = 5381;
-  for (let i = 0; i < str.length; i++) h = ((h << 5) + h) ^ str.charCodeAt(i);
-  return (h >>> 0).toString(36);
 }
 
 export function getCurrentLang() { return _currentLang; }
@@ -83,9 +67,6 @@ function _applyLangToDOM(lang) {
   } else {
     html.removeAttribute('data-cjk');
   }
-  // Indic scripts (Hindi, Bengali, Tamil, Telugu, Marathi) need Noto Sans loaded.
-  // We lazy-load only the font subset needed for the chosen script — not all at once.
-  // Each subset is < 60KB woff2. We set data-indic so lang.css can apply the stack.
   if (INDIC_LANGS.has(lang)) {
     html.setAttribute('data-indic', lang);
     _loadIndicFont(lang);
@@ -97,15 +78,11 @@ function _applyLangToDOM(lang) {
 }
 
 // ── Lazy Indic font loader ────────────────────────────────────────────────────
-// Loads the Google Fonts Noto Sans subset for the given Indic script.
-// Called at most once per script per session (Set tracks loaded scripts).
-// Font requests are tiny woff2 subsets (40–80KB) — no perceptible delay.
 const _loadedIndicFonts = new Set();
 function _loadIndicFont(lang) {
   if (_loadedIndicFonts.has(lang)) return;
   _loadedIndicFonts.add(lang);
 
-  // Google Fonts API query for each Indic script subset
   const fontMap = {
     hi: 'Noto+Sans:ital,wght@0,400;0,500;0,700&subset=devanagari',
     mr: 'Noto+Sans:ital,wght@0,400;0,500;0,700&subset=devanagari',
@@ -142,286 +119,4 @@ function _applyStaticStrings(lang) {
 
 function _notifySubscribers() {
   _subscribers.forEach(cb => { try { cb(_currentLang); } catch(e) {} });
-}
-
-export const TRANSLATABLE_FIELDS = [
-  'whatItSays', 'simpleExample', 'deepMeaning', 'whyItMatters',
-  'example', 'derivation', 'whoDiscovered', 'misconception', 'desc',
-];
-
-// ── translateVars ─────────────────────────────────────────────────────────────
-// Translates the .d (description) field of equation variable rows.
-// Keeps the .s (symbol) field always in English — it's always a Latin/Greek letter.
-//
-// vars:  array of { s: 'F', d: 'Force in Newtons' }
-// lang:  target language code
-// Returns: array of { s, d } with translated d values
-// ─────────────────────────────────────────────────────────────────────────────
-export async function translateVars(vars, lang) {
-  if (lang === 'en' || !vars || vars.length === 0) return vars;
-
-  // Build a flat object: { VAR_0: 'Force in Newtons', VAR_1: 'Mass in kg', ... }
-  const toTranslate = {};
-  const cached      = {};
-
-  vars.forEach((v, i) => {
-    if (!v.d) return;
-    const cacheKey = `${lang}:${_hash(v.d)}`;
-    const stored   = _sessionCache.get(cacheKey) ?? _readTranslationCache(cacheKey);
-    if (stored !== null) {
-      cached[i] = stored;
-      if (!_sessionCache.has(cacheKey)) _sessionCache.set(cacheKey, stored);
-    } else {
-      toTranslate[`VAR_${i}`] = v.d;
-    }
-  });
-
-  let apiResult = {};
-  if (Object.keys(toTranslate).length > 0) {
-    apiResult = await _callTranslationAPI(toTranslate, lang, '');
-    // Write results to cache
-    Object.entries(apiResult).forEach(([key, text]) => {
-      const i         = parseInt(key.replace('VAR_', ''), 10);
-      const cacheKey  = `${lang}:${_hash(vars[i].d)}`;
-      _sessionCache.set(cacheKey, text);
-      _writeTranslationCache(cacheKey, text);
-    });
-  }
-
-  return vars.map((v, i) => ({
-    s: v.s, // symbol always stays in English
-    d: cached[i] ?? (apiResult[`VAR_${i}`] || v.d),
-  }));
-}
-
-export async function translateContent(obj, fields, lang) {
-  if (lang === 'en') return Object.fromEntries(fields.map(f => [f, obj[f]]));
-
-  const result = {};
-  const toTranslate = {};
-
-  fields.forEach(field => {
-    if (!obj[field]) return;
-    const cacheKey = `${lang}:${_hash(obj[field])}`;
-    const sessionHit = _sessionCache.get(cacheKey);
-    if (sessionHit) {
-      // Only trust session cache if it holds a real non-empty string
-      result[field] = sessionHit;
-    } else {
-      const stored = _readTranslationCache(cacheKey);
-      if (stored) {
-        // Only trust localStorage cache if it holds a real non-empty string
-        result[field] = stored;
-        _sessionCache.set(cacheKey, stored);
-      } else {
-        toTranslate[field] = obj[field];
-      }
-    }
-  });
-
-  if (Object.keys(toTranslate).length > 0) {
-    const translated = await _callTranslationAPI(toTranslate, lang, obj.name || '');
-    Object.entries(translated).forEach(([field, text]) => {
-      if (!text) return;
-      result[field] = text;
-      const cacheKey = `${lang}:${_hash(toTranslate[field])}`;
-      _sessionCache.set(cacheKey, text);
-      _writeTranslationCache(cacheKey, text);
-    });
-  }
-
-  fields.forEach(field => {
-    if (obj[field] && !result[field]) result[field] = obj[field];
-  });
-
-  return result;
-}
-
-// =============================================================================
-// translateBatch — translate card-level fields for many items in ONE API call.
-//
-// items: array of { id, fields: { fieldName: 'english text', ... } }
-// lang:  target language code
-//
-// Returns: Map<id, { fieldName: 'translated text', ... }>
-//
-// Architecture:
-//   • Check session + localStorage cache for each (id, field) pair first.
-//   • Collect only the uncached strings and send them as one batched payload.
-//   • The payload key is `ITEM_{id}__{field}` so Gemini returns a flat JSON
-//     that we can unpack back into per-item results.
-//   • Results written back to both caches exactly like translateContent.
-// =============================================================================
-export async function translateBatch(items, lang) {
-  if (lang === 'en' || !items || items.length === 0) {
-    const out = new Map();
-    items.forEach(({ id, fields }) => out.set(id, { ...fields }));
-    return out;
-  }
-
-  const resultMap = new Map();
-  items.forEach(({ id }) => resultMap.set(id, {}));
-
-  // ── 1. Resolve cache hits, collect misses ──────────────────────────────────
-  const toTranslate = {}; // flat key → original text
-  const keyMeta     = {}; // flat key → { id, field, cacheKey }
-
-  items.forEach(({ id, fields }) => {
-    Object.entries(fields).forEach(([field, text]) => {
-      if (!text) return;
-      const cacheKey = `${lang}:${_hash(text)}`;
-      const sessionHit = _sessionCache.get(cacheKey);
-      if (sessionHit) {
-        resultMap.get(id)[field] = sessionHit;
-      } else {
-        const stored = _readTranslationCache(cacheKey);
-        if (stored) {
-          resultMap.get(id)[field] = stored;
-          _sessionCache.set(cacheKey, stored);
-        } else {
-          const flatKey = `ITEM_${id.replace(/[^A-Za-z0-9]/g, '_')}__${field}`;
-          toTranslate[flatKey] = text;
-          keyMeta[flatKey]     = { id, field, cacheKey };
-        }
-      }
-    });
-  });
-
-  // ── 2. Single API call for all misses ─────────────────────────────────────
-  if (Object.keys(toTranslate).length > 0) {
-    const translated = await _callTranslationAPI(toTranslate, lang, '');
-    Object.entries(translated).forEach(([flatKey, text]) => {
-      if (!text || !keyMeta[flatKey]) return;
-      const { id, field, cacheKey } = keyMeta[flatKey];
-      resultMap.get(id)[field] = text;
-      _sessionCache.set(cacheKey, text);
-      _writeTranslationCache(cacheKey, text);
-    });
-  }
-
-  // ── 3. Fill untranslated fields with English fallback ─────────────────────
-  items.forEach(({ id, fields }) => {
-    Object.entries(fields).forEach(([field, text]) => {
-      if (text && !resultMap.get(id)[field]) resultMap.get(id)[field] = text;
-    });
-  });
-
-  return resultMap;
-}
-
-function _cacheStorageKey(cacheKey) {
-  return `${CACHE_KEY_PFX}${CACHE_VERSION}_${cacheKey}`;
-}
-
-function _readTranslationCache(cacheKey) {
-  try {
-    const raw = localStorage.getItem(_cacheStorageKey(cacheKey));
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (Date.now() - parsed.ts > 30 * 24 * 3600 * 1000) {
-      _remove(_cacheStorageKey(cacheKey));
-      return null;
-    }
-    return parsed.text;
-  } catch { return null; }
-}
-
-function _writeTranslationCache(cacheKey, text) {
-  try {
-    localStorage.setItem(_cacheStorageKey(cacheKey), JSON.stringify({ text, ts: Date.now() }));
-  } catch { _pruneTranslationCache(); }
-}
-
-function _pruneTranslationCache() {
-  try {
-    const keys = Object.keys(localStorage)
-      .filter(k => k.startsWith(CACHE_KEY_PFX))
-      .map(k => { try { return { k, ts: JSON.parse(localStorage.getItem(k)).ts }; } catch { return { k, ts: 0 }; } })
-      .sort((a, b) => a.ts - b.ts);
-    keys.slice(0, Math.max(1, Math.floor(keys.length * 0.2))).forEach(({ k }) => localStorage.removeItem(k));
-  } catch {}
-}
-
-// ─── Translation proxy endpoint ───────────────────────────────────────────────
-// The Gemini API key lives ONLY in the server-side environment variable
-// GEMINI_API_KEY. The browser never sees it, so it cannot be stolen or
-// restricted by HTTP-referrer allowlists in Google Cloud Console.
-//
-// • Vercel deploy  → /api/translate.js   handles POST /api/translate
-// • Netlify deploy → /netlify/functions/translate.js + netlify.toml redirect
-//
-// Both expose the same URL path so this client code never needs to change.
-// ─────────────────────────────────────────────────────────────────────────────
-const TRANSLATE_ENDPOINT = '/api/translate';
-
-// ── Client-side retry config ─────────────────────────────────────────────────
-// When the server returns 503 (all Gemini models quota-exhausted), we wait the
-// server-suggested retryAfter and try once more. This covers the edge case where
-// a student's very first request hits during a brief quota window — the retry
-// almost always succeeds because the server cascade tries 3 separate quota pools.
-const _CLIENT_MAX_RETRIES      = 2;
-const _CLIENT_DEFAULT_RETRY_MS = 15_000; // fallback if server sends no hint
-const _CLIENT_MAX_RETRY_MS     = 45_000; // never wait longer than this on client
-
-async function _callTranslationAPI(fieldsToTranslate, lang, equationName, _attempt = 0) {
-  try {
-    const response = await fetch(TRANSLATE_ENDPOINT, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        fields:       fieldsToTranslate,
-        lang,
-        equationName: equationName || '',
-      }),
-    });
-
-    if (response.ok) {
-      const parsed = await response.json();
-      // Only return fields that were requested and are valid non-empty strings
-      const safeResult = {};
-      Object.keys(fieldsToTranslate).forEach(field => {
-        if (parsed[field] && typeof parsed[field] === 'string') {
-          safeResult[field] = parsed[field];
-        }
-      });
-      return safeResult;
-    }
-
-    // 503 = all server-side models quota-exhausted — honour Retry-After and retry
-    if (response.status === 503 && _attempt < _CLIENT_MAX_RETRIES) {
-      let waitMs = _CLIENT_DEFAULT_RETRY_MS;
-      try {
-        // Server sends { retryAfter: <seconds> } in the body
-        const errJson = await response.json();
-        if (errJson.retryAfter && typeof errJson.retryAfter === 'number') {
-          waitMs = Math.min(errJson.retryAfter * 1000, _CLIENT_MAX_RETRY_MS);
-        }
-      } catch {}
-      // Also respect the HTTP Retry-After header if present
-      const headerRetry = response.headers.get('Retry-After');
-      if (headerRetry) {
-        const secs = parseInt(headerRetry, 10);
-        if (!isNaN(secs)) waitMs = Math.min(secs * 1000, _CLIENT_MAX_RETRY_MS);
-      }
-      console.warn(`[Phyansy translate] 503 quota — retrying in ${waitMs / 1000}s (attempt ${_attempt + 1}/${_CLIENT_MAX_RETRIES})`);
-      await new Promise(resolve => setTimeout(resolve, waitMs));
-      return _callTranslationAPI(fieldsToTranslate, lang, equationName, _attempt + 1);
-    }
-
-    // Any other non-OK response — log and return empty (English fallback kicks in)
-    const errBody = await response.text().catch(() => '');
-    console.warn('[Phyansy translate] Proxy error', response.status, errBody);
-    return {};
-
-  } catch (err) {
-    console.warn('[Phyansy translate] Failed:', err);
-    return {};
-  }
-}
-
-export function emitTranslating(el) {
-  if (el) el.dispatchEvent(new CustomEvent('phyansy:translating', { bubbles: true }));
-}
-export function emitTranslated(el) {
-  if (el) el.dispatchEvent(new CustomEvent('phyansy:translated', { bubbles: true }));
 }
