@@ -11,10 +11,74 @@
 // =============================================================================
 
 import { EQUATIONS } from '../data/equationsData.js';
+import { EQUATIONS_BN } from '../data/equationsData_bn.js';
 import { createLazyTabSection } from './lazyRenderer.js';
 import {
   getCurrentLang, onLangChange, t,
 } from './langController.js';
+
+// ── EQUATION LOCALE MAP ───────────────────────────────────────────────────────
+// Add new locale files here following the same pattern.
+const EQUATION_LOCALE_MAP = {
+  bn: EQUATIONS_BN,
+};
+
+/**
+ * Returns localized equation data for a given lang.
+ * Falls back to null (English kept) for any unrecognised lang.
+ */
+function getLocalizedEquations(lang) {
+  return EQUATION_LOCALE_MAP[lang] ?? null;
+}
+
+/**
+ * Branch names can differ slightly between the English and locale files
+ * (e.g. "Waves & Oscillations" vs "Waves and Oscillations").
+ * This map lets the locale lookup fall back to the normalised key.
+ */
+const _BN_BRANCH_ALIAS = {
+  'Waves & Oscillations':                  'Waves and Oscillations',
+  'Nuclear & Particle':                    'Nuclear and Particle Physics',
+  'Particle Physics & QFT':               null, // not in BN — skip
+  'Astrophysics & Cosmology':             null,
+  'Fluid Mechanics':                      null,
+  'Solid State & Condensed Matter Physics': null,
+  'Mathematical Physics & Key Constants': null,
+};
+
+function _getLocBranch(localeData, branch) {
+  if (!localeData) return null;
+  if (localeData[branch]) return localeData[branch];
+  const alias = _BN_BRANCH_ALIAS[branch];
+  if (alias === null) return null;          // explicitly not in BN
+  if (alias && localeData[alias]) return localeData[alias];
+  return null;
+}
+
+/**
+ * Swaps visible card text (name + desc) to the localized data.
+ * Cards are matched by branch (data-lazy-branch) + index (data-lazy-idx).
+ * If a localized entry doesn't exist for that slot, English is kept.
+ */
+function _translateVisibleCards(lang) {
+  const grid = document.getElementById('eq-grid');
+  if (!grid) return;
+  const localeData = getLocalizedEquations(lang);
+  if (!localeData) return; // no locale file → keep English
+
+  grid.querySelectorAll('[data-lazy-branch][data-lazy-idx]').forEach(card => {
+    const branch    = card.dataset.lazyBranch;
+    const idx       = Number(card.dataset.lazyIdx);
+    const locBranch = _getLocBranch(localeData, branch);
+    const locEq     = locBranch ? locBranch[idx] : null;
+    if (!locEq) return; // fallback: leave English text in place
+
+    const nameEl = card.querySelector('.eq-name');
+    const descEl = card.querySelector('.eq-desc');
+    if (nameEl) nameEl.textContent = locEq.name;
+    if (descEl) descEl.textContent = locEq.desc;
+  });
+}
 
 const ICONS = {
   whatItSays:    `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
@@ -306,8 +370,8 @@ function initModal() {
     });
   }
 
-  async function openModal(eq) {
-    titleEl.textContent = eq.name;
+  async function openModal(eq, locEq) {
+    titleEl.textContent = locEq ? locEq.name : eq.name;
 
     const diffSlug = eq.difficulty ? eq.difficulty.toLowerCase().replace(/[^a-z]/g, '') : '';
     badgesEl.innerHTML = [
@@ -317,8 +381,14 @@ function initModal() {
 
     formulaEl.innerHTML = `\\(${eq.formulaLatex || eq.formula}\\)`;
 
-    // Render English content immediately — never leave blank
-    _renderAndKatex(eq);
+    // Merge: always keep English math fields; overlay translated prose from locEq.
+    const mergedEq = locEq
+      ? { ...eq, ...locEq, formulaLatex: eq.formulaLatex, formula: eq.formula,
+          SI_units: eq.SI_units, dimensions: eq.dimensions, integralForm: eq.integralForm }
+      : eq;
+
+    // Render content — localized if available, English fallback
+    _renderAndKatex(mergedEq, locEq ? locEq.vars : null);
 
     overlay.classList.add('show');
     lockBodyScroll(); // FIX #03
@@ -470,7 +540,13 @@ export function initEquations() {
     });
   }
 
-  onLangChange(() => { _restoreCardText(); });
+  onLangChange(lang => {
+    if (lang === 'en') {
+      _restoreCardText();
+    } else {
+      _translateVisibleCards(lang);
+    }
+  });
 
   createLazyTabSection({
     data:         EQUATIONS,
@@ -525,7 +601,17 @@ export function initEquations() {
     // for keyboard/screen-reader affordance (existing behaviour, no change).
     onExpand: (cardEl, eq) => {
       if (modal) {
-        modal.openModal(eq);
+        // Pass localized equation if available for the current language
+        const lang = getCurrentLang();
+        const localeData = getLocalizedEquations(lang);
+        let locEq = null;
+        if (localeData) {
+          const branch = cardEl.dataset.lazyBranch;
+          const idx    = Number(cardEl.dataset.lazyIdx);
+          const locBranch = _getLocBranch(localeData, branch);
+          locEq = locBranch ? locBranch[idx] : null;
+        }
+        modal.openModal(eq, locEq);
       }
       // Return true so lazyRenderer knows onExpand handled it on mobile
       return !isDesktop();
