@@ -123,6 +123,8 @@ function updateEquationDisplay() {
       delimiters: [{ left: '\\(', right: '\\)', display: false }],
       throwOnError: false,
     });
+      // Protect KaTeX from Google Translate
+      el.querySelectorAll('.katex').forEach(k => k.classList.add('notranslate'));
   } else {
     el.textContent = currentEq.formula;
   }
