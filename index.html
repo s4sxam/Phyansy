@@ -43,14 +43,20 @@
 
   <!-- Google Translate: suppress banner, style inline select -->
   <style>
+    /* Kill banner iframe — NOT the whole .skiptranslate class (that hides the select too) */
     .goog-te-banner-frame { display: none !important; }
     body { top: 0 !important; }
-    #goog-gt-tt, .goog-tooltip, .skiptranslate { display: none !important; }
+    #goog-gt-tt, .goog-tooltip { display: none !important; }
+
+    /* Only hide the skiptranslate div Google injects at top of body, not inside our wrapper */
+    body > .skiptranslate { display: none !important; }
+
     #google-translate-wrapper {
       display: flex;
       align-items: center;
       flex-shrink: 0;
     }
+    /* Hide gadget chrome (Powered by Google text/logo) */
     #google_translate_element .goog-te-gadget {
       font-size: 0 !important;
       color: transparent !important;
@@ -59,17 +65,20 @@
     #google_translate_element .goog-te-gadget > a {
       display: none !important;
     }
+    /* The actual select — styled to match nav */
     #google_translate_element select.goog-te-combo {
+      display: block !important;
+      visibility: visible !important;
       font-size: 12px;
       font-family: inherit;
-      padding: 4px 8px;
+      padding: 5px 8px;
       border-radius: 8px;
       border: 1px solid rgba(128,128,128,0.3);
       background: transparent;
-      color: inherit;
+      color: var(--text-main, inherit);
       cursor: pointer;
       outline: none;
-      max-width: 115px;
+      max-width: 120px;
       opacity: 0.85;
       transition: opacity 0.2s, border-color 0.2s;
     }
@@ -79,8 +88,9 @@
       border-color: rgba(102,126,234,0.6);
     }
     .dark #google_translate_element select.goog-te-combo {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.06);
       color: #e2e8f0;
+      border-color: rgba(255,255,255,0.15);
     }
   </style>
   <script>
@@ -90,19 +100,20 @@
         'google_translate_element'
       );
     }
-    // MutationObserver — reliably kill Google's injected banner bar
+    // MutationObserver — kill Google's injected banner after it loads
     (function suppressGoogleTranslateBanner() {
       const kill = () => {
         const banner = document.querySelector('.goog-te-banner-frame');
         if (banner) banner.style.setProperty('display', 'none', 'important');
         if (document.body && document.body.style.top)
           document.body.style.setProperty('top', '0', 'important');
-        document.querySelectorAll('iframe.goog-te-banner-frame, .goog-te-ftab-float')
+        // Hide the top-level skiptranslate div Google injects (NOT our wrapper)
+        document.querySelectorAll('body > .skiptranslate, iframe.goog-te-banner-frame')
           .forEach(el => el.style.setProperty('display', 'none', 'important'));
       };
       const observer = new MutationObserver(kill);
       document.addEventListener('DOMContentLoaded', () => {
-        observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+        observer.observe(document.body, { childList: true, subtree: false, attributes: true });
         kill();
       });
     })();
