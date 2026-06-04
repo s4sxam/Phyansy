@@ -41,6 +41,74 @@
       } catch(e){}
     })();
   </script>
+  <!-- Google Translate: suppress top bar & attribution, style widget inline -->
+  <style>
+    /* Hide the Google Translate top banner that hijacks the page */
+    .goog-te-banner-frame,
+    #goog-gt-tt,
+    .goog-tooltip,
+    .goog-tooltip:hover {
+      display: none !important;
+    }
+    body {
+      top: 0 !important;
+      position: static !important;
+    }
+    /* Wrapper sits in nav like the old globe button */
+    #google-translate-wrapper {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    /* Hide everything in the widget except the <select> */
+    #google_translate_element .goog-te-gadget {
+      font-size: 0 !important;
+      color: transparent !important;
+    }
+    #google_translate_element .goog-te-gadget > span,
+    #google_translate_element .goog-te-gadget > a {
+      display: none !important;
+    }
+    #google_translate_element select.goog-te-combo {
+      font-size: 12px;
+      font-family: inherit;
+      padding: 4px 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(128,128,128,0.3);
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      outline: none;
+      max-width: 110px;
+      opacity: 0.85;
+      transition: opacity 0.2s, border-color 0.2s;
+    }
+    #google_translate_element select.goog-te-combo:hover,
+    #google_translate_element select.goog-te-combo:focus {
+      opacity: 1;
+      border-color: rgba(102,126,234,0.6);
+    }
+    /* Dark mode compat */
+    .dark #google_translate_element select.goog-te-combo {
+      background: rgba(255,255,255,0.05);
+      color: #e2e8f0;
+    }
+  </style>
+
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement(
+        {
+          pageLanguage: 'en',
+          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false
+        },
+        'google_translate_element'
+      );
+    }
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
+
 </head>
 <body>
 
@@ -64,6 +132,11 @@
   <button class="tab-btn"        data-tab="symbols"    aria-pressed="false" data-i18n="nav_symbols">Symbols</button>
   <button class="tab-btn"        data-tab="units"      aria-pressed="false" data-i18n="nav_units">Units</button>
   <button class="tab-btn"        data-tab="calculator" aria-pressed="false" data-i18n="nav_calculator">Calculator</button>
+
+  <!-- Google Translate widget -->
+  <div id="google-translate-wrapper" title="Translate page">
+    <div id="google_translate_element"></div>
+  </div>
 
   <!-- Dark mode toggle -->
   <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
