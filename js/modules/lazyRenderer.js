@@ -96,6 +96,8 @@ export function createLazySection(config) {
         ],
         throwOnError: false,
       });
+      // Protect KaTeX from Google Translate
+      grid.querySelectorAll('.katex').forEach(k => k.classList.add('notranslate'));
     }
 
     grid.querySelectorAll('[data-lazy-idx]').forEach(card => {
@@ -290,6 +292,8 @@ export function createLazyTabSection(config) {
         ],
         throwOnError: false,
       });
+      // Protect KaTeX from Google Translate
+      grid.querySelectorAll('.katex').forEach(k => k.classList.add('notranslate'));
     }
 
     grid.querySelectorAll('[data-lazy-idx]').forEach(card => {
@@ -341,6 +345,8 @@ export function createLazyTabSection(config) {
               ],
               throwOnError: false,
             });
+      // Protect KaTeX from Google Translate
+      card.querySelectorAll('.katex').forEach(k => k.classList.add('notranslate'));
           }
         }
 
