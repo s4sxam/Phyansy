@@ -6,7 +6,6 @@
 import { initPageController }    from './js/modules/pageController.js';
 import { initSettingsController } from './js/modules/settingsController.js';
 import { initLangController }    from './js/modules/langController.js';
-import { initLangPicker }        from './js/modules/langPickerController.js';
 import { initThemeController, toggleTheme } from './js/modules/themeController.js';
 import { initBgRenderer }        from './js/modules/bgRenderer.js';
 import { initFavicon }           from './js/modules/faviconController.js';
@@ -92,7 +91,7 @@ function injectSectionIcons() {
     initBgRenderer();
     wireThemeToggle();
     injectSectionIcons();
-    initLangPicker();     // ← Language globe button + picker panel
+
     initPageController();
     initSearch();   // ← Advanced search engine (global + fuzzy)
   };
