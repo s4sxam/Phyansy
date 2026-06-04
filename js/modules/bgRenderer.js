@@ -4,7 +4,7 @@
 // Uses only Canvas 2D — zero dependencies
 // =============================================================================
 
-const PARTICLE_COUNT = 28;
+const PARTICLE_COUNT = window.innerWidth < 768 ? 12 : 28;
 const FIELD_LINE_COUNT = 6;
 
 let canvas, ctx, W, H, raf;
@@ -129,6 +129,8 @@ function frame() {
 }
 
 export function initBgRenderer() {
+  // Respect user preference for reduced motion (accessibility + battery)
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   canvas = document.createElement('canvas');
   canvas.className = 'physics-bg-canvas';
   canvas.setAttribute('aria-hidden', 'true');
