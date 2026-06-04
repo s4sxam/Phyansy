@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://phyansy.vercel.app/favicon.ico" width="80" height="80" alt="Phyansy Logo" />
+<img src="assets/logo.svg" width="120" height="120" alt="Phyansy Logo" />
 
 # ⚛ Phyansy
 
@@ -11,6 +11,7 @@
 [![Vanilla JS](https://img.shields.io/badge/Vanilla_JS-No_Framework-f6c90e?style=for-the-badge&labelColor=0d0d14&logo=javascript&logoColor=f6c90e)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![Vite](https://img.shields.io/badge/Built_with-Vite-646cff?style=for-the-badge&labelColor=0d0d14&logo=vite)](https://vitejs.dev)
 [![KaTeX](https://img.shields.io/badge/Math-KaTeX-9a75ea?style=for-the-badge&labelColor=0d0d14)](https://katex.org)
+[![Stars](https://img.shields.io/github/stars/s4sxam/Phyansy?style=for-the-badge&labelColor=0d0d14&color=f6c90e&logo=github)](https://github.com/s4sxam/Phyansy/stargazers)
 
 <br/>
 
@@ -165,7 +166,8 @@ A built-in physics calculator for common computations — no need to leave the a
 Phyansy/
 ├── index.html                    # Entry point, Google Translate widget
 ├── script.js                     # App bootstrap, module orchestration
-├── equationsData.js              # Root equations dataset (legacy entry)
+├── assets/
+│   └── logo.svg                  # Phyansy logo
 │
 ├── css/
 │   ├── base.css                  # Global reset & typography
@@ -190,37 +192,27 @@ Phyansy/
 │   │   ├── unitsController.js
 │   │   ├── calculatorController.js
 │   │   ├── langController.js     # i18n engine
-│   │   ├── langPickerController.js # Language picker UI
-│   │   ├── themeController.js    # Dark/light theme
-│   │   ├── pageController.js     # Tab/section navigation
+│   │   ├── langPickerController.js
+│   │   ├── themeController.js
+│   │   ├── pageController.js
 │   │   ├── lazyRenderer.js       # IntersectionObserver lazy loading
 │   │   ├── bgRenderer.js         # Animated particle background
 │   │   ├── particleRenderer.js
-│   │   ├── toastController.js    # Toast notification system
-│   │   ├── cookieController.js   # Cookie consent
+│   │   ├── toastController.js
+│   │   ├── cookieController.js
 │   │   ├── settingsController.js
 │   │   └── faviconController.js
 │   │
 │   └── data/
 │       ├── equationsData.js      # 295 equations with full metadata
-│       ├── equationsData_bn.js   # Bengali equation translations
-│       ├── constantsData.js      # 79 physical constants (English)
-│       ├── constantsData.bn.js   # Bengali
-│       ├── constantsData.zh.js   # Chinese
-│       ├── constantsData.ja.js   # Japanese
-│       ├── constantsData.ru.js   # Russian
-│       ├── constantsData.ta.js   # Tamil
-│       ├── constantsData.hi.js   # Hindi
-│       ├── constantsData.es.js   # Spanish
-│       ├── constantsData.ar.js   # Arabic
-│       ├── constantsData.fr.js   # French
-│       ├── constantsData.pt.js   # Portuguese
-│       ├── constantsData.mr.js   # Marathi
-│       ├── constantsData.te.js   # Telugu
-│       ├── constantsData.de.js   # German
-│       ├── symbolsData.js        # Greek + math symbols
-│       ├── unitsData.js          # SI, derived, non-SI units
-│       ├── calculatorData.js     # Calculator presets
+│       ├── equationsData_bn.js
+│       ├── constantsData.js      # 79 physical constants
+│       ├── constantsData.bn.js / zh.js / ja.js / ru.js / ta.js
+│       ├── constantsData.hi.js / es.js / ar.js / fr.js / pt.js
+│       ├── constantsData.mr.js / te.js / de.js
+│       ├── symbolsData.js
+│       ├── unitsData.js
+│       ├── calculatorData.js
 │       └── locales/
 │           └── ui-strings.js     # UI label translations (all 14 langs)
 │
