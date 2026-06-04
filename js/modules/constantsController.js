@@ -218,6 +218,8 @@ function initModal() {
         ],
         throwOnError: false,
       });
+      // Protect KaTeX from Google Translate
+      bodyEl.querySelectorAll('.katex').forEach(k => k.classList.add('notranslate'));
     }
   }
 
