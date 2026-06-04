@@ -91,7 +91,6 @@ function injectSectionIcons() {
     initBgRenderer();
     wireThemeToggle();
     injectSectionIcons();
-
     initPageController();
     initSearch();   // ← Advanced search engine (global + fuzzy)
   };
