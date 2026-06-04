@@ -357,6 +357,8 @@ function initModal() {
         ],
         throwOnError: false,
       });
+      // Protect KaTeX from Google Translate
+      overlay.querySelectorAll('.katex').forEach(k => k.classList.add('notranslate'));
     }
     // FIX #14 — Wire related chips
     bodyEl.querySelectorAll('.eq-related-chip[data-eq-name]').forEach(chip => {
