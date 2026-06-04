@@ -41,22 +41,21 @@
     })();
   </script>
 
-  <!-- Google Translate: suppress banner, style inline select -->
+  <!-- Google Translate: suppress banner, protect KaTeX, style inline select -->
   <style>
-    /* Kill banner iframe — NOT the whole .skiptranslate class (that hides the select too) */
     .goog-te-banner-frame { display: none !important; }
     body { top: 0 !important; }
     #goog-gt-tt, .goog-tooltip { display: none !important; }
-
-    /* Only hide the skiptranslate div Google injects at top of body, not inside our wrapper */
     body > .skiptranslate { display: none !important; }
+
+    /* notranslate on .katex prevents Google Translate from touching math */
+    .katex, .katex * { pointer-events: none; }
 
     #google-translate-wrapper {
       display: flex;
       align-items: center;
       flex-shrink: 0;
     }
-    /* Hide gadget chrome (Powered by Google text/logo) */
     #google_translate_element .goog-te-gadget {
       font-size: 0 !important;
       color: transparent !important;
@@ -65,7 +64,6 @@
     #google_translate_element .goog-te-gadget > a {
       display: none !important;
     }
-    /* The actual select — styled to match nav */
     #google_translate_element select.goog-te-combo {
       display: block !important;
       visibility: visible !important;
@@ -100,21 +98,42 @@
         'google_translate_element'
       );
     }
-    // MutationObserver — kill Google's injected banner after it loads
-    (function suppressGoogleTranslateBanner() {
-      const kill = () => {
+
+    (function init() {
+      // 1. Kill Google banner whenever it appears
+      const killBanner = () => {
         const banner = document.querySelector('.goog-te-banner-frame');
         if (banner) banner.style.setProperty('display', 'none', 'important');
         if (document.body && document.body.style.top)
           document.body.style.setProperty('top', '0', 'important');
-        // Hide the top-level skiptranslate div Google injects (NOT our wrapper)
         document.querySelectorAll('body > .skiptranslate, iframe.goog-te-banner-frame')
           .forEach(el => el.style.setProperty('display', 'none', 'important'));
       };
-      const observer = new MutationObserver(kill);
+
+      // 2. Stamp notranslate on ALL existing and future .katex elements
+      //    so Google Translate never touches rendered math
+      const stampKatex = (root) => {
+        (root || document).querySelectorAll('.katex:not(.notranslate)')
+          .forEach(el => el.classList.add('notranslate'));
+      };
+
       document.addEventListener('DOMContentLoaded', () => {
-        observer.observe(document.body, { childList: true, subtree: false, attributes: true });
-        kill();
+        stampKatex(document);
+
+        const observer = new MutationObserver((mutations) => {
+          killBanner();
+          for (const m of mutations) {
+            for (const node of m.addedNodes) {
+              if (node.nodeType === 1) {
+                if (node.classList?.contains('katex')) node.classList.add('notranslate');
+                stampKatex(node);
+              }
+            }
+          }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+        killBanner();
       });
     })();
   </script>
