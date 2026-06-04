@@ -6,20 +6,113 @@
        values on iPhones with home indicator (iPhone X and later). Without this
        the env() calls in modal.css evaluate to 0 and fix #18 has no effect. -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Phyansy — Interactive Physics Reference</title>
-  <meta name="description" content="An interactive physics reference for high-school and university students. Constants, equations, symbols, units, and calculator.">
+
+  <!-- ═══ PRIMARY META ═══════════════════════════════════════════════════ -->
+  <title>Phyansy — Physics Equations, Constants &amp; Calculator | Free Reference</title>
+  <meta name="description" content="295 physics equations, 79 constants, 51 symbols, SI units and a calculator. Free for high-school &amp; university students. No sign-up. Available in 14 languages.">
   <meta name="author" content="Tanay (s4sxam)">
   <meta name="theme-color" content="#667eea">
+  <meta name="keywords" content="physics equations, physical constants, SI units, physics calculator, physics reference, formula sheet, Planck constant, Maxwell equations, Greek symbols physics">
 
-  <!-- Fonts -->
+  <!-- ═══ CANONICAL ══════════════════════════════════════════════════════ -->
+  <link rel="canonical" href="https://phyansy.vercel.app/">
+
+  <!-- ═══ OPEN GRAPH ═════════════════════════════════════════════════════ -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://phyansy.vercel.app/">
+  <meta property="og:title"       content="Phyansy — Physics Equations, Constants &amp; Calculator">
+  <meta property="og:description" content="295 physics equations, 79 constants, 51 symbols, SI units and a free calculator. For high-school &amp; university students. No sign-up.">
+  <meta property="og:image"       content="https://phyansy.vercel.app/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name"   content="Phyansy">
+  <meta property="og:locale"      content="en_US">
+
+  <!-- ═══ TWITTER CARD ══════════════════════════════════════════════════ -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@s4sxam">
+  <meta name="twitter:creator"     content="@s4sxam">
+  <meta name="twitter:title"       content="Phyansy — Physics Equations, Constants &amp; Calculator">
+  <meta name="twitter:description" content="295 physics equations, 79 constants, SI units, symbols &amp; calculator. Free. No sign-up.">
+  <meta name="twitter:image"       content="https://phyansy.vercel.app/og-image.png">
+
+  <!-- ═══ STRUCTURED DATA / JSON-LD ════════════════════════════════════ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Phyansy",
+        "url": "https://phyansy.vercel.app",
+        "description": "Interactive physics reference: 295 equations, 79 constants, 51 symbols, SI units and a calculator. Free for students.",
+        "applicationCategory": "EducationApplication",
+        "operatingSystem": "Any",
+        "inLanguage": ["en","hi","bn","ta","te","mr","ar","ja","de","ru","fr","es","pt","zh"],
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Tanay",
+          "url": "https://github.com/s4sxam"
+        },
+        "featureList": [
+          "295 physics equations with derivations",
+          "79 physical constants with CODATA values",
+          "51 physics symbols",
+          "SI base and derived units",
+          "Physics equation calculator",
+          "14 language support"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What physics equations does Phyansy cover?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Phyansy covers 295 physics equations across all branches including Classical Mechanics, Electromagnetism, Thermodynamics, Quantum Mechanics, Relativity, Optics, and more."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Phyansy free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Phyansy is completely free with no sign-up required. It is available to all high-school and university students worldwide."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How many physical constants does Phyansy include?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Phyansy includes 79 fundamental physical constants including the speed of light, Planck constant, gravitational constant, Boltzmann constant, and more, with CODATA-standard values."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- ═══ FONTS ══════════════════════════════════════════════════════════ -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <!-- KaTeX — math rendering for equations -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <!-- ═══ KaTeX — non-blocking CSS load ════════════════════════════════ -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"></noscript>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 
-  <!-- Styles — theme.css must come first so dark-mode overrides cascade correctly -->
+  <!-- ═══ STYLES ═════════════════════════════════════════════════════════ -->
+  <!-- theme.css must come first so dark-mode overrides cascade correctly -->
   <link rel="stylesheet" href="css/theme.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/constants.css">
@@ -30,8 +123,9 @@
   <link rel="stylesheet" href="css/modal.css">
   <link rel="stylesheet" href="css/cookie.css">
   <link rel="stylesheet" href="css/search.css">
+  <link rel="stylesheet" href="css/lang.css">
 
-  <!-- Prevent flash of wrong theme -->
+  <!-- ═══ PREVENT FLASH OF WRONG THEME ═════════════════════════════════ -->
   <script>
     (function(){
       try {
@@ -41,7 +135,7 @@
     })();
   </script>
 
-  <!-- Google Translate: suppress banner, protect KaTeX, style inline select -->
+  <!-- ═══ GOOGLE TRANSLATE CONFIG ══════════════════════════════════════ -->
   <style>
     .goog-te-banner-frame { display: none !important; }
     body { top: 0 !important; }
@@ -142,9 +236,31 @@
 </head>
 <body>
 
+<!-- ═══ SEO: keyword-rich above-the-fold text (visible & crawlable) ════════ -->
+<div id="seo-hero" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+  <h1>Phyansy — Free Physics Reference for Students</h1>
+  <p>Phyansy is a free interactive physics reference tool for high-school and university students. Browse 295 physics equations with full derivations, 79 physical constants with CODATA-standard values, 51 Greek and mathematical symbols, SI base units, derived units, metric prefixes, and a physics equation calculator. Available in 14 languages including Hindi, Bengali, Tamil, Telugu, Marathi, Arabic, Japanese, German, Russian, French, Spanish, Portuguese, and Chinese. No sign-up required.</p>
+  <p>Topics covered include Classical Mechanics, Electromagnetism, Thermodynamics, Quantum Mechanics, Special Relativity, Optics, Wave Physics, Fluid Mechanics, Nuclear Physics, and Astrophysics. Key equations include Newton's laws, Maxwell's equations, Schrödinger equation, Planck's law, Einstein's mass-energy equivalence, and hundreds more.</p>
+</div>
+
+<noscript>
+  <div style="font-family:sans-serif;max-width:800px;margin:40px auto;padding:20px;">
+    <h1>Phyansy — Free Physics Reference</h1>
+    <p>An interactive physics reference with 295 equations, 79 constants, 51 symbols, SI units, and a calculator. Please enable JavaScript to use the full interactive experience.</p>
+    <ul>
+      <li>295 Physics Equations (Mechanics, Electromagnetism, Thermodynamics, Quantum, Relativity, and more)</li>
+      <li>79 Physical Constants (speed of light, Planck constant, gravitational constant, Boltzmann constant…)</li>
+      <li>51 Physics Symbols (Greek alphabet, mathematical notation)</li>
+      <li>SI Units — base units, derived units, metric prefixes</li>
+      <li>Physics Calculator — solve equations for any variable</li>
+    </ul>
+    <p>Made by Tanay (s4sxam) — free for all students worldwide.</p>
+  </div>
+</noscript>
+
 <nav>
   <div class="nav-brand">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#navGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#navGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Phyansy logo">
       <defs>
         <linearGradient id="navGrad" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stop-color="#667eea"/>
@@ -189,11 +305,11 @@
   </button>
 </nav>
 
-<!-- Mobile landing -->
+<!-- Mobile landing — removed gating, shows welcome instead -->
 <div id="mobile-landing" class="hidden">
   <div class="mobile-landing-inner">
     <div class="mobile-brand-icon">
-      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="url(#mobileGrad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="url(#mobileGrad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Phyansy logo">
         <defs>
           <linearGradient id="mobileGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#667eea"/>
@@ -206,8 +322,8 @@
     </div>
     <h1 class="mobile-brand-name">Phyansy</h1>
     <p class="mobile-tagline">Interactive Physics Reference</p>
-    <p class="mobile-msg">Best experienced on a larger screen.<br>Open on desktop for the full experience.</p>
-    <button class="mobile-continue-btn" id="mobile-continue-btn">Continue Anyway</button>
+    <p class="mobile-msg">295 equations · 79 constants · 51 symbols<br>Free for every student, on every device.</p>
+    <button class="mobile-continue-btn" id="mobile-continue-btn">Open Phyansy</button>
     <p class="mobile-credit">Made by Tanay (s4sxam)</p>
   </div>
 </div>
@@ -219,7 +335,7 @@
   ════════════════════════════════ -->
   <section id="sec-constants" class="section active" aria-label="Physical Constants">
     <div class="section-header">
-      <h1 class="section-title" data-i18n="sec_constants_title">Physical Constants</h1>
+      <h2 class="section-title" data-i18n="sec_constants_title">Physical Constants</h2>
       <p class="section-sub" data-i18n="sec_constants_sub">Fundamental constants of the universe — click any card to expand</p>
     </div>
     <div class="controls">
@@ -234,7 +350,7 @@
   ════════════════════════════════ -->
   <section id="sec-equations" class="section" aria-label="Key Equations">
     <div class="section-header">
-      <h1 class="section-title" data-i18n="sec_equations_title">Key Equations</h1>
+      <h2 class="section-title" data-i18n="sec_equations_title">Key Equations</h2>
       <p class="section-sub" data-i18n="sec_equations_sub">Essential formulas across all branches of physics — click to see variable legend</p>
     </div>
     <input type="search" id="eq-search" aria-hidden="true" style="display:none">
@@ -248,7 +364,7 @@
   ════════════════════════════════ -->
   <section id="sec-symbols" class="section" aria-label="Symbols Reference">
     <div class="section-header">
-      <h1 class="section-title" data-i18n="sec_symbols_title">Symbols Reference</h1>
+      <h2 class="section-title" data-i18n="sec_symbols_title">Symbols Reference</h2>
       <p class="section-sub" data-i18n="sec_symbols_sub">Greek alphabet and mathematical notation used in physics</p>
     </div>
     <input type="search" id="sym-search" aria-hidden="true" style="display:none">
@@ -269,35 +385,35 @@
   ════════════════════════════════ -->
   <section id="sec-units" class="section" aria-label="Units and Measurement">
     <div class="section-header">
-      <h1 class="section-title" data-i18n="sec_units_title">Units &amp; Measurement</h1>
+      <h2 class="section-title" data-i18n="sec_units_title">Units &amp; Measurement</h2>
       <p class="section-sub" data-i18n="sec_units_sub">SI base units, derived units, and metric prefixes — click any symbol to copy</p>
     </div>
 
     <input type="search" id="unit-search" aria-hidden="true" style="display:none">
 
     <div class="units-section">
-      <h2 class="units-section-title" data-i18n="units_si_base">SI Base Units</h2>
+      <h3 class="units-section-title" data-i18n="units_si_base">SI Base Units</h3>
       <div class="glass-card units-table-wrapper">
         <table class="units-table" id="si-table" aria-label="SI Base Units"></table>
       </div>
     </div>
 
     <div class="units-section">
-      <h2 class="units-section-title" data-i18n="units_derived">Common Derived Units</h2>
+      <h3 class="units-section-title" data-i18n="units_derived">Common Derived Units</h3>
       <div class="glass-card units-table-wrapper">
         <table class="units-table" id="derived-table" aria-label="Common Derived Units"></table>
       </div>
     </div>
 
     <div class="units-section">
-      <h2 class="units-section-title" data-i18n="units_non_si">Non-SI Units (Widely Used in Physics)</h2>
+      <h3 class="units-section-title" data-i18n="units_non_si">Non-SI Units (Widely Used in Physics)</h3>
       <div class="glass-card units-table-wrapper">
         <table class="units-table" id="non-si-table" aria-label="Non-SI Units Widely Used in Physics"></table>
       </div>
     </div>
 
     <div class="units-section">
-      <h2 class="units-section-title" data-i18n="units_prefixes">Metric Prefixes</h2>
+      <h3 class="units-section-title" data-i18n="units_prefixes">Metric Prefixes</h3>
       <div class="units-search-bar">
         <span class="units-search-icon" aria-hidden="true">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -313,7 +429,7 @@
   ════════════════════════════════ -->
   <section id="sec-calculator" class="section" aria-label="Physics Calculator">
     <div class="section-header">
-      <h1 class="section-title" data-i18n="sec_calc_title">Physics Calculator</h1>
+      <h2 class="section-title" data-i18n="sec_calc_title">Physics Calculator</h2>
       <p class="section-sub" data-i18n="sec_calc_sub">Pick an equation, choose what to solve for, enter known values</p>
     </div>
     <div class="calc-layout">
@@ -395,17 +511,25 @@
   </div>
 </div>
 
-<footer class="site-footer">
+<!-- ═══ FOOTER with static crawlable About section ══════════════════════════ -->
+<footer class="site-footer" id="site-footer">
   <span>Phyansy</span>
   <span class="footer-sep">·</span>
-  <span>Made by <strong>Tanay</strong> (s4sxam)</span>
+  <span>Made by <strong>Tanay</strong> (<a href="https://github.com/s4sxam" rel="author" target="_blank" style="color:inherit">s4sxam</a>)</span>
   <span class="footer-sep">·</span>
   <span>Phase 2</span>
   <span class="footer-sep">·</span>
-  <button onclick="openAboutModal('privacy')" style="background:none;border:none;font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:0;opacity:0.7;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">Privacy &amp; About</button>
+  <button id="privacy-about-btn" style="background:none;border:none;font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:0;opacity:0.7;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">Privacy &amp; About</button>
   <span class="footer-sep">·</span>
   <span>© 2025 Tanay</span>
 </footer>
+
+<!-- Static about/attribution section — crawlable by Googlebot -->
+<section id="about-static" style="max-width:800px;margin:0 auto 48px;padding:0 24px;font-size:13px;color:#64748b;line-height:1.7;" aria-label="About Phyansy">
+  <h2 style="font-size:15px;font-weight:600;margin-bottom:8px;color:#94a3b8;">About Phyansy</h2>
+  <p>Phyansy is a free interactive physics reference built by <strong>Tanay</strong>, a developer passionate about making physics accessible to students worldwide. The project covers 295 physics equations with full derivations and context, 79 physical constants with CODATA-standard values, 51 symbols, SI units, and a built-in calculator — all free, with no sign-up required.</p>
+  <p style="margin-top:8px;">Constant values are sourced from <a href="https://codata.org/recommendations/2018-codata-recommended-values/" rel="noopener noreferrer" target="_blank" style="color:inherit;">CODATA 2018 recommended values</a>. The project is open-source on <a href="https://github.com/s4sxam" rel="noopener noreferrer" target="_blank" style="color:inherit;">GitHub</a>. Third-party services: Google Translate (for 14-language support) and KaTeX (for math rendering). See our Privacy policy for details.</p>
+</section>
 
 <script type="module" src="script.js"></script>
 </body>
