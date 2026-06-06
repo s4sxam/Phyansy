@@ -136,6 +136,7 @@ function injectAboutModal() {
 
       <div class="about-tabs" role="tablist">
         <button class="about-tab-btn active" data-tab="about" role="tab" aria-selected="true">About</button>
+        <button class="about-tab-btn" data-tab="faq" role="tab" aria-selected="false">FAQ</button>
         <button class="about-tab-btn" data-tab="privacy" role="tab" aria-selected="false">Privacy Policy</button>
         <button class="about-tab-btn" data-tab="cookies" role="tab" aria-selected="false">Cookie Policy</button>
         <button class="about-tab-btn" data-tab="terms" role="tab" aria-selected="false">Terms of Use</button>
@@ -184,6 +185,71 @@ function injectAboutModal() {
 
           <div class="about-section-title">Version</div>
           <p class="about-p">Phyansy Phase 2 — actively maintained.</p>
+        </div>
+
+        <!-- FAQ TAB -->
+        <div class="about-tab-panel" id="panel-faq">
+          <div class="about-section-title">Frequently Asked Questions</div>
+
+          <div class="about-faq-item">
+            <div class="about-faq-q">What is Phyansy?</div>
+            <p class="about-p">Phyansy is a free, open-source physics reference web app. It gives students and researchers instant access to 295 physics equations with full derivations, 79 physical constants, 51 symbols, SI units, and a built-in calculator — all beautifully rendered with KaTeX math typesetting, with no sign-up required.</p>
+          </div>
+
+          <div class="about-faq-item">
+            <div class="about-faq-q">Is Phyansy completely free?</div>
+            <p class="about-p">Yes — 100% free. No account, no ads, no paywalls, no premium tier. Every feature is available to everyone.</p>
+          </div>
+
+          <div class="about-faq-item">
+            <div class="about-faq-q">What physics topics and equations are covered?</div>
+            <p class="about-p">Phyansy covers 295 equations across 13 domains: Classical Mechanics, Electromagnetism, Thermodynamics, Quantum Mechanics, Relativity, Optics, Waves &amp; Oscillations, Nuclear &amp; Particle Physics, Astrophysics &amp; Cosmology, Fluid Mechanics, Solid State Physics, Particle Physics &amp; QFT, and Mathematical Physics.</p>
+          </div>
+
+          <div class="about-faq-item">
+            <div class="about-faq-q">Do equations include derivations and explanations?</div>
+            <p class="about-p">Yes. Every equation card includes: a step-by-step derivation, a plain-English explanation, the deep physical meaning, historical attribution, real-world significance, common misconceptions, dimensional analysis, and SI units for every variable.</p>
+          </div>
+
+          <div class="about-faq-item">
+            <div class="about-faq-q">Where do the physical constant values come from?</div>
+            <p class="about-p">All 79 constants are sourced from <a class="about-link" href="https://codata.org/recommendations/2018-codata-recommended-values/" target="_blank" rel="noopener">CODATA 2018 recommended values</a> — the internationally accepted standard used by NIST and the scientific community.</p>
+          </div>
+
+          <div class="about-faq-item">
+            <div class="about-faq-q">What languages does Phyansy support?</div>
+            <p class="about-p">Phyansy supports 14 languages: English, Hindi, Bengali, Tamil, Telugu, Marathi, Arabic, Spanish, French, Portuguese, Russian, Japanese, Chinese (Simplified), and German. Physics formulas stay in English — the universal language of physics — while descriptions are translated.</p>
+          </div>
+
+          <div class="about-faq-item">
+            <div class="about-faq-q">Does Phyansy work on mobile?</div>
+            <p class="about-p">Yes. Phyansy is fully responsive and works on phones, tablets, and desktops. Dark mode and light mode are supported, auto-detected from your system preference and togglable manually.</p>
+          </div>
+
+          <div class="about-faq-item">
+            <div class="about-faq-q">How does the search work?</div>
+            <p class="about-p">Phyansy has a custom-built fuzzy search engine that indexes all equations, constants, symbols, and units simultaneously. It finds results even with typos. Press <kbd style="font-family:inherit;background:var(--bg-card,#1e1e2e);padding:1px 5px;border-radius:4px;font-size:12px;border:1px solid var(--border,#333);">/</kbd> anywhere on the page to focus the search bar instantly.</p>
+          </div>
+
+          <div class="about-faq-item">
+            <div class="about-faq-q">Does Phyansy collect my data?</div>
+            <p class="about-p">No. Phyansy is a client-side tool with no backend server. It stores only your theme preference and cookie consent in your browser's localStorage — data that never leaves your device. See the Privacy Policy tab for full details.</p>
+          </div>
+
+          <div class="about-faq-item">
+            <div class="about-faq-q">Is Phyansy open source? Can I contribute?</div>
+            <p class="about-p">Yes. The source code is on <a class="about-link" href="https://github.com/s4sxam/Phyansy" target="_blank" rel="noopener">GitHub</a>. Contributions are welcome — you can add equations, fix errors, improve translations, or report bugs via GitHub issues.</p>
+          </div>
+
+          <div class="about-faq-item">
+            <div class="about-faq-q">Who built Phyansy?</div>
+            <p class="about-p">Phyansy was designed and built by <strong>Tanay Guha</strong> (<a class="about-link" href="https://github.com/s4sxam" target="_blank" rel="noopener">@s4sxam</a>), a student developer from West Bengal, India — built independently as a free resource for physics students everywhere.</p>
+          </div>
+
+          <div class="about-faq-item">
+            <div class="about-faq-q">Can I use Phyansy as a physics calculator?</div>
+            <p class="about-p">Yes. Phyansy includes a built-in physics calculator for common computations — you can look up an equation and compute directly without leaving the app.</p>
+          </div>
         </div>
 
         <!-- PRIVACY TAB -->
@@ -248,7 +314,7 @@ function injectAboutModal() {
 
           <div class="about-highlight">
             <strong>Necessary (always active)</strong><br>
-            <span style="font-size:12px;">Key: <code>phyansy_theme</code>, <code>phyansy_cookie_consent</code>, <code>phyansy_cookie_prefs</code></span><br>
+            <span style="font-size:12px;">Key: <code>quantra_theme</code>, <code>phyansy_cookie_consent</code>, <code>phyansy_cookie_prefs</code></span><br>
             Stores your dark/light theme choice and your consent decision. Without these, the site would forget your preferences on every visit and keep showing you the consent banner.
           </div>
 
