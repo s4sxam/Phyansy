@@ -3,7 +3,7 @@
 // Phase 2: Visual Identity
 // =============================================================================
 
-const STORAGE_KEY = 'quantra_theme';
+const STORAGE_KEY = 'phyansy_theme';
 
 export function getTheme() {
   try {
