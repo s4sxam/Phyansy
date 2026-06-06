@@ -11,22 +11,23 @@ import { initBgRenderer }        from './js/modules/bgRenderer.js';
 import { initFavicon }           from './js/modules/faviconController.js';
 import { initCookieController }  from './js/modules/cookieController.js';
 import { initSearch }            from './js/modules/searchInit.js';
+import { initLangPicker }        from './js/modules/langPickerController.js'; // BUG-03 FIX
 
 // ── GLOBAL DRAG GUARD ────────────────────────────────────────────────────────
-window._quantraIsDragging = false;
+window._phyansyIsDragging = false;
 
 (function initGlobalDragTracking() {
   let startX = 0, startY = 0;
   document.addEventListener('mousedown', (e) => {
     startX = e.clientX; startY = e.clientY;
-    window._quantraIsDragging = false;
+    window._phyansyIsDragging = false;
   });
   document.addEventListener('mousemove', (e) => {
     if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5)
-      window._quantraIsDragging = true;
+      window._phyansyIsDragging = true;
   });
   document.addEventListener('mouseup', () => {
-    setTimeout(() => { window._quantraIsDragging = false; }, 50);
+    setTimeout(() => { window._phyansyIsDragging = false; }, 50);
   });
 })();
 
@@ -121,9 +122,12 @@ function handleMobileLanding() {
 
   initSettingsController();
   initLangController();
+  initLangPicker(); // BUG-03 FIX: was never called — language picker never appeared
   initCookieController();
 
-  // Wire footer button via event listener (not inline onclick)
+  // BUG-06 FIX: wireFooterBtn() moved to AFTER initCookieController() so that
+  // window.openAboutModal (registered by cookieController) is always defined
+  // before the footer button click handler can ever fire.
   wireFooterBtn();
 
   // Handle mobile landing without blocking the app
