@@ -1368,12 +1368,27 @@ export class PhyansySearch {
       fuzzyTimer = setTimeout(() => {
         // Wait for lazyRenderer to render, then count visible cards
         requestAnimationFrame(() => {
-          const gridId  = { constants: 'constants-grid', equations: 'eq-grid', symbols: 'symbols-grid', units: 'units-grid' }[section];
-          const grid    = gridId ? document.getElementById(gridId) : null;
-          if (!grid) return;
-
-          const hasResults = grid.querySelectorAll('[data-lazy-idx]').length > 0
-                          && !grid.querySelector('p[style]');  // "No results" p
+          // BUG-02 FIX: use correct DOM IDs that actually exist in index.html
+          // symbols has two grids (greek-grid / math-sym-grid); pick the visible one
+          // units has no single grid — check si-table rows instead
+          let hasResults = false;
+          if (section === 'constants') {
+            const grid = document.getElementById('constants-grid');
+            hasResults = !!grid && grid.querySelectorAll('[data-lazy-idx]').length > 0 && !grid.querySelector('p[style]');
+          } else if (section === 'equations') {
+            const grid = document.getElementById('eq-grid');
+            hasResults = !!grid && grid.querySelectorAll('[data-lazy-idx]').length > 0 && !grid.querySelector('p[style]');
+          } else if (section === 'symbols') {
+            // Check whichever sub-tab is currently visible
+            const greekVisible = !document.getElementById('sym-greek')?.classList.contains('hidden');
+            const gridId = greekVisible ? 'greek-grid' : 'math-sym-grid';
+            const grid = document.getElementById(gridId);
+            hasResults = !!grid && grid.querySelectorAll('[data-lazy-idx], .math-sym-card').length > 0;
+          } else if (section === 'units') {
+            // Units renders tables, not lazy cards — check si-table for rows
+            const table = document.getElementById('si-table');
+            hasResults = !!table && table.querySelectorAll('tbody tr').length > 0;
+          }
 
           if (!hasResults) {
             // Native search returned nothing — try fuzzy
