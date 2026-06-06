@@ -4,7 +4,10 @@
 // Uses only Canvas 2D — zero dependencies
 // =============================================================================
 
-const PARTICLE_COUNT = window.innerWidth < 768 ? 12 : 28;
+// BUG-08 FIX: removed top-level PARTICLE_COUNT constant — it was evaluated at
+// module parse time, permanently freezing the count at whatever the viewport
+// was when the script first loaded (e.g. before orientation change, DevTools open).
+// Count is now computed inside initParticles() so it always reflects current width.
 const FIELD_LINE_COUNT = 6;
 
 let canvas, ctx, W, H, raf;
@@ -21,6 +24,7 @@ function isDark() {
 }
 
 function initParticles() {
+  const PARTICLE_COUNT = window.innerWidth < 768 ? 12 : 28; // BUG-08 FIX: read at call-time
   particles = Array.from({ length: PARTICLE_COUNT }, () => ({
     x: Math.random() * W,
     y: Math.random() * H,
