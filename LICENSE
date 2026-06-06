@@ -1,21 +1,63 @@
-MIT License
+Phyansy Source Available License v1.0
 
-Copyright (c) 2026 Tanay ⌬
+Copyright (c) 2026 Tanay Guha (@s4sxam). All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+GRANT OF RIGHTS
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Permission is granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to use,
+study, and modify the Software for the following purposes only:
+
+  1. Personal, private, non-commercial use.
+  2. Educational and academic study.
+  3. Contributing improvements back to the original repository at
+     https://github.com/s4sxam/Phyansy (via pull request).
+
+RESTRICTIONS
+
+The following are strictly prohibited without prior written approval from
+the copyright holder (contact: via GitHub @s4sxam):
+
+  a) COMMERCIAL USE — You may not sell, license, or otherwise commercialize
+     the Software or any derivative of it.
+
+  b) PUBLIC HOSTING — You may not host, deploy, or make the Software or any
+     derivative publicly accessible on the internet or any network (including
+     but not limited to websites, web apps, PWAs, or cloud deployments),
+     except as a private local development instance for personal use.
+
+  c) ADVERTISING — You may not display advertisements, affiliate links,
+     sponsored content, or any monetization mechanism on any version of the
+     Software, hosted or distributed.
+
+  d) SUBLICENSING & REDISTRIBUTION — You may not sublicense, resell, or
+     redistribute the Software, in whole or in part, in original or modified
+     form, as a standalone product or bundled with another product.
+
+  e) WHITE-LABELLING — You may not rebrand or present the Software as your
+     own product without explicit written permission and visible credit to
+     the original author.
+
+TO OBTAIN APPROVAL
+
+For any use not covered by the grant above — including commercial licensing,
+public hosting, partnerships, or sponsored deployments — contact the author:
+
+  GitHub : https://github.com/s4sxam
+  Project: https://github.com/s4sxam/Phyansy
+
+Approval requests must be made before the intended use begins.
+
+ATTRIBUTION REQUIREMENT
+
+Any permitted use must retain this license file, the original copyright
+notice, and a visible credit to Phyansy (https://phyansy.vercel.app) and
+the author Tanay Guha.
+
+DISCLAIMER
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHOR
+BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE
+OF OR CONNECTION WITH THE SOFTWARE.
