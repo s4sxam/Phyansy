@@ -11,23 +11,23 @@ import { initBgRenderer }        from './js/modules/bgRenderer.js';
 import { initFavicon }           from './js/modules/faviconController.js';
 import { initCookieController }  from './js/modules/cookieController.js';
 import { initSearch }            from './js/modules/searchInit.js';
-import { initLangPicker }        from './js/modules/langPickerController.js'; // BUG-03 FIX
+import { handleInitialRoute }    from './js/modules/deepLinkRouter.js';
 
 // ── GLOBAL DRAG GUARD ────────────────────────────────────────────────────────
-window._phyansyIsDragging = false;
+window._quantraIsDragging = false;
 
 (function initGlobalDragTracking() {
   let startX = 0, startY = 0;
   document.addEventListener('mousedown', (e) => {
     startX = e.clientX; startY = e.clientY;
-    window._phyansyIsDragging = false;
+    window._quantraIsDragging = false;
   });
   document.addEventListener('mousemove', (e) => {
     if (Math.abs(e.clientX - startX) > 5 || Math.abs(e.clientY - startY) > 5)
-      window._phyansyIsDragging = true;
+      window._quantraIsDragging = true;
   });
   document.addEventListener('mouseup', () => {
-    setTimeout(() => { window._phyansyIsDragging = false; }, 50);
+    setTimeout(() => { window._quantraIsDragging = false; }, 50);
   });
 })();
 
@@ -122,12 +122,9 @@ function handleMobileLanding() {
 
   initSettingsController();
   initLangController();
-  initLangPicker(); // BUG-03 FIX: was never called — language picker never appeared
   initCookieController();
 
-  // BUG-06 FIX: wireFooterBtn() moved to AFTER initCookieController() so that
-  // window.openAboutModal (registered by cookieController) is always defined
-  // before the footer button click handler can ever fire.
+  // Wire footer button via event listener (not inline onclick)
   wireFooterBtn();
 
   // Handle mobile landing without blocking the app
@@ -143,4 +140,8 @@ function handleMobileLanding() {
   injectSectionIcons();
   initPageController();
   initSearch();
+
+  // ── DEEP LINK: handle initial URL route (e.g. /equations/half-life) ──────
+  // Small timeout so all section controllers have registered their window openers
+  setTimeout(() => handleInitialRoute(), 300);
 })();
