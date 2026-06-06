@@ -6,6 +6,7 @@
 import { GREEK, MATH_SYMBOLS } from '../data/symbolsData.js';
 import { createLazySection } from './lazyRenderer.js';
 import { onLangChange } from './langController.js';
+import { toSlug, pushSymbolState, resetMeta } from './deepLinkRouter.js';
 
 const DESKTOP_BREAKPOINT = 768;
 const isDesktop = () => window.innerWidth > DESKTOP_BREAKPOINT;
@@ -22,24 +23,6 @@ function initModal() {
 
   if (!overlay) return null;
 
-  // BUG-04 FIX: overflow:hidden does NOT lock scroll on iOS Safari.
-  // Use the position:fixed trick (same as constantsController/equationsController).
-  let _savedScrollY = 0;
-  function lockBodyScroll() {
-    _savedScrollY = window.scrollY;
-    document.body.style.position  = 'fixed';
-    document.body.style.top       = `-${_savedScrollY}px`;
-    document.body.style.width     = '100%';
-    document.body.style.overflowY = 'scroll';
-  }
-  function unlockBodyScroll() {
-    document.body.style.position  = '';
-    document.body.style.top       = '';
-    document.body.style.width     = '';
-    document.body.style.overflowY = '';
-    window.scrollTo(0, _savedScrollY);
-  }
-
   function openModal(g) {
     lettersEl.textContent = `${g.upper} ${g.lower}`;
     titleEl.textContent   = g.name;
@@ -51,13 +34,15 @@ function initModal() {
       </div>`;
 
     overlay.classList.add('show');
-    lockBodyScroll(); // BUG-04 FIX
+    document.body.style.overflow = 'hidden';
+    pushSymbolState(g);
     closeBtn.focus();
   }
 
   function closeModal() {
     overlay.classList.remove('show');
-    unlockBodyScroll(); // BUG-04 FIX
+    document.body.style.overflow = '';
+    resetMeta();
   }
 
   closeBtn.addEventListener('click', closeModal);
@@ -73,6 +58,14 @@ function initModal() {
 
 export function initSymbols() {
   const modal = initModal();
+
+  // ── DEEP LINK: register global opener so deepLinkRouter can open by slug ──
+  window._phyansy_openSymbolModal = function(slug) {
+    const all = [...(GREEK || []), ...(MATH_SYMBOLS || [])];
+    const found = all.find(g => toSlug(g.name) === slug);
+    if (found) { modal.openModal(found); return; }
+    console.warn('[Phyansy] Symbol not found for slug:', slug);
+  };
 
   // Language changes: cards always show English content from data files.
   // Translated content will come from i18n locale files when provided.
@@ -160,72 +153,22 @@ export function initSymbols() {
       </div>`).join('');
   }
 
-  // BUG-10 FIX: Sub-tab switching (Greek / Math)
-  // Previously, switching sub-tabs didn't update the search scope — the sym-search
-  // input always searched only Greek cards (the only thing wired to lazyRenderer).
-  // Fix: on tab switch, re-filter the visible grid based on the current query.
+  // Sub-tab switching (Greek / Math)
   const subBtns  = document.querySelectorAll('.sym-sub-btn');
   const symGreek = document.getElementById('sym-greek');
   const symMath  = document.getElementById('sym-math');
-  let   _activeSymTab = 'greek'; // track which sub-tab is showing
-
-  const searchInput = document.getElementById('sym-search');
-
-  function filterMathSymbols(q) {
-    // Math symbols are static — filter by name or use text
-    const mathGrid = document.getElementById('math-sym-grid');
-    if (!mathGrid) return;
-    const cards = mathGrid.querySelectorAll('.math-sym-card');
-    const query = q.toLowerCase().trim();
-    let anyVisible = false;
-    cards.forEach(card => {
-      const name = card.querySelector('.math-sym-name')?.textContent.toLowerCase() || '';
-      const use  = card.querySelector('.math-sym-use')?.textContent.toLowerCase()  || '';
-      const glyph = card.querySelector('.math-sym-glyph')?.textContent.toLowerCase() || '';
-      const match = !query || name.includes(query) || use.includes(query) || glyph.includes(query);
-      card.style.display = match ? '' : 'none';
-      if (match) anyVisible = true;
-    });
-    // Show "no results" message if nothing matched
-    let noResultsEl = mathGrid.querySelector('.sym-no-results');
-    if (!anyVisible && query) {
-      if (!noResultsEl) {
-        noResultsEl = document.createElement('p');
-        noResultsEl.className = 'sym-no-results';
-        noResultsEl.style.cssText = 'color:var(--text-muted);padding:20px 4px';
-        noResultsEl.textContent = 'No results found.';
-        mathGrid.appendChild(noResultsEl);
-      }
-    } else if (noResultsEl) {
-      noResultsEl.remove();
-    }
-  }
-
-  // Wire search input to also filter math symbols when that tab is active
-  if (searchInput) {
-    searchInput.addEventListener('input', () => {
-      if (_activeSymTab === 'math') {
-        filterMathSymbols(searchInput.value);
-      }
-    });
-  }
 
   subBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       subBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
       btn.classList.add('active');
       btn.setAttribute('aria-selected', 'true');
-      _activeSymTab = btn.dataset.sym;
       if (btn.dataset.sym === 'greek') {
         symGreek?.classList.remove('hidden');
         symMath?.classList.add('hidden');
-        // Re-trigger Greek search with current query so it re-renders correctly
-        if (searchInput) searchInput.dispatchEvent(new Event('input', { bubbles: true }));
       } else {
         symGreek?.classList.add('hidden');
         symMath?.classList.remove('hidden');
-        // Apply current search query to math symbols immediately on tab switch
-        filterMathSymbols(searchInput ? searchInput.value : '');
       }
     });
   });
