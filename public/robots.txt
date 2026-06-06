@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
 
+# Section deep links
+Allow: /equations/
+Allow: /constants/
+Allow: /symbols/
+Allow: /units/
+
 Sitemap: https://phyansy.vercel.app/sitemap.xml
