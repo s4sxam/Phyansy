@@ -3,9 +3,9 @@
 // =============================================================================
 
 const KEYS = {
-  lang:       'quantra_lang',
-  theme:      'quantra_theme',       // reserved for Phase 2 dark mode
-  animPaused: 'quantra_anim_paused',
+  lang:       'phyansy_lang',
+  theme:      'phyansy_theme',       // reserved for Phase 2 dark mode
+  animPaused: 'phyansy_anim_paused',
 };
 
 function get(key, fallback = null) {
@@ -31,7 +31,7 @@ export function getSavedAnimationState() {
 
 export function initSettingsController() {
   const animPaused = getSavedAnimationState();
-  window._quantraAnimPaused = animPaused;
+  window._phyansyAnimPaused = animPaused;
 
   return {
     lang:       get(KEYS.lang, 'en'),
@@ -40,7 +40,7 @@ export function initSettingsController() {
     setLang:  (v) => set(KEYS.lang, v),
     setTheme: (v) => set(KEYS.theme, v),
     setAnimPaused: (v) => {
-      window._quantraAnimPaused = v;
+      window._phyansyAnimPaused = v;
       set(KEYS.animPaused, String(v));
     },
   };
