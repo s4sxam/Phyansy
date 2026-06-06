@@ -14,7 +14,7 @@
 
 import { UI_STRINGS, RTL_LANGS, CJK_LANGS, INDIC_LANGS } from '../data/locales/ui-strings.js';
 
-const LANG_KEY = 'quantra_lang';
+const LANG_KEY = 'phyansy_lang';
 
 let _currentLang   = 'en';
 const _subscribers = [];
