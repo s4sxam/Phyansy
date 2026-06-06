@@ -221,6 +221,176 @@ Phyansy/
 
 ---
 
+---
+
+## 🏆 How Phyansy Compares to Other Physics Reference Sites
+
+Below is an honest, section-by-section comparison of Phyansy against the most popular physics reference websites used by students and researchers worldwide.
+
+**Sites compared:**
+- [HyperPhysics](http://hyperphysics.phy-astr.gsu.edu/) — Georgia State University's long-standing physics reference
+- [The Physics Classroom](https://www.physicsclassroom.com/) — curriculum-based tutorial site
+- [Physics.info](https://physics.info/) — Glenn Elert's equations and notes reference
+- [NIST CODATA](https://physics.nist.gov/cuu/Constants/) — The official NIST physical constants database
+- [Wikipedia Physics Portal](https://en.wikipedia.org/wiki/Portal:Physics) — crowdsourced encyclopedia
+
+---
+
+### 📐 Equations Coverage
+
+| Feature | **Phyansy** | HyperPhysics | The Physics Classroom | Physics.info | Wikipedia |
+|---|---|---|---|---|---|
+| Total equations | **295** | ~200 (scattered) | ~150 (curriculum only) | ~180 | Varies |
+| Derivations included | ✅ Step-by-step | ⚠️ Partial | ❌ Rarely | ⚠️ Minimal | ⚠️ Some |
+| Deep meaning / "Why it works" | ✅ Every equation | ❌ No | ❌ No | ❌ No | ⚠️ Some |
+| Historical attribution | ✅ Yes | ⚠️ Partial | ❌ No | ❌ No | ✅ Yes |
+| Common misconceptions | ✅ Explicitly listed | ❌ No | ⚠️ Some | ❌ No | ❌ No |
+| Dimensional analysis | ✅ Yes | ⚠️ Some | ❌ Rarely | ✅ Yes | ⚠️ Some |
+| Difficulty tagging (GCSE→Graduate) | ✅ Yes | ❌ No | ⚠️ Implicit | ❌ No | ❌ No |
+| LaTeX / KaTeX rendering | ✅ KaTeX | ❌ Image-based | ❌ Plain text | ⚠️ MathJax | ✅ MathJax |
+| Related equation linking | ✅ Yes | ⚠️ Concept maps | ❌ No | ❌ No | ✅ Wiki links |
+
+**⭐ Equations Rating: Phyansy 9.5/10 · HyperPhysics 6.5/10 · Physics Classroom 5/10 · Physics.info 6/10 · Wikipedia 7/10**
+
+> **Why Phyansy wins:** No other free site pairs every equation with its derivation, deep meaning, historical context, misconceptions, *and* dimensional analysis — all in one card, rendered with beautiful KaTeX math. HyperPhysics has depth but presents it as a confusing clickable concept map with no mobile support and image-rendered equations that break on zoom.
+
+---
+
+### ⚡ Physical Constants
+
+| Feature | **Phyansy** | HyperPhysics | NIST CODATA | Physics.info | Wikipedia |
+|---|---|---|---|---|---|
+| Number of constants | **79** | ~60 | ~340 (exhaustive) | ~40 | ~100 |
+| Exact SI values | ✅ Yes | ✅ Yes | ✅ Official source | ✅ Yes | ✅ Yes |
+| Uncertainty values | ✅ Yes | ⚠️ Some | ✅ Full CODATA | ❌ No | ⚠️ Some |
+| Descriptions / explanations | ✅ Multilingual | ⚠️ Brief | ❌ Values only | ❌ No | ✅ Yes |
+| Category organization | ✅ 6 categories | ⚠️ Mixed | ⚠️ Alphabetical | ⚠️ Minimal | ✅ Yes |
+| One-click copy | ✅ Yes | ❌ No | ❌ No | ❌ No | ❌ No |
+| Multilingual descriptions | ✅ 14 languages | ❌ English only | ❌ English only | ❌ English only | ✅ Many (separate pages) |
+| Mobile-friendly | ✅ Yes | ❌ No | ⚠️ Partial | ✅ Yes | ✅ Yes |
+
+**⭐ Constants Rating: Phyansy 9/10 · NIST CODATA 8.5/10 · HyperPhysics 6/10 · Wikipedia 7/10 · Physics.info 4/10**
+
+> **Why Phyansy wins for students:** NIST CODATA is the *authoritative* source for raw values, but it's a data table — no explanations, no context, no mobile design. Phyansy takes NIST-level precision and wraps it in meaning: you don't just see the value of the Boltzmann constant, you understand *what it physically represents*, in your own language.
+
+---
+
+### 🌐 Multilingual Support (i18n)
+
+| Feature | **Phyansy** | HyperPhysics | The Physics Classroom | NIST CODATA | Wikipedia |
+|---|---|---|---|---|---|
+| Languages supported | **14** | 1 (English) | 1 (English) | 1 (English) | 300+ (separate wikis) |
+| Indian languages | ✅ Hindi, Bengali, Tamil, Telugu, Marathi | ❌ | ❌ | ❌ | ✅ (separate pages) |
+| Arabic / Russian / Japanese | ✅ Yes | ❌ | ❌ | ❌ | ✅ (separate pages) |
+| Math stays in English | ✅ Yes (correct approach) | N/A | N/A | N/A | ✅ |
+| Persisted across sessions | ✅ localStorage | N/A | N/A | N/A | ✅ |
+| Single-page multilingual | ✅ Yes | ❌ | ❌ | ❌ | ❌ (separate full wikis) |
+
+**⭐ Multilingual Rating: Phyansy 9.5/10 · Wikipedia 8/10 (different model) · All others 1/10**
+
+> **Why this matters:** For the 1.4 billion people in India, 300+ million Arabic speakers, and hundreds of millions of other non-English speakers, physics education in English is a barrier — not a bridge. Phyansy is the *only* dedicated physics reference app with native support for Hindi, Bengali, Tamil, Telugu, and Marathi on a single page. Wikipedia has translations but they are entirely separate websites with inconsistent content.
+
+---
+
+### 🔍 Search Experience
+
+| Feature | **Phyansy** | HyperPhysics | The Physics Classroom | Physics.info | Wikipedia |
+|---|---|---|---|---|---|
+| Global search (all sections) | ✅ Yes — unified | ❌ Section-only | ✅ Site search | ❌ No search | ✅ Wikipedia search |
+| Fuzzy matching (typo-tolerant) | ✅ Yes | ❌ No | ❌ No | ❌ No | ⚠️ Partial |
+| Real-time dropdown suggestions | ✅ Yes | ❌ No | ❌ No | ❌ No | ✅ Yes |
+| Keyboard shortcut (`/` to search) | ✅ Yes | ❌ No | ❌ No | ❌ No | ✅ Yes |
+| Searches equations + constants + symbols + units simultaneously | ✅ Yes | ❌ No | ❌ No | ❌ No | ❌ No |
+| Section-tagged results | ✅ Yes | ❌ N/A | ❌ No | ❌ No | ⚠️ Category tags |
+
+**⭐ Search Rating: Phyansy 9.5/10 · Wikipedia 7.5/10 · Physics Classroom 5/10 · HyperPhysics 3/10 · Physics.info 2/10**
+
+> **Why Phyansy wins:** HyperPhysics has no real search — you navigate via a clickable concept map diagram from the 1990s. Phyansy's custom-built fuzzy search engine (`searchEngine.js`) indexes all 295 equations, 79 constants, 51 symbols, and all units simultaneously. Type "planc" and it finds the Planck constant. Type "newtn" and it surfaces Newton's Second Law. No other site in this comparison matches this.
+
+---
+
+### 🎨 UI / UX & Design
+
+| Feature | **Phyansy** | HyperPhysics | The Physics Classroom | Physics.info | NIST CODATA |
+|---|---|---|---|---|---|
+| Dark mode | ✅ Auto-detected + toggle | ❌ No | ❌ No | ❌ No | ❌ No |
+| Mobile responsive | ✅ Yes | ❌ No | ✅ Yes | ✅ Yes | ⚠️ Partial |
+| Animated / modern UI | ✅ Particle background, modals | ❌ Static HTML | ⚠️ Minimal | ❌ Plain HTML | ❌ Plain HTML |
+| Lazy rendering (performance) | ✅ IntersectionObserver | ❌ No | ✅ Some | ❌ No | ❌ No |
+| No ads | ✅ Completely ad-free | ✅ Ad-free | ❌ Has ads | ✅ Ad-free | ✅ Ad-free |
+| No login required | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
+| Open source | ✅ MIT License | ❌ No | ❌ No | ❌ No | ❌ No |
+| Last design update | 2025 | ~2005 era | 2022 | ~2010 era | 2019 |
+
+**⭐ UI/UX Rating: Phyansy 9/10 · The Physics Classroom 6/10 · Wikipedia 7/10 · HyperPhysics 2/10 · NIST 4/10**
+
+> **Honest note:** HyperPhysics is a masterpiece of *content* built on a completely outdated interface. Its concept map navigation made sense in 2000; today it is confusing and inaccessible on any mobile device. Phyansy delivers the same depth of content inside a 2025-grade UX.
+
+---
+
+### 🖩 Built-in Calculator
+
+| Feature | **Phyansy** | HyperPhysics | The Physics Classroom | Physics.info | Wikipedia |
+|---|---|---|---|---|---|
+| Built-in calculator | ✅ Yes | ✅ Yes (many) | ✅ Yes | ❌ No | ❌ No |
+| Integrated into reference | ✅ Same app | ❌ Separate pages | ❌ Separate tools | ❌ N/A | ❌ N/A |
+| No external redirect needed | ✅ Yes | ✅ Yes | ❌ External links | ❌ N/A | ❌ N/A |
+
+**⭐ Calculator Rating: Phyansy 8/10 · HyperPhysics 8.5/10 · Physics Classroom 6/10 · Others N/A**
+
+> HyperPhysics genuinely excels at calculators — it has domain-specific interactive calculators for optics, thermodynamics, and more. Phyansy's calculator is general-purpose. This is an area where HyperPhysics leads.
+
+---
+
+### 📚 Content Depth & Educational Quality
+
+| Feature | **Phyansy** | HyperPhysics | The Physics Classroom | Physics.info | Wikipedia |
+|---|---|---|---|---|---|
+| Beginner-friendly explanations | ✅ Yes | ⚠️ Assumes background | ✅ Excellent | ⚠️ Terse | ⚠️ Variable |
+| Graduate-level depth | ✅ Yes (QFT, Condensed Matter) | ✅ Yes | ❌ GCSE/A-Level only | ⚠️ Some | ✅ Yes |
+| Real-world applications | ✅ Every equation | ⚠️ Some | ✅ Yes | ❌ No | ✅ Yes |
+| Historical context | ✅ Every equation | ⚠️ Some | ❌ Minimal | ❌ No | ✅ Yes |
+| Misconceptions addressed | ✅ Explicitly | ❌ No | ✅ Some | ❌ No | ❌ No |
+| Covers GCSE → Graduate | ✅ Full range, tagged | ⚠️ University+ focus | ⚠️ GCSE/A-Level only | ⚠️ Mixed | ✅ All levels |
+
+**⭐ Educational Depth Rating: Phyansy 9.5/10 · Wikipedia 8/10 · HyperPhysics 7.5/10 · Physics Classroom 6.5/10 · Physics.info 5/10**
+
+---
+
+### 🏁 Overall Comparison Summary
+
+| | **Phyansy** | HyperPhysics | Physics Classroom | Physics.info | NIST CODATA | Wikipedia |
+|---|---|---|---|---|---|---|
+| Equations | ⭐ 9.5 | 6.5 | 5.0 | 6.0 | N/A | 7.0 |
+| Constants | ⭐ 9.0 | 6.0 | N/A | 4.0 | 8.5 | 7.0 |
+| Multilingual | ⭐ 9.5 | 1.0 | 1.0 | 1.0 | 1.0 | 8.0 |
+| Search | ⭐ 9.5 | 3.0 | 5.0 | 2.0 | 4.0 | 7.5 |
+| UI / UX | ⭐ 9.0 | 2.0 | 6.0 | 3.0 | 4.0 | 7.0 |
+| Calculator | 8.0 | ⭐ 8.5 | 6.0 | N/A | N/A | N/A |
+| Educational Depth | ⭐ 9.5 | 7.5 | 6.5 | 5.0 | N/A | 8.0 |
+| Open Source | ✅ MIT | ❌ | ❌ | ❌ | ❌ | ✅ CC |
+| Ad-free | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **Overall** | ⭐ **9.2** | **5.8** | **5.0** | **3.5** | **5.5** | **7.5** |
+
+> **Ratings are based on student-facing utility:** how useful is this site for someone learning or referencing physics, regardless of specialty level?
+
+---
+
+### 💬 Bottom Line
+
+**Phyansy is the only physics reference tool that combines:**
+1. ✅ Beautiful KaTeX math rendering
+2. ✅ Deep equation explanations (not just formulas)
+3. ✅ 14 languages including 5 Indian languages
+4. ✅ Fuzzy global search across all sections
+5. ✅ Modern, mobile-first, dark-mode UI
+6. ✅ Completely open source (MIT)
+7. ✅ Zero ads, zero login, zero cost
+
+No single competitor offers all of these together. HyperPhysics has deeper domain calculators. NIST has more authoritative constant values. Wikipedia has broader coverage. But for a student who wants to **understand physics** — not just look up a number — Phyansy offers the most complete, accessible, and beautiful experience available for free.
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
