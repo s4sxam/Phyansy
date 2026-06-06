@@ -600,3 +600,24 @@
     max-height: 92vh;
   }
 }
+
+/* ── FAQ tab styles ─────────────────────────────────────────────────────── */
+.about-faq-item {
+  border-left: 2px solid var(--accent, #667eea);
+  padding: 10px 0 10px 14px;
+  margin-bottom: 16px;
+}
+.about-faq-item:last-child {
+  margin-bottom: 0;
+}
+.about-faq-q {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary, #e2e8f0);
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+.about-faq-item .about-p {
+  margin: 0;
+  color: var(--text-secondary, #94a3b8);
+}
