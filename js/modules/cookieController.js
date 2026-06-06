@@ -248,7 +248,7 @@ function injectAboutModal() {
 
           <div class="about-highlight">
             <strong>Necessary (always active)</strong><br>
-            <span style="font-size:12px;">Key: <code>quantra_theme</code>, <code>phyansy_cookie_consent</code>, <code>phyansy_cookie_prefs</code></span><br>
+            <span style="font-size:12px;">Key: <code>phyansy_theme</code>, <code>phyansy_cookie_consent</code>, <code>phyansy_cookie_prefs</code></span><br>
             Stores your dark/light theme choice and your consent decision. Without these, the site would forget your preferences on every visit and keep showing you the consent banner.
           </div>
 
