@@ -159,6 +159,7 @@ function showResult(val, unit, explain) {
 function calculate() {
   const vals = {};
   let valid = true;
+  const errors = []; // BUG-07 FIX: collect all errors, show one combined toast
 
   currentEq.vars.forEach((v) => {
     if (v.id === solveFor) return;
@@ -182,16 +183,16 @@ function calculate() {
         if (v.constraints) {
           if (v.constraints.min !== undefined && num < v.constraints.min) {
             input.style.borderColor = 'rgba(239,68,68,0.7)';
-            showToast(`${v.label} cannot be negative or zero`);
+            errors.push(`${v.label} cannot be negative or zero`); // BUG-07 FIX
             valid = false;
           }
           if (v.constraints.nonzero && num === 0) {
             input.style.borderColor = 'rgba(239,68,68,0.7)';
-            showToast(`${v.label} cannot be zero`);
+            errors.push(`${v.label} cannot be zero`); // BUG-07 FIX
             valid = false;
           }
         }
-        if (valid || vals[v.id] === undefined) vals[v.id] = num;
+        if (valid) vals[v.id] = num; // BUG-01 FIX: only store value when still valid
       }
     }
     // FIX 3+4 — inject constant value
@@ -201,7 +202,8 @@ function calculate() {
   });
 
   if (!valid) {
-    showToast('Please fill in all fields with valid numbers');
+    // BUG-07 FIX: show specific constraint errors joined, or generic message
+    showToast(errors.length > 0 ? errors.join(' · ') : 'Please fill in all fields with valid numbers');
     return;
   }
 
