@@ -16,6 +16,7 @@ import { createLazyTabSection } from './lazyRenderer.js';
 import {
   getCurrentLang, onLangChange, t,
 } from './langController.js';
+import { toSlug, pushEquationState, resetMeta } from './deepLinkRouter.js';
 
 // ── EQUATION LOCALE MAP ───────────────────────────────────────────────────────
 // Add new locale files here following the same pattern.
@@ -394,6 +395,7 @@ function initModal() {
 
     overlay.classList.add('show');
     lockBodyScroll(); // FIX #03
+    pushEquationState(eq);
 
     // Reset sheet state on every open
     isFullscreen = false;
@@ -413,6 +415,7 @@ function initModal() {
       box.style.transform = '';
       box.style.opacity   = '';
     }
+    resetMeta();
   }
 
   closeBtn.addEventListener('click', closeModal);
@@ -520,6 +523,19 @@ function _openRelatedEquation(name) {
 export function initEquations() {
   const modal = initModal();
   _modalRef = modal; // FIX #14 — expose ref for related-chip navigation
+
+  // ── DEEP LINK: register global opener so deepLinkRouter can open by slug ──
+  window._phyansy_openEquationModal = function(slug) {
+    for (const branch of Object.values(EQUATIONS)) {
+      for (const eq of branch) {
+        if (toSlug(eq.name) === slug) {
+          modal.openModal(eq);
+          return;
+        }
+      }
+    }
+    console.warn('[Phyansy] Equation not found for slug:', slug);
+  };
 
   // FIX #16 — Stagger animation delay: cap at 200ms on mobile, 300ms on desktop
   const isMobile  = !isDesktop();
