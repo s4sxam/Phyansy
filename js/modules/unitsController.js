@@ -71,7 +71,7 @@ function buildTable(tableId, rows, cols) {
   // Wire copy buttons
   table.querySelectorAll('.unit-sym-btn').forEach((btn) => {
     btn.addEventListener('click', (e) => {
-      if (window._quantraIsDragging) return;
+      if (window._phyansyIsDragging) return;
       copyText(btn.dataset.sym);
       showCopyFeedback(btn);
     });
