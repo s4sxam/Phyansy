@@ -7,6 +7,7 @@ import { initEquations }   from './equationsController.js';
 import { initSymbols }     from './symbolsController.js';
 import { initUnits }       from './unitsController.js';
 import { initCalculator }  from './calculatorController.js';
+import { initFunFacts }    from './funFactsController.js';
 
 const INIT_MAP = {
   constants:  initConstants,
@@ -14,6 +15,7 @@ const INIT_MAP = {
   symbols:    initSymbols,
   units:      initUnits,
   calculator: initCalculator,
+  funfacts:   initFunFacts,
 };
 
 const initialized  = {};
