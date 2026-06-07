@@ -253,6 +253,7 @@
   <link rel="stylesheet" href="css/cookie.css">
   <link rel="stylesheet" href="css/search.css">
   <link rel="stylesheet" href="css/lang.css">
+  <link rel="stylesheet" href="css/funfacts.css">
 
   <!-- ═══ PREVENT FLASH OF WRONG THEME ═════════════════════════════════ -->
   <script>
@@ -402,6 +403,7 @@
   <button class="tab-btn"        data-tab="symbols"    aria-pressed="false" data-i18n="nav_symbols">Symbols</button>
   <button class="tab-btn"        data-tab="units"      aria-pressed="false" data-i18n="nav_units">Units</button>
   <button class="tab-btn"        data-tab="calculator" aria-pressed="false" data-i18n="nav_calculator">Calculator</button>
+  <button class="tab-btn funfacts-tab-btn" data-tab="funfacts" aria-pressed="false">Fun Facts</button>
 
   <!-- Google Translate widget -->
   <div id="google-translate-wrapper" title="Translate page">
@@ -574,6 +576,27 @@
           <div class="calc-result-explain" id="calc-result-explain"></div>
         </div>
       </div>
+    </div>
+  </section>
+
+
+  <!-- SECTION 6: FUN FACTS -->
+  <section id="sec-funfacts" class="section" aria-label="Fun Facts">
+    <div class="section-header">
+      <h2 class="section-title">🔥 Fun Facts</h2>
+      <p class="section-sub">Mind-bending facts across Physics, Chemistry, Biology, Space &amp; more — because science is wild</p>
+    </div>
+    <div class="ff-controls">
+      <div class="ff-search-wrap">
+        <svg class="ff-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="ff-search" id="ff-search-input" type="search" placeholder="Search facts…" aria-label="Search fun facts">
+      </div>
+      <div class="ff-filter-row" id="ff-filters" role="group" aria-label="Filter by category"></div>
+    </div>
+    <div class="ff-grid" id="ff-grid"></div>
+    <div class="ff-empty hidden" id="ff-empty">
+      <div class="ff-empty-icon">🔍</div>
+      <p>No facts match your search. Try a different keyword!</p>
     </div>
   </section>
 
