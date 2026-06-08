@@ -478,9 +478,9 @@ const FACTS = [
     text: 'Google\'s Sycamore quantum processor in 2019 performed a specific calculation in 200 seconds. The same calculation on the world\'s most powerful classical supercomputer would take approximately 10,000 years. Quantum computing doesn\'t just do things faster. It does things that are mathematically impossible for classical computers regardless of how long you wait.',
   },
 {
-    emoji: '🗣️', cat: 'upsc', catLabel: 'UPSC',
-    title: 'ORIGINS OF LANGUAGE & WRITING — THE INVENTION THAT MADE USHUMAN.',
-    text: 'Language didn\'t evolve gradually. It may have appeared almost overnight in
+  emoji: '🗣️', cat: 'upsc', catLabel: 'UPSC',
+  title: 'ORIGINS OF LANGUAGE & WRITING — THE INVENTION THAT MADE USHUMAN.',
+  text: `Language didn't evolve gradually. It may have appeared almost overnight in
 evolutionary terms. And nobody knows why.
 For 200,000 years Homo sapiens existed. Made tools. Buried dead. Used fire. Then roughly
 50,000-70,000 years ago something happened — cave paintings, jewellery, long distance
@@ -489,8 +489,9 @@ Anthropologists call it the Great Leap Forward. The leading hypothesis is a sing
 mutation — possibly in the FOXP2 gene — that rewired the brain for recursive syntax. The
 ability to say "I think that she believes that he knows that they want" — embedding thoughts
 inside thoughts infinitely — may have been a single mutation that changed everything.
-Language didn't slowly develop. It may have switched on. 🧬💡.', 
-  },
+Language didn't slowly develop. It may have switched on. 🧬💡.`, 
+}, 
+
 ];
 
 // ── Categories ──
