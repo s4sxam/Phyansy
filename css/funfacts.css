@@ -72,12 +72,18 @@
 /* ── BUCKET TAB ROW ── */
 .ff-filter-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.ff-filter-row::-webkit-scrollbar { display: none; }
 
 .ff-filter-btn {
   position: relative;
+  flex-shrink: 0;
   padding: 7px 16px;
   border-radius: 99px;
   border: 1px solid var(--border);
@@ -400,11 +406,5 @@
   .ff-search-wrap {
     max-width: 100%;
   }
-  .ff-filter-row {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-  }
-  .ff-filter-row::-webkit-scrollbar { display: none; }
+
 }
