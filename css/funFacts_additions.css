@@ -1,0 +1,78 @@
+/* ── Add this element to your HTML, right below #ff-filters ──
+   <div id="ff-subfilters" class="ff-subfilters hidden"></div>
+*/
+
+/* ── Sub-pill row ── */
+.ff-subfilters {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 0 4px;          /* bottom padding for scrollbar gap */
+  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none;  /* IE/Edge */
+  margin-top: 10px;
+}
+.ff-subfilters::-webkit-scrollbar { display: none; }
+
+.ff-subfilters.hidden { display: none; }
+
+.ff-sub-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  background: transparent;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.ff-sub-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.85);
+}
+.ff-sub-btn.active {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.4);
+  color: #fff;
+  font-weight: 600;
+}
+
+.ff-sub-count {
+  font-size: 0.7rem;
+  opacity: 0.55;
+  font-weight: 400;
+}
+.ff-sub-btn.active .ff-sub-count { opacity: 0.7; }
+
+/* ── Bucket section heading (All view) ── */
+.ff-bucket-section {
+  margin-bottom: 48px;
+}
+.ff-bucket-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 20px;
+  opacity: 0.95;
+}
+
+/* ── Sub-section heading (within bucket) ── */
+.ff-sub-section {
+  margin-bottom: 32px;
+}
+.ff-sub-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.4;
+  margin: 0 0 14px;
+  padding-left: 2px;
+}
