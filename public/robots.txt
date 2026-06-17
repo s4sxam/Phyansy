@@ -7,4 +7,23 @@ Allow: /constants/
 Allow: /symbols/
 Allow: /units/
 
+# Explicitly allow crawling of all static assets
+Allow: /assets/
+Allow: /css/
+Allow: /js/
+
+# Block noisy crawlers that waste crawl budget
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: *
 Sitemap: https://phyansy.vercel.app/sitemap.xml
