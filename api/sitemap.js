@@ -1,5 +1,7 @@
 export default function handler(req, res) {
-  const today = new Date().toISOString().split('T')[0];
+  // Use a fixed last-modified date (update this when you deploy major content changes).
+  // Do NOT use today's date — telling Google everything changes daily destroys crawl trust.
+  const today = '2026-06-13';
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
