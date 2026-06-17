@@ -19,9 +19,13 @@
   <link rel="icon" href="/og-image.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/og-image.png">
 
+  <!-- ═══ PRECONNECT — speed up third-party resources ═══════════════════ -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
   <!-- ═══ CANONICAL ══════════════════════════════════════════════════════ -->
   <link rel="canonical" href="https://phyansy.vercel.app/">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 
   <!-- ═══ HREFLANG — 14 language variants ══════════════════════════════ -->
   <link rel="alternate" hreflang="en"        href="https://phyansy.vercel.app/">
@@ -672,8 +676,8 @@
   <span>© 2025 Tanay</span>
 </footer>
 
-<!-- Static about/attribution + FAQ section — crawlable by Googlebot, visually hidden -->
-<section id="about-static" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">
+<!-- Static about/attribution + FAQ section — crawlable content, rendered as supplemental footer -->
+<section id="about-static" style="max-width:900px;margin:0 auto;padding:48px 24px 24px;color:var(--text-secondary,#888);font-size:0.82rem;line-height:1.7;">
   <h2>About Phyansy</h2>
   <p>Phyansy is a free interactive physics reference built by <strong>Tanay</strong>, a developer passionate about making physics accessible to students worldwide. The project covers 295 physics equations with full derivations and context, 79 physical constants with CODATA-standard values, 51 symbols, SI units, and a built-in calculator — all free, with no sign-up required.</p>
   <p>Constant values are sourced from CODATA 2018 recommended values. The project is open-source on GitHub. Third-party services: Google Translate (for 14-language support) and KaTeX (for math rendering).</p>
@@ -692,9 +696,8 @@
 
 <script type="module" src="script.js"></script>
 
-<!-- ═══ STATIC CRAWLABLE CONTENT — SEO fallback for JS-rendered data ═══ -->
-<!-- This section is visually hidden but fully readable by search engine bots -->
-<section id="seo-static-content" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">
+<!-- ═══ STATIC CRAWLABLE CONTENT — rendered as a footer, readable by bots and users ═══ -->
+<section id="seo-static-content" style="max-width:900px;margin:0 auto;padding:0 24px 64px;color:var(--text-secondary,#888);font-size:0.82rem;line-height:1.8;">
 <h2>Physics Equations — Complete Reference</h2>
 <h3>Classical Mechanics</h3>
 <ul>
