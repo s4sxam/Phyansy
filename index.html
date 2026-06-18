@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- viewport-fit=cover: required for env(safe-area-inset-*) to return real
+       values on iPhones with home indicator (iPhone X and later). Without this
+       the env() calls in modal.css evaluate to 0 and fix #18 has no effect. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <!-- ═══ PRIMARY META ═══════════════════════════════════════════════════ -->
+  <title>Phyansy — Physics Equations, Constants &amp; Calculator | Free Reference</title>
+  <meta name="description" content="295 physics equations, 79 constants, 51 symbols, SI units and a calculator. Free for high-school &amp; university students. No sign-up. Available in 14 languages.">
+  <meta name="author" content="Tanay (s4sxam)">
+  <meta name="theme-color" content="#667eea">
+  <meta name="keywords" content="physics equations, physical constants, SI units, physics calculator, physics reference, formula sheet, Planck constant, Maxwell equations, Greek symbols physics, JEE physics formulas, NEET physics equations, physics cheat sheet, physics constants list, free physics reference">
+
+  <!-- ═══ FAVICON ══════════════════════════════════════════════════════════ -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/og-image.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/og-image.png">
+
+  <!-- ═══ PRECONNECT — speed up third-party resources ═══════════════════ -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+  <!-- ═══ CANONICAL ══════════════════════════════════════════════════════ -->
+  <link rel="canonical" href="https://phyansy.vercel.app/">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+  <!-- ═══ HREFLANG — 14 language variants ══════════════════════════════ -->
+  <link rel="alternate" hreflang="en"        href="https://phyansy.vercel.app/">
+  <link rel="alternate" hreflang="hi"        href="https://phyansy.vercel.app/?lang=hi">
+  <link rel="alternate" hreflang="bn"        href="https://phyansy.vercel.app/?lang=bn">
+  <link rel="alternate" hreflang="ta"        href="https://phyansy.vercel.app/?lang=ta">
+  <link rel="alternate" hreflang="te"        href="https://phyansy.vercel.app/?lang=te">
+  <link rel="alternate" hreflang="mr"        href="https://phyansy.vercel.app/?lang=mr">
+  <link rel="alternate" hreflang="ar"        href="https://phyansy.vercel.app/?lang=ar">
+  <link rel="alternate" hreflang="ja"        href="https://phyansy.vercel.app/?lang=ja">
+  <link rel="alternate" hreflang="de"        href="https://phyansy.vercel.app/?lang=de">
+  <link rel="alternate" hreflang="ru"        href="https://phyansy.vercel.app/?lang=ru">
+  <link rel="alternate" hreflang="fr"        href="https://phyansy.vercel.app/?lang=fr">
+  <link rel="alternate" hreflang="es"        href="https://phyansy.vercel.app/?lang=es">
+  <link rel="alternate" hreflang="pt"        href="https://phyansy.vercel.app/?lang=pt">
+  <link rel="alternate" hreflang="zh"        href="https://phyansy.vercel.app/?lang=zh">
+  <link rel="alternate" hreflang="x-default" href="https://phyansy.vercel.app/">
+
+  <!-- ═══ OPEN GRAPH ═════════════════════════════════════════════════════ -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://phyansy.vercel.app/">
+  <meta property="og:title"       content="Phyansy — Physics Equations, Constants &amp; Calculator">
+  <meta property="og:description" content="295 physics equations, 79 constants, 51 symbols, SI units and a free calculator. For high-school &amp; university students. No sign-up.">
+  <meta property="og:image"        content="https://phyansy.vercel.app/og-image.png">
+  <meta property="og:image:width"  content="1731">
+  <meta property="og:image:height" content="909">
+  <meta property="og:image:alt"    content="Phyansy — Free physics reference with 295 equations, 79 constants, and a calculator">
+  <meta property="og:site_name"    content="Phyansy">
+  <meta property="og:locale"       content="en_US">
+
+  <!-- ═══ TWITTER CARD ══════════════════════════════════════════════════ -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:site"        content="@s4sxam">
+  <meta name="twitter:creator"     content="@s4sxam">
+  <meta name="twitter:title"       content="Phyansy — Physics Equations, Constants &amp; Calculator">
+  <meta name="twitter:description" content="295 physics equations, 79 constants, SI units, symbols &amp; calculator. Free. No sign-up.">
+  <meta name="twitter:image"       content="https://phyansy.vercel.app/og-image.png">
+  <meta name="twitter:image:alt"   content="Phyansy — Free physics reference with 295 equations, 79 constants, and a calculator">
+
+  <!-- ═══ STRUCTURED DATA / JSON-LD ════════════════════════════════════ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Phyansy",
+        "url": "https://phyansy.vercel.app",
+        "description": "Interactive physics reference: 295 equations, 79 constants, 51 symbols, SI units and a calculator. Free for students.",
+        "applicationCategory": "EducationApplication",
+        "operatingSystem": "Any",
+        "inLanguage": ["en","hi","bn","ta","te","mr","ar","ja","de","ru","fr","es","pt","zh"],
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "author": {
+          "@type": "Person",
+          "name": "Tanay",
+          "url": "https://github.com/s4sxam"
+        },
+        "featureList": [
+          "295 physics equations with derivations",
+          "79 physical constants with CODATA values",
+          "51 physics symbols",
+          "SI base and derived units",
+          "Physics equation calculator",
+          "14 language support"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What physics equations does Phyansy cover?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Phyansy covers 295 physics equations across all branches including Classical Mechanics, Electromagnetism, Thermodynamics, Quantum Mechanics, Relativity, Optics, and more."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Phyansy free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Phyansy is completely free with no sign-up, no account, and no ads required. It is available to all high-school and university students worldwide."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How many physical constants does Phyansy include?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Phyansy includes 79 fundamental physical constants sourced from CODATA 2018 recommended values, including the speed of light, Planck constant, gravitational constant, Boltzmann constant, elementary charge, and more."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What languages does Phyansy support?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Phyansy supports 14 languages: English, Hindi, Bengali, Tamil, Telugu, Marathi, Arabic, Spanish, French, Portuguese, Russian, Japanese, Chinese (Simplified), and German. Physics equations stay in English — the universal language of physics — while descriptions and explanations are translated."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Phyansy work on mobile phones?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Phyansy is fully responsive and works on mobile phones, tablets, and desktops. It supports dark mode and light mode, auto-detected from your system preference."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Who created Phyansy?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Phyansy was designed and built by Tanay Guha (GitHub: s4sxam), a student developer from West Bengal, India. It is an independent, open-source project created as a free resource for physics students everywhere."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What math rendering does Phyansy use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Phyansy uses KaTeX for fast, accurate LaTeX math typesetting directly in the browser, producing publication-quality equations without relying on images or plain text."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Phyansy open source?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Phyansy's source code is publicly available on GitHub under a source-available license. It is free for personal and educational use."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What physics topics does Phyansy cover?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Phyansy covers 13 physics domains: Classical Mechanics, Electromagnetism, Thermodynamics, Quantum Mechanics, Special and General Relativity, Optics, Waves and Oscillations, Nuclear and Particle Physics, Astrophysics and Cosmology, Fluid Mechanics, Solid State and Condensed Matter Physics, and Mathematical Physics."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Phyansy include physics equation derivations?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Every equation in Phyansy includes a step-by-step derivation, a plain-English explanation of what the equation says, its deep physical meaning, historical attribution, real-world significance, common misconceptions, dimensional analysis, and SI units for every variable."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use Phyansy as a physics calculator?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Phyansy includes a built-in physics calculator for common computations, so you can look up an equation and calculate with it without leaving the app."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- ═══ BREADCRUMB + SITELINKS SCHEMA ══════════════════════════════════ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Phyansy",
+        "item": "https://phyansy.vercel.app/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Physics Equations",
+        "item": "https://phyansy.vercel.app/equations"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Physical Constants",
+        "item": "https://phyansy.vercel.app/constants"
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": "Physics Symbols",
+        "item": "https://phyansy.vercel.app/symbols"
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "name": "SI Units",
+        "item": "https://phyansy.vercel.app/units"
+      }
+    ]
+  }
+  </script>
+
+  <!-- ═══ FONTS ══════════════════════════════════════════════════════════ -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- ═══ KaTeX — non-blocking CSS load ════════════════════════════════ -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"></noscript>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <!-- ═══ STYLES ═════════════════════════════════════════════════════════ -->
+  <!-- theme.css must come first so dark-mode overrides cascade correctly -->
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/constants.css">
+  <link rel="stylesheet" href="css/equations.css">
+  <link rel="stylesheet" href="css/symbols.css">
+  <link rel="stylesheet" href="css/units.css">
+  <link rel="stylesheet" href="css/calculator.css">
+  <link rel="stylesheet" href="css/modal.css">
+  <link rel="stylesheet" href="css/cookie.css">
+  <link rel="stylesheet" href="css/search.css">
+  <link rel="stylesheet" href="css/lang.css">
+  <link rel="stylesheet" href="css/funfacts.css">
+
+  <!-- ═══ PREVENT FLASH OF WRONG THEME ═════════════════════════════════ -->
+  <script>
+    (function(){
+      try {
+        const t = localStorage.getItem('quantra_theme');
+        if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+      } catch(e){}
+    })();
+  </script>
+
+  <!-- ═══ GOOGLE TRANSLATE CONFIG ══════════════════════════════════════ -->
+  <style>
+    .goog-te-banner-frame { display: none !important; }
+    body { top: 0 !important; }
+    #goog-gt-tt, .goog-tooltip { display: none !important; }
+    body > .skiptranslate { display: none !important; }
+
+    /* notranslate on .katex prevents Google Translate from touching math */
+    .katex, .katex * { pointer-events: none; }
+
+    #google-translate-wrapper {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    #google_translate_element .goog-te-gadget {
+      font-size: 0 !important;
+      color: transparent !important;
+    }
+    #google_translate_element .goog-te-gadget > span,
+    #google_translate_element .goog-te-gadget > a {
+      display: none !important;
+    }
+    #google_translate_element select.goog-te-combo {
+      display: block !important;
+      visibility: visible !important;
+      font-size: 12px;
+      font-family: inherit;
+      padding: 5px 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(128,128,128,0.3);
+      background: #ffffff;
+      color: #1a1a2e;
+      cursor: pointer;
+      outline: none;
+      max-width: 120px;
+      opacity: 0.85;
+      transition: opacity 0.2s, border-color 0.2s;
+    }
+    #google_translate_element select.goog-te-combo:hover,
+    #google_translate_element select.goog-te-combo:focus {
+      opacity: 1;
+      border-color: rgba(102,126,234,0.6);
+    }
+    .dark #google_translate_element select.goog-te-combo,
+    [data-theme="dark"] #google_translate_element select.goog-te-combo {
+      background: rgba(255,255,255,0.06);
+      color: #e2e8f0;
+      border-color: rgba(255,255,255,0.15);
+    }
+  </style>
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement(
+        { pageLanguage: 'en', autoDisplay: false },
+        'google_translate_element'
+      );
+    }
+
+    (function init() {
+      // 1. Kill Google banner whenever it appears
+      const killBanner = () => {
+        const banner = document.querySelector('.goog-te-banner-frame');
+        if (banner) banner.style.setProperty('display', 'none', 'important');
+        if (document.body && document.body.style.top)
+          document.body.style.setProperty('top', '0', 'important');
+        document.querySelectorAll('body > .skiptranslate, iframe.goog-te-banner-frame')
+          .forEach(el => el.style.setProperty('display', 'none', 'important'));
+      };
+
+      // 2. Stamp notranslate on ALL existing and future .katex elements
+      //    so Google Translate never touches rendered math
+      const stampKatex = (root) => {
+        (root || document).querySelectorAll('.katex:not(.notranslate)')
+          .forEach(el => el.classList.add('notranslate'));
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        stampKatex(document);
+
+        const observer = new MutationObserver((mutations) => {
+          killBanner();
+          for (const m of mutations) {
+            for (const node of m.addedNodes) {
+              if (node.nodeType === 1) {
+                if (node.classList?.contains('katex')) node.classList.add('notranslate');
+                stampKatex(node);
+              }
+            }
+          }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+        killBanner();
+      });
+    })();
+  </script>
+  <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
+</head>
+<body>
+
+<!-- SEO meta handled via <head> tags -->
+
+<noscript>
+  <div style="font-family:sans-serif;max-width:800px;margin:40px auto;padding:20px;">
+    <h1>Phyansy — Free Physics Reference</h1>
+    <p>An interactive physics reference with 295 equations, 79 constants, 51 symbols, SI units, and a calculator. Please enable JavaScript to use the full interactive experience.</p>
+    <ul>
+      <li>295 Physics Equations (Mechanics, Electromagnetism, Thermodynamics, Quantum, Relativity, and more)</li>
+      <li>79 Physical Constants (speed of light, Planck constant, gravitational constant, Boltzmann constant…)</li>
+      <li>51 Physics Symbols (Greek alphabet, mathematical notation)</li>
+      <li>SI Units — base units, derived units, metric prefixes</li>
+      <li>Physics Calculator — solve equations for any variable</li>
+    </ul>
+    <p>Made by Tanay (s4sxam) — free for all students worldwide.</p>
+  </div>
+</noscript>
+
+<nav>
+  <div class="nav-brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#navGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Phyansy logo">
+      <defs>
+        <linearGradient id="navGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#667eea"/>
+          <stop offset="100%" stop-color="#764ba2"/>
+        </linearGradient>
+      </defs>
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+    </svg>
+    Phyansy
+  </div>
+
+  <button class="tab-btn active" data-tab="constants"  aria-pressed="true"  data-i18n="nav_constants">Constants</button>
+  <button class="tab-btn"        data-tab="equations"  aria-pressed="false" data-i18n="nav_equations">Equations</button>
+  <button class="tab-btn"        data-tab="symbols"    aria-pressed="false" data-i18n="nav_symbols">Symbols</button>
+  <button class="tab-btn"        data-tab="units"      aria-pressed="false" data-i18n="nav_units">Units</button>
+  <button class="tab-btn"        data-tab="calculator" aria-pressed="false" data-i18n="nav_calculator">Calculator</button>
+  <button class="tab-btn funfacts-tab-btn" data-tab="funfacts" aria-pressed="false">Fun Facts</button>
+
+  <!-- Google Translate widget -->
+  <div id="google-translate-wrapper" title="Translate page">
+    <div id="google_translate_element"></div>
+  </div>
+
+  <!-- Dark mode toggle -->
+  <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle dark mode" title="Toggle dark mode">
+    <!-- Sun icon (shown in light mode) -->
+    <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1"  x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22"  x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1"  y1="12" x2="3"  y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+    <!-- Moon icon (shown in dark mode) -->
+    <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+</nav>
+
+<!-- Mobile landing — removed gating, shows welcome instead -->
+<div id="mobile-landing" class="hidden">
+  <div class="mobile-landing-inner">
+    <div class="mobile-brand-icon">
+      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="url(#mobileGrad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Phyansy logo">
+        <defs>
+          <linearGradient id="mobileGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#667eea"/>
+            <stop offset="100%" stop-color="#764ba2"/>
+          </linearGradient>
+        </defs>
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+      </svg>
+    </div>
+    <h1 class="mobile-brand-name">Phyansy</h1>
+    <p class="mobile-tagline">Interactive Physics Reference</p>
+    <p class="mobile-msg">295 equations · 79 constants · 51 symbols<br>Free for every student, on every device.</p>
+    <button class="mobile-continue-btn" id="mobile-continue-btn">Open Phyansy</button>
+    <p class="mobile-credit">Made by Tanay (s4sxam)</p>
+  </div>
+</div>
+
+<main id="main-app">
+
+  <!-- ═══════════════════════════════
+       SECTION 1: CONSTANTS
+  ════════════════════════════════ -->
+  <section id="sec-constants" class="section active" aria-label="Physical Constants">
+    <div class="section-header">
+      <h2 class="section-title" data-i18n="sec_constants_title">Physical Constants</h2>
+      <p class="section-sub" data-i18n="sec_constants_sub">Fundamental constants of the universe — click any card to expand</p>
+    </div>
+    <div class="controls">
+      <input type="search" id="const-search" aria-hidden="true" style="display:none">
+      <div class="filter-btns" id="const-filters" role="group" aria-label="Filter by category"></div>
+    </div>
+    <div class="constants-grid" id="constants-grid" role="list"></div>
+  </section>
+
+  <!-- ═══════════════════════════════
+       SECTION 2: EQUATIONS
+  ════════════════════════════════ -->
+  <section id="sec-equations" class="section" aria-label="Key Equations">
+    <div class="section-header">
+      <h2 class="section-title" data-i18n="sec_equations_title">Key Equations</h2>
+      <p class="section-sub" data-i18n="sec_equations_sub">Essential formulas across all branches of physics — click to see variable legend</p>
+    </div>
+    <input type="search" id="eq-search" aria-hidden="true" style="display:none">
+    <div class="eq-branch-tabs" id="eq-branch-tabs" role="tablist" aria-label="Physics branch"></div>
+    <div class="filter-btns eq-difficulty-filters" id="eq-difficulty-filters" role="group" aria-label="Filter by difficulty"></div>
+    <div class="eq-grid" id="eq-grid" role="list"></div>
+  </section>
+
+  <!-- ═══════════════════════════════
+       SECTION 3: SYMBOLS
+  ════════════════════════════════ -->
+  <section id="sec-symbols" class="section" aria-label="Symbols Reference">
+    <div class="section-header">
+      <h2 class="section-title" data-i18n="sec_symbols_title">Symbols Reference</h2>
+      <p class="section-sub" data-i18n="sec_symbols_sub">Greek alphabet and mathematical notation used in physics</p>
+    </div>
+    <input type="search" id="sym-search" aria-hidden="true" style="display:none">
+    <div class="symbols-sub-tabs" role="tablist" aria-label="Symbol category">
+      <button class="sym-sub-btn active" data-sym="greek" role="tab" aria-selected="true" data-i18n="sym_greek">Greek Alphabet</button>
+      <button class="sym-sub-btn" data-sym="math" role="tab" aria-selected="false" data-i18n="sym_math">Math Symbols</button>
+    </div>
+    <div id="sym-greek">
+      <div class="greek-grid" id="greek-grid" role="list"></div>
+    </div>
+    <div id="sym-math" class="hidden">
+      <div class="math-symbols-grid" id="math-sym-grid" role="list"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════
+       SECTION 4: UNITS
+  ════════════════════════════════ -->
+  <section id="sec-units" class="section" aria-label="Units and Measurement">
+    <div class="section-header">
+      <h2 class="section-title" data-i18n="sec_units_title">Units &amp; Measurement</h2>
+      <p class="section-sub" data-i18n="sec_units_sub">SI base units, derived units, and metric prefixes — click any symbol to copy</p>
+    </div>
+
+    <input type="search" id="unit-search" aria-hidden="true" style="display:none">
+
+    <div class="units-section">
+      <h3 class="units-section-title" data-i18n="units_si_base">SI Base Units</h3>
+      <div class="glass-card units-table-wrapper">
+        <table class="units-table" id="si-table" aria-label="SI Base Units"></table>
+      </div>
+    </div>
+
+    <div class="units-section">
+      <h3 class="units-section-title" data-i18n="units_derived">Common Derived Units</h3>
+      <div class="glass-card units-table-wrapper">
+        <table class="units-table" id="derived-table" aria-label="Common Derived Units"></table>
+      </div>
+    </div>
+
+    <div class="units-section">
+      <h3 class="units-section-title" data-i18n="units_non_si">Non-SI Units (Widely Used in Physics)</h3>
+      <div class="glass-card units-table-wrapper">
+        <table class="units-table" id="non-si-table" aria-label="Non-SI Units Widely Used in Physics"></table>
+      </div>
+    </div>
+
+    <div class="units-section">
+      <h3 class="units-section-title" data-i18n="units_prefixes">Metric Prefixes</h3>
+      <div class="units-search-bar">
+        <span class="units-search-icon" aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+        <input id="prefix-search" type="search" placeholder="Filter prefixes — name, symbol, or exponent…" aria-label="Filter metric prefixes" data-i18n-placeholder="units_prefix_filter">
+      </div>
+      <div class="prefix-scale" id="prefix-scale" role="list" aria-label="Metric Prefixes"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════
+       SECTION 5: CALCULATOR
+  ════════════════════════════════ -->
+  <section id="sec-calculator" class="section" aria-label="Physics Calculator">
+    <div class="section-header">
+      <h2 class="section-title" data-i18n="sec_calc_title">Physics Calculator</h2>
+      <p class="section-sub" data-i18n="sec_calc_sub">Pick an equation, choose what to solve for, enter known values</p>
+    </div>
+    <div class="calc-layout">
+      <div class="glass-card calc-picker">
+        <label for="calc-eq-select" data-i18n="calc_equation_label">Equation</label>
+        <select class="calc-select" id="calc-eq-select" aria-label="Select equation"></select>
+        <div class="calc-solve-label" data-i18n="calc_solve_for">Solve for</div>
+        <div class="calc-var-checks" id="calc-var-checks" role="radiogroup" aria-label="Variable to solve for"></div>
+      </div>
+      <div class="glass-card calc-panel">
+        <div class="calc-eq-display" id="calc-eq-display" aria-live="polite">—</div>
+        <div class="calc-inputs" id="calc-inputs"></div>
+        <button class="calc-btn" id="calc-go-btn" aria-label="Calculate result" data-i18n="calc_btn">Calculate</button>
+        <div class="calc-result" id="calc-result" aria-live="polite" aria-atomic="true">
+          <div class="calc-result-label" data-i18n="calc_result_label">Result</div>
+          <div class="calc-result-val" id="calc-result-val"></div>
+          <div class="calc-result-unit" id="calc-result-unit"></div>
+          <div class="calc-result-explain" id="calc-result-explain"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- SECTION 6: FUN FACTS -->
+  <section id="sec-funfacts" class="section" aria-label="Fun Facts">
+    <div class="section-header">
+      <h2 class="section-title">🔥 Fun Facts</h2>
+      <p class="section-sub">Mind-bending facts across Physics, Chemistry, Biology, Space &amp; more — because science is wild</p>
+    </div>
+    <div class="ff-controls">
+      <div class="ff-search-wrap">
+        <svg class="ff-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="ff-search" id="ff-search-input" type="search" placeholder="Search facts…" aria-label="Search fun facts">
+      </div>
+      <div class="ff-filter-row" id="ff-filters" role="group" aria-label="Filter by category"></div>
+      <div class="ff-subfilters hidden" id="ff-subfilters" role="group" aria-label="Filter by sub-category"></div>
+    </div>
+    <div class="ff-grid" id="ff-grid"></div>
+    <div class="ff-empty hidden" id="ff-empty">
+      <div class="ff-empty-icon">🔍</div>
+      <p>No facts match your search. Try a different keyword!</p>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- ── CONSTANTS MODAL (desktop only) ── -->
+<div id="const-modal" class="phys-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="const-modal-title">
+  <div class="phys-modal-box">
+    <button class="phys-modal-close" id="const-modal-close" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="phys-modal-header">
+      <div class="phys-modal-symbol" id="const-modal-symbol"></div>
+      <div class="phys-modal-meta">
+        <span class="const-badge" id="const-modal-badge"></span>
+        <div class="phys-modal-name" id="const-modal-title"></div>
+        <div class="phys-modal-value" id="const-modal-value"></div>
+      </div>
+    </div>
+    <button class="const-copy-btn phys-modal-copy" id="const-modal-copy">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy exact value
+    </button>
+    <div class="phys-modal-body" id="const-modal-body"></div>
+  </div>
+</div>
+
+<!-- ── EQUATIONS MODAL (desktop only) ── -->
+<div id="eq-modal" class="phys-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="eq-modal-title">
+  <div class="phys-modal-box">
+    <button class="phys-modal-close" id="eq-modal-close" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="phys-modal-header eq-modal-header">
+      <div class="phys-modal-name" id="eq-modal-title"></div>
+      <div class="eq-modal-badges" id="eq-modal-badges"></div>
+    </div>
+    <div class="eq-modal-formula" id="eq-modal-formula"></div>
+    <div class="phys-modal-body" id="eq-modal-body"></div>
+  </div>
+</div>
+
+<!-- ── SYMBOLS MODAL (desktop only) ── -->
+<div id="sym-modal" class="phys-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="sym-modal-title">
+  <div class="phys-modal-box phys-modal-box--sm">
+    <button class="phys-modal-close" id="sym-modal-close" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="phys-modal-header">
+      <div class="sym-modal-letters" id="sym-modal-letters"></div>
+      <div class="phys-modal-meta">
+        <div class="phys-modal-name" id="sym-modal-title"></div>
+        <div class="phys-modal-value" id="sym-modal-pron"></div>
+      </div>
+    </div>
+    <div class="phys-modal-body" id="sym-modal-body"></div>
+  </div>
+</div>
+
+<!-- ═══ FOOTER with static crawlable About section ══════════════════════════ -->
+<footer class="site-footer" id="site-footer">
+  <span>Phyansy</span>
+  <span class="footer-sep">·</span>
+  <span>Made by <strong>Tanay</strong> (<a href="https://github.com/s4sxam" rel="author" target="_blank" style="color:inherit">s4sxam</a>)</span>
+  <span class="footer-sep">·</span>
+  <span>Phase 2</span>
+  <span class="footer-sep">·</span>
+  <button id="privacy-about-btn" style="background:none;border:none;font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:0;opacity:0.7;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7">Privacy &amp; About</button>
+  <span class="footer-sep">·</span>
+  <button id="support-btn" style="background:none;border:none;font-family:inherit;font-size:inherit;color:var(--accent,#667eea);cursor:pointer;padding:0;opacity:0.85;transition:opacity 0.2s;display:inline-flex;align-items:center;gap:4px;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.85">☕ Support Phyansy</button>
+  <span class="footer-sep">·</span>
+  <span>© 2025 Tanay</span>
+</footer>
+
+<!-- ═══ SUPPORT MODAL ════════════════════════════════════════════════════ -->
+<div id="support-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+  <div style="background:var(--bg-card,#1a1a2e);border:1px solid var(--border,rgba(255,255,255,0.08));border-radius:20px;padding:32px 28px;max-width:360px;width:90%;text-align:center;position:relative;box-shadow:0 24px 64px rgba(0,0,0,0.4);">
+    <button onclick="document.getElementById('support-modal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted,#888);line-height:1;">&times;</button>
+    <div style="font-size:2rem;margin-bottom:8px;">&#9749;</div>
+    <h2 style="margin:0 0 6px;font-size:1.15rem;color:var(--text,#fff);">Support Phyansy</h2>
+    <p style="margin:0 0 24px;font-size:0.82rem;color:var(--text-muted,#888);line-height:1.6;">Phyansy is free and always will be.<br>If it helped you ace that exam, a coffee keeps it going &#9749;</p>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <a href="https://ko-fi.com/s4sxam" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;background:#29abe0;color:#fff;text-decoration:none;padding:12px 20px;border-radius:10px;font-size:0.9rem;font-weight:600;transition:opacity 0.2s;" onmouseover="this.style.opacity=0.85" onmouseout="this.style.opacity=1">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 2.97.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z"/></svg>
+        Buy me a coffee on Ko-fi
+      </a>
+      <button onclick="var s=document.getElementById('upi-section');s.style.display=s.style.display==='none'?'block':'none'" style="background:var(--bg,#0d0d14);border:1px solid var(--border,rgba(255,255,255,0.1));color:var(--text,#fff);padding:12px 20px;border-radius:10px;font-size:0.9rem;font-weight:600;cursor:pointer;transition:opacity 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;" onmouseover="this.style.opacity=0.75" onmouseout="this.style.opacity=1">
+        &#127470;&#127475; Pay via UPI
+      </button>
+      <div id="upi-section" style="display:none;">
+        <img src="data:image/png;base64,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" alt="UPI QR Code" style="width:180px;height:180px;border-radius:10px;margin:8px auto 0;display:block;border:4px solid rgba(255,255,255,0.06);" />
+        <p style="margin:8px 0 0;font-size:0.75rem;color:var(--text-muted,#888);">Scan with GPay, PhonePe, or Paytm</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var btn = document.getElementById('support-btn');
+  var modal = document.getElementById('support-modal');
+  if(btn && modal){
+    btn.addEventListener('click', function(){ modal.style.display='flex'; });
+    modal.addEventListener('click', function(e){ if(e.target===modal) modal.style.display='none'; });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') modal.style.display='none'; });
+  }
+})();
+</script>
+
+<!-- Static about/attribution + FAQ section — crawlable content, rendered as supplemental footer -->
+<section id="about-static" style="max-width:900px;margin:0 auto;padding:48px 24px 24px;color:var(--text-secondary,#888);font-size:0.82rem;line-height:1.7;">
+  <h2>About Phyansy</h2>
+  <p>Phyansy is a free interactive physics reference built by <strong>Tanay</strong>, a developer passionate about making physics accessible to students worldwide. The project covers 295 physics equations with full derivations and context, 79 physical constants with CODATA-standard values, 51 symbols, SI units, and a built-in calculator — all free, with no sign-up required.</p>
+  <p>Constant values are sourced from CODATA 2018 recommended values. The project is open-source on GitHub. Third-party services: Google Translate (for 14-language support) and KaTeX (for math rendering).</p>
+  <h2>Frequently Asked Questions</h2>
+  <h3>What is Phyansy?</h3><p>Phyansy is a free, open-source physics reference web app. It gives students and researchers instant access to 295 physics equations, 79 physical constants, 51 symbols, SI units, and a built-in calculator — all beautifully rendered with KaTeX math typesetting.</p>
+  <h3>Is Phyansy free to use?</h3><p>Yes. Phyansy is completely free with no sign-up, no account, and no ads required. It is available to all students worldwide.</p>
+  <h3>What physics equations does Phyansy cover?</h3><p>Phyansy covers 295 equations across 13 categories: Classical Mechanics, Electromagnetism, Thermodynamics, Quantum Mechanics, Relativity, Optics, Waves, Nuclear Physics, Astrophysics, Fluid Mechanics, Solid State Physics, Particle Physics, and Mathematical Physics.</p>
+  <h3>How many physical constants does Phyansy include?</h3><p>Phyansy includes 79 fundamental physical constants sourced from CODATA 2018 recommended values, including the speed of light, Planck constant, gravitational constant, Boltzmann constant, and more.</p>
+  <h3>Does Phyansy work in multiple languages?</h3><p>Yes. Phyansy supports 14 languages including English, Hindi, Bengali, Tamil, Telugu, Marathi, Arabic, Spanish, French, Portuguese, Russian, Japanese, Chinese, and German.</p>
+  <h3>Does Phyansy work on mobile?</h3><p>Yes. Phyansy is fully responsive and works on mobile phones, tablets, and desktops with dark mode support.</p>
+  <h3>Is Phyansy open source?</h3><p>Yes. Phyansy's source code is available on GitHub under a source-available license for personal and educational use.</p>
+  <h3>Who created Phyansy?</h3><p>Phyansy was designed and built by Tanay Guha (s4sxam), a student developer from West Bengal, India.</p>
+  <h3>What math rendering does Phyansy use?</h3><p>Phyansy uses KaTeX for fast, accurate LaTeX math typesetting directly in the browser — producing publication-quality equations.</p>
+  <h3>Can I use Phyansy offline?</h3><p>Phyansy requires an internet connection for initial load, but once loaded the core reference data works entirely in the browser with no server calls.</p>
+</section>
+
+<script type="module" src="script.js"></script>
+
+<!-- ═══ STATIC CRAWLABLE CONTENT — rendered as a footer, readable by bots and users ═══ -->
+<section id="seo-static-content" style="max-width:900px;margin:0 auto;padding:0 24px 64px;color:var(--text-secondary,#888);font-size:0.82rem;line-height:1.8;">
+<h2>Physics Equations — Complete Reference</h2>
+<h3>Classical Mechanics</h3>
+<ul>
+  <li><strong>Final Velocity (time)</strong> — v = u + a·t — Final velocity after accelerating from initial velocity u for time t.</li>
+  <li><strong>Final Velocity (displacement)</strong> — v² = u² + 2a·s — Relates final velocity to initial velocity and displacement — no time needed.</li>
+  <li><strong>Weight</strong> — W = m·g — Gravitational force on a mass m near Earth's surface, directed downward.</li>
+  <li><strong>Kinetic Friction</strong> — f_k = µ_k · N — Friction force opposing sliding motion equals the kinetic friction coefficient times the normal force.</li>
+  <li><strong>Static Friction</strong> — f_s ≤ µ_s · N — Static friction is a reactive force that can take any value up to a maximum of µ_s · N.</li>
+  <li><strong>Hooke's Law</strong> — F = −k·x — A spring exerts a restoring force proportional to its displacement from equilibrium.</li>
+  <li><strong>Work Done</strong> — W = F·d·cos(θ) — Work is the component of force along the displacement, times the displacement.</li>
+  <li><strong>Gravitational Potential Energy</strong> — PE = mgh — Potential energy stored in a mass at height h above a reference level in a uniform gravitational field.</li>
+  <li><strong>Conservation of Momentum</strong> — m₁u₁ + m₂u₂ = m₁v₁ + m₂v₂ — In an isolated system, total momentum before a collision equals total momentum after.</li>
+  <li><strong>Moments of Inertia</strong> — I = mr² (and variants) — Moment of inertia measures resistance to angular acceleration — the rotational analogue of mass.</li>
+</ul>
+<h3>Thermodynamics</h3>
+<ul>
+  <li><strong>Ideal Gas Law</strong> — PV = nRT — Pressure times volume equals moles times gas constant times absolute temperature.</li>
+  <li><strong>Ideal Gas Law (molecular form)</strong> — PV = NkT — Ideal gas law in terms of number of molecules N and Boltzmann's constant k.</li>
+  <li><strong>Heat Capacity</strong> — Q = mcΔT — Heat energy required to raise temperature of mass m by ΔT.</li>
+  <li><strong>Latent Heat</strong> — Q = mL — Heat energy for a phase transition — temperature stays constant while bonds form or break.</li>
+  <li><strong>Thermal Expansion (linear)</strong> — ΔL = α·L₀·ΔT — A solid expands in length proportionally to its original length and temperature change.</li>
+  <li><strong>Thermal Expansion (volume)</strong> — ΔV = β·V₀·ΔT — Volume expands with temperature, governed by the volumetric expansion coefficient β.</li>
+  <li><strong>Stefan-Boltzmann Law</strong> — P = εσAT⁴ — Total power radiated by a body depends on the fourth power of its absolute temperature.</li>
+  <li><strong>First Law of Thermodynamics</strong> — ΔU = Q − W — Change in internal energy equals heat added to the system minus work done by the system.</li>
+  <li><strong>Isobaric Work</strong> — W = PΔV — At constant pressure, work done by a gas is simply pressure times volume change.</li>
+  <li><strong>Boltzmann Entropy</strong> — S = k·ln(Ω) — Entropy equals Boltzmann's constant times the logarithm of the number of accessible microstates.</li>
+  <li><strong>Gibbs Free Energy</strong> — G = H − TS — Gibbs free energy determines spontaneity at constant temperature and pressure — ΔG < 0 means spontaneous.</li>
+  <li><strong>Helmholtz Free Energy</strong> — A = U − TS — Helmholtz free energy — maximum work from a system at constant temperature and volume.</li>
+  <li><strong>Enthalpy</strong> — H = U + PV — Enthalpy combines internal energy with pressure-volume work — the natural energy for constant-pressure processes.</li>
+</ul>
+<h3>Waves & Oscillations</h3>
+<ul>
+  <li><strong>SHM Displacement Solution</strong> — x(t) = A·cos(ωt + φ) — General solution of SHM — displacement is sinusoidal with amplitude A, angular frequency ω, and phase φ.</li>
+  <li><strong>Wave Speed</strong> — v = fλ — Wave speed equals frequency times wavelength — the fundamental kinematic relation for any wave.</li>
+  <li><strong>Transverse Wave</strong> — y(x,t) = A·sin(kx − ωt) — Sinusoidal wave travelling in the +x direction — the fundamental solution of the wave equation.</li>
+</ul>
+<h3>Electromagnetism</h3>
+<ul>
+  <li><strong>Ohm's Law</strong> — V = IR — Voltage equals current times resistance — an empirical law holding for ohmic materials, with resistance arising from electron scattering.</li>
+  <li><strong>Drift Velocity</strong> — I = nqv_d A — Current equals the product of carrier density, charge, drift velocity, and cross-section — drift is slow (mm/s), but the field propagates at ~c.</li>
+  <li><strong>Temperature Dependence of Resistivity</strong> — ρ = ρ₀(1 + αΔT) — Resistivity increases linearly with temperature for metals (more scattering), decreases for semiconductors (more carriers), and vanishes for superconductors.</li>
+  <li><strong>Magnetic Field of a Solenoid</strong> — B = μ₀nI — Inside an ideal solenoid the field is perfectly uniform — the magnetic analogue of a parallel-plate capacitor's uniform electric field.</li>
+  <li><strong>Motional EMF</strong> — ε = BLv — A conductor moving through a magnetic field develops an EMF across its ends — the microscopic origin of generator action.</li>
+  <li><strong>Self-Inductance (Solenoid)</strong> — L = μ₀n²V — Inductance measures flux produced per unit current — a solenoid's inductance scales as turns density squared times volume.</li>
+</ul>
+<h3>Optics</h3>
+<ul>
+  <li><strong>Snell's Law</strong> — n₁sin(θ₁) = n₂sin(θ₂) — Light bends at an interface between two media — the fundamental law governing all lenses, prisms, and fibre optics.</li>
+  <li><strong>Double Slit Bright Fringes</strong> — d·sin(θ) = mλ — Young's double-slit experiment — constructive interference occurs where path difference equals a whole number of wavelengths.</li>
+  <li><strong>Single Slit Dark Fringes</strong> — a·sin(θ) = mλ — Diffraction minima from a single slit of width a — the bending of waves around an aperture.</li>
+  <li><strong>Diffraction Grating</strong> — d·sin(θ) = mλ — A diffraction grating with N slits produces extremely sharp principal maxima — the basis of spectroscopy.</li>
+  <li><strong>Thin Film Interference (no inversion)</strong> — 2nt = mλ — Constructive interference in a thin film when both reflections are phase-inverted or neither is — net phase shift zero from reflections.</li>
+  <li><strong>Malus's Law</strong> — I = I₀·cos²(θ) — Intensity of polarised light transmitted through a polariser at angle θ to the polarisation direction.</li>
+</ul>
+<h3>Relativity</h3>
+<ul>
+  <li><strong>Time Dilation</strong> — Δt = γ·Δt₀ — Moving clocks run slow — a clock in motion runs slower by factor γ relative to a stationary observer.</li>
+  <li><strong>Rest Energy</strong> — E₀ = mc² — Mass is energy — a particle at rest has energy mc², the most famous equation in physics.</li>
+  <li><strong>Relativistic Kinetic Energy</strong> — KE = (γ − 1)mc² — Kinetic energy of a relativistic particle — reduces to ½mv² at low speeds, diverges as v → c.</li>
+  <li><strong>Energy-Momentum Relation</strong> — E² = (pc)² + (mc²)² — The relativistic energy-momentum relation — a Lorentz invariant that holds for all particles, massless or massive.</li>
+</ul>
+<h3>Quantum Mechanics</h3>
+<ul>
+  <li><strong>Probability Density</strong> — P(x) = |Ψ(x,t)|² — The squared modulus of the wavefunction gives the probability density of finding the particle at position x.</li>
+  <li><strong>Angular Momentum z-Component</strong> — Lz = mₗℏ — The projection of orbital angular momentum onto the z-axis takes 2l+1 discrete values, from −lℏ to +lℏ in steps of ℏ.</li>
+  <li><strong>Pauli Exclusion Principle</strong> — Ψ(1,2) = −Ψ(2,1) — No two fermions can occupy the same quantum state simultaneously. Fermionic wavefunctions are antisymmetric under particle exchange — if two particles share the same state, the wavefunction vanishes identically.</li>
+  <li><strong>Electric Dipole Selection Rules</strong> — Δl = ±1, Δmₗ = 0, ±1 — For an atom to emit or absorb a photon via electric dipole radiation, the orbital angular momentum quantum number must change by exactly ±1 and the magnetic quantum number by 0 or ±1.</li>
+  <li><strong>Electron g-factor</strong> — gₑ ≈ 2.00232 — The electron's magnetic moment is slightly more than twice the value predicted by classical theory. The deviation from 2 arises entirely from quantum electrodynamics.</li>
+</ul>
+<h3>Nuclear & Particle</h3>
+<ul>
+</ul>
+<h3>Particle Physics & QFT</h3>
+<ul>
+  <li><strong>Dirac Equation</strong> — (iγ^μ ∂_μ − m)ψ = 0 — The relativistic wave equation for a spin-1/2 particle (fermion). Predicts spin, antiparticles, the electron magnetic moment gₑ = 2, and the fine structure of hydrogen — all from first principles.</li>
+  <li><strong>QED Covariant Derivative</strong> — D_μ = ∂_μ + ieA_μ — The covariant derivative replaces the ordinary partial derivative to make the electron Lagrangian invariant under local U(1) gauge transformations. Its introduction forces the existence of the photon and completely determines the electron-photon coupling.</li>
+  <li><strong>Weinberg Angle</strong> — sin²θ_W ≈ 0.231 — The electroweak mixing angle — the single parameter that controls how the SU(2) gauge field W³_μ and the U(1) gauge field B_μ mix to produce the physical photon and Z boson. It determines the ratio of W and Z masses, the neutral current coupling strengths, and the ratio of the two electroweak gauge coupling constants.</li>
+</ul>
+<h3>Astrophysics & Cosmology</h3>
+<ul>
+  <li><strong>Stellar Luminosity</strong> — L = 4πR²σT⁴ — The total power radiated by a star of radius R and surface temperature T, treating it as a perfect blackbody. The T⁴ dependence makes temperature the dominant factor — doubling T increases luminosity 16-fold.</li>
+  <li><strong>Hubble's Law</strong> — v = H₀ d — Galaxies recede with velocity proportional to their distance. H₀ ≈ 70 km/s/Mpc is the Hubble constant. The law encodes the expansion of the universe — not an explosion from a centre, but a uniform stretching of space itself, so every observer in every galaxy sees every other galaxy receding.</li>
+</ul>
+<h3>Fluid Mechanics</h3>
+<ul>
+  <li><strong>Hydrostatic Pressure</strong> — P = P₀ + ρgh — The pressure at depth h in a static fluid of density ρ, with surface pressure P₀, increases linearly with depth. Each metre of water adds approximately ρgh ≈ 9800 Pa ≈ 0.097 atm. Pressure depends only on depth, not on the shape of the container.</li>
+  <li><strong>Continuity Equation</strong> — A₁v₁ = A₂v₂ — For steady, incompressible flow through a pipe, the volume flow rate Q = Av is constant at every cross-section. Where a pipe narrows (A decreases), the fluid velocity must increase proportionally. This is mass conservation applied to fluid flow.</li>
+</ul>
+<h3>Solid State & Condensed Matter Physics</h3>
+<ul>
+  <li><strong>Bragg's Law</strong> — 2d·sinθ = nλ — X-rays of wavelength λ diffract from crystal planes of spacing d at glancing angle θ. Constructive interference — a sharp diffraction peak — occurs only when the extra path length 2d sinθ equals an integer multiple n of the wavelength. The foundation of X-ray crystallography.</li>
+</ul>
+<h3>Mathematical Physics & Key Constants</h3>
+<ul>
+</ul>
+
+<h2>Physical Constants — Complete Reference</h2>
+<ul>
+  <li><strong>Speed of Light in Vacuum</strong> (symbol: c) — value: 2.998 × 10</li>
+  <li><strong>Planck Constant</strong> (symbol: h) — value: 6.626 × 10</li>
+  <li><strong>Reduced Planck Constant</strong> (symbol: ħ) — value: 1.055 × 10</li>
+  <li><strong>Elementary Charge</strong> (symbol: e) — value: 1.602 × 10</li>
+  <li><strong>Boltzmann Constant</strong> (symbol: k) — value: 1.381 × 10</li>
+  <li><strong>Avogadro Constant</strong> (symbol: N<sub>A</sub>) — value: 6.022 × 10</li>
+  <li><strong>Luminous Efficacy</strong> (symbol: K<sub>cd</sub>) — value: 683</li>
+  <li><strong>Caesium Hyperfine Frequency</strong> (symbol: Δν<sub>Cs</sub>) — value: 9,192,631,770</li>
+  <li><strong>Vacuum Electric Permittivity</strong> (symbol: ε<sub>0</sub>) — value: 8.854 × 10</li>
+  <li><strong>Vacuum Magnetic Permeability</strong> (symbol: μ<sub>0</sub>) — value: 1.257 × 10</li>
+  <li><strong>Characteristic Impedance of Vacuum</strong> (symbol: Z<sub>0</sub>) — value: 376.730</li>
+  <li><strong>Josephson Constant</strong> (symbol: K<sub>J</sub>) — value: 4.836 × 10</li>
+  <li><strong>Von Klitzing Constant</strong> (symbol: R<sub>K</sub>) — value: 25812.807</li>
+  <li><strong>Magnetic Flux Quantum</strong> (symbol: Φ<sub>0</sub>) — value: 2.068 × 10</li>
+  <li><strong>Conductance Quantum</strong> (symbol: G<sub>0</sub>) — value: 7.748 × 10</li>
+  <li><strong>Faraday Constant</strong> (symbol: F) — value: 96,485.332</li>
+  <li><strong>Fine-Structure Constant</strong> (symbol: α) — value: 7.297 × 10</li>
+  <li><strong>Rydberg Constant</strong> (symbol: R<sub>∞</sub>) — value: 1.097 × 10</li>
+  <li><strong>Bohr Radius</strong> (symbol: a<sub>0</sub>) — value: 5.292 × 10</li>
+  <li><strong>Hartree Energy</strong> (symbol: E<sub>h</sub>) — value: 4.360 × 10</li>
+  <li><strong>Bohr Magneton</strong> (symbol: μ<sub>B</sub>) — value: 9.274 × 10</li>
+  <li><strong>Nuclear Magneton</strong> (symbol: μ<sub>N</sub>) — value: 5.051 × 10</li>
+  <li><strong>Electron Mass</strong> (symbol: m<sub>e</sub>) — value: 9.109 × 10</li>
+  <li><strong>Electron g-factor</strong> (symbol: g<sub>e</sub>) — value: −2.002319304</li>
+  <li><strong>Proton Mass</strong> (symbol: m<sub>p</sub>) — value: 1.673 × 10</li>
+  <li><strong>Proton g-factor</strong> (symbol: g<sub>p</sub>) — value: 5.586</li>
+  <li><strong>Neutron Mass</strong> (symbol: m<sub>n</sub>) — value: 1.675 × 10</li>
+  <li><strong>Neutron Magnetic Moment</strong> (symbol: μ<sub>n</sub>) — value: −9.662 × 10</li>
+  <li><strong>Muon Mass</strong> (symbol: m<sub>μ</sub>) — value: 1.884 × 10</li>
+  <li><strong>Muon Anomalous Magnetic Moment</strong> (symbol: a<sub>μ</sub>) — value: 0.0011659</li>
+  <li><strong>Tau Lepton Mass</strong> (symbol: m<sub>τ</sub>) — value: 3.168 × 10</li>
+  <li><strong>Molar Gas Constant</strong> (symbol: R) — value: 8.314</li>
+  <li><strong>Stefan-Boltzmann Constant</strong> (symbol: σ) — value: 5.670 × 10</li>
+  <li><strong>Wien Displacement Constant</strong> (symbol: b) — value: 2.898 × 10</li>
+  <li><strong>Gravitational Constant</strong> (symbol: G) — value: 6.674 × 10</li>
+  <li><strong>Fermi Coupling Constant</strong> (symbol: G<sub>F</sub>) — value: 1.166 × 10</li>
+  <li><strong>Weak Mixing Angle</strong> (symbol: sin<sup>2</sup>θ<sub>W</sub>) — value: 0.2229</li>
+  <li><strong>Quantum of Circulation</strong> (symbol: κ) — value: 3.637 × 10</li>
+  <li><strong>Thomson Cross Section</strong> (symbol: σ<sub>T</sub>) — value: 6.652 × 10</li>
+  <li><strong>Electron Charge-to-Mass Ratio</strong> (symbol: −e/m<sub>e</sub>) — value: −1.759 × 10</li>
+  <li><strong>Electron Molar Mass</strong> (symbol: M(e)) — value: 5.486 × 10</li>
+  <li><strong>Electron-Proton Mass Ratio</strong> (symbol: m<sub>e</sub>/m<sub>p</sub>) — value: 5.446 × 10</li>
+  <li><strong>Proton Charge-to-Mass Ratio</strong> (symbol: e/m<sub>p</sub>) — value: 9.579 × 10</li>
+  <li><strong>Proton Molar Mass</strong> (symbol: M(p)) — value: 1.007 × 10</li>
+  <li><strong>Neutron-Electron Mass Ratio</strong> (symbol: m<sub>n</sub>/m<sub>e</sub>) — value: 1838.68</li>
+  <li><strong>Neutron-Proton Mass Ratio</strong> (symbol: m<sub>n</sub>/m<sub>p</sub>) — value: 1.00138</li>
+  <li><strong>Neutron g-factor</strong> (symbol: g<sub>n</sub>) — value: −3.826</li>
+  <li><strong>Neutron Molar Mass</strong> (symbol: M(n)) — value: 1.00866 × 10</li>
+  <li><strong>Neutron Compton Wavelength</strong> (symbol: λ<sub>Cn</sub>) — value: 1.320 × 10</li>
+  <li><strong>Muon Compton Wavelength</strong> (symbol: λ<sub>Cμ</sub>) — value: 1.173 × 10</li>
+  <li><strong>Muon g-factor</strong> (symbol: g<sub>μ</sub>) — value: −2.00233</li>
+  <li><strong>Deuteron Mass</strong> (symbol: m<sub>d</sub>) — value: 3.344 × 10</li>
+  <li><strong>Deuteron Magnetic Moment</strong> (symbol: μ<sub>d</sub>) — value: 4.331 × 10</li>
+  <li><strong>Deuteron g-factor</strong> (symbol: g<sub>d</sub>) — value: 0.8574</li>
+  <li><strong>Helion Mass</strong> (symbol: m<sub>h</sub>) — value: 5.006 × 10</li>
+  <li><strong>Alpha Particle Mass</strong> (symbol: m<sub>α</sub>) — value: 6.645 × 10</li>
+  <li><strong>Atomic Mass Constant</strong> (symbol: m<sub>u</sub>) — value: 1.661 × 10</li>
+  <li><strong>Molar Mass Constant</strong> (symbol: M<sub>u</sub>) — value: 1.000 × 10</li>
+  <li><strong>Molar Planck Constant</strong> (symbol: N<sub>A</sub>h) — value: 3.990 × 10</li>
+  <li><strong>Molar Volume of Ideal Gas (STP)</strong> (symbol: V<sub>m</sub>) — value: 22.414 × 10</li>
+  <li><strong>Loschmidt Constant</strong> (symbol: n<sub>0</sub>) — value: 2.687 × 10</li>
+  <li><strong>Molar Volume of Silicon</strong> (symbol: V<sub>m,Si</sub>) — value: 1.206 × 10</li>
+  <li><strong>Molar Mass of Carbon-12</strong> (symbol: M(<sup>12</sup>C)) — value: 12.000 × 10</li>
+  <li><strong>First Radiation Constant</strong> (symbol: c<sub>1</sub>) — value: 3.742 × 10</li>
+  <li><strong>First Radiation Constant for Spectral Radiance</strong> (symbol: c<sub>1L</sub>) — value: 1.191 × 10</li>
+  <li><strong>Second Radiation Constant</strong> (symbol: c<sub>2</sub>) — value: 1.439 × 10</li>
+  <li><strong>Standard Acceleration of Gravity</strong> (symbol: g) — value: 9.807</li>
+  <li><strong>a.u. of Length</strong> (symbol: a<sub>0</sub>) — value: 5.292 × 10</li>
+  <li><strong>a.u. of Mass</strong> (symbol: m<sub>e</sub>) — value: 9.109 × 10</li>
+  <li><strong>a.u. of Time</strong> (symbol: t<sub>au</sub>) — value: 2.419 × 10</li>
+  <li><strong>a.u. of Energy</strong> (symbol: E<sub>h</sub>) — value: 4.360 × 10</li>
+  <li><strong>a.u. of Charge</strong> (symbol: e) — value: 1.602 × 10</li>
+  <li><strong>a.u. of Velocity</strong> (symbol: v<sub>au</sub>) — value: 2.188 × 10</li>
+  <li><strong>a.u. of Momentum</strong> (symbol: p<sub>au</sub>) — value: 1.993 × 10</li>
+  <li><strong>a.u. of Force</strong> (symbol: F<sub>au</sub>) — value: 8.239 × 10</li>
+  <li><strong>a.u. of Electric Field</strong> (symbol: E<sub>au</sub>) — value: 5.142 × 10</li>
+  <li><strong>a.u. of Magnetic Flux Density</strong> (symbol: B<sub>au</sub>) — value: 2.351 × 10</li>
+  <li><strong>a.u. of Permittivity</strong> (symbol: ε<sub>au</sub>) — value: 1.113 × 10</li>
+  <li><strong>a.u. of Magnetizability</strong> (symbol: χ<sub>au</sub>) — value: 7.891 × 10</li>
+</ul>
+
+  <h2>Physics Symbols Reference</h2>
+  <p>Phyansy covers 51 physics symbols including the full Greek alphabet (alpha α, beta β, gamma γ, delta δ, epsilon ε, zeta ζ, eta η, theta θ, iota ι, kappa κ, lambda λ, mu μ, nu ν, xi ξ, omicron ο, pi π, rho ρ, sigma σ, tau τ, upsilon υ, phi φ, chi χ, psi ψ, omega ω) and mathematical notation (nabla ∇, Laplacian ∇², partial derivative ∂, integral ∫, line integral ∮, summation Σ, product Π, Dirac bra-ket ⟨ψ|, tensor product ⊗, cross product ×, dot product ·, h-bar ħ, plus-or-minus ±, dagger † hermitian conjugate, magnitude |·|, hat notation, for-all ∀, there-exists ∃, element-of ∈, direct-sum ⊕, maps-to →, not-equal ≠, approximately-equal ≈, proportional-to ∝, infinity ∞, identically-equal ≡).</p>
+
+  <h2>SI Units and Measurement</h2>
+  <p>Phyansy covers all 7 SI base units: metre (m) for length, kilogram (kg) for mass, second (s) for time, ampere (A) for electric current, kelvin (K) for thermodynamic temperature, mole (mol) for amount of substance, candela (cd) for luminous intensity. Derived units include: newton (N = kg·m/s²), joule (J = N·m), watt (W = J/s), pascal (Pa = N/m²), coulomb (C = A·s), volt (V = J/C), ohm (Ω = V/A), farad (F = C/V), tesla (T = kg/(A·s²)), hertz (Hz = s⁻¹), weber (Wb = V·s), henry (H = Wb/A), siemens (S = Ω⁻¹), becquerel (Bq = s⁻¹), gray (Gy = J/kg), sievert (Sv = J/kg), lumen (lm = cd·sr), lux (lx = lm/m²). Non-SI units in physics: electron-volt (eV = 1.602×10⁻¹⁹ J), atomic mass unit (u = 1.661×10⁻²⁷ kg), light-year (ly ≈ 9.461×10¹⁵ m), parsec (pc ≈ 3.086×10¹⁶ m), angstrom (Å = 10⁻¹⁰ m), barn (b = 10⁻²⁸ m²). Metric prefixes: yocto (y, 10⁻²⁴), zepto (z, 10⁻²¹), atto (a, 10⁻¹⁸), femto (f, 10⁻¹⁵), pico (p, 10⁻¹²), nano (n, 10⁻⁹), micro (μ, 10⁻⁶), milli (m, 10⁻³), centi (c, 10⁻²), deci (d, 10⁻¹), deca (da, 10¹), hecto (h, 10²), kilo (k, 10³), mega (M, 10⁶), giga (G, 10⁹), tera (T, 10¹²), peta (P, 10¹⁵), exa (E, 10¹⁸), zetta (Z, 10²¹), yotta (Y, 10²⁴).</p>
+</section>
+</body>
