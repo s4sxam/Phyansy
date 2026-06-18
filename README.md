@@ -19,7 +19,7 @@
 
 <br/>
 
-> *Built by a CS student at IIT Bombay who was tired of Googling physics constants mid-problem.*
+> *Built by a High School Student who was tired of Googling physics constants mid-problem.*
 
 <br/>
 
