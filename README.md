@@ -4,7 +4,7 @@
 
 # ⚛ Phyansy
 
-### The Physics Reference Web App — Built for Curious Minds
+### The physics reference you wish existed in college.
 
 [![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-phyansy.vercel.app-667eea?style=for-the-badge&labelColor=0d0d14)](https://phyansy.vercel.app)
 [![License](https://img.shields.io/badge/License-MIT-48bb78?style=for-the-badge&labelColor=0d0d14)](LICENSE)
@@ -15,7 +15,11 @@
 
 <br/>
 
-*Constants. Equations. Symbols. Units. A Calculator. Everything a physics student needs — beautifully rendered, instantly searchable, multilingual.*
+**295 equations · 79 constants · 14 languages · 0 ads · 0 login · forever free**
+
+<br/>
+
+> *Built by a CS student at IIT Bombay who was tired of Googling physics constants mid-problem.*
 
 <br/>
 
@@ -23,508 +27,219 @@
 
 </div>
 
-## ✨ What is Phyansy?
+## The problem
 
-**Phyansy** is a free, open-source physics reference web app. No sign-up. No ads. No fluff.
+You're mid-derivation at 1 AM. You need the Boltzmann constant. You Google it. You get a Wikipedia page, three ads, and a table that doesn't render on mobile.
 
-It gives students, researchers, and curious minds instant access to:
-- **295 physics equations** across 13 categories — each with derivations, deep meanings, history, and misconceptions
-- **79 physical constants** with exact values, uncertainties, and multilingual descriptions  
-- **51 physics symbols** (Greek + mathematical) with usage context  
-- A **unit reference** covering SI, derived, and non-SI units  
-- A built-in **physics calculator**
-- A **global fuzzy search engine** across every section
+Or you need to understand *why* Schrödinger's equation works — not just what it looks like. No site gives you that cleanly.
 
-Everything is rendered with **KaTeX** for beautiful, accurate math — not plain text.
+**Phyansy fixes this.** One app. Every equation, constant, symbol, and unit you'll ever need — with real explanations, beautiful math, and support for 14 languages including Hindi, Bengali, Tamil, Telugu, and Marathi.
 
 ---
 
-## 📸 Screenshots
+## What's inside
 
-> **Light Mode**
+| Section | What you get |
+|---|---|
+| ⚡ **295 Equations** | Formula + derivation + deep meaning + misconceptions + history. Not just the formula. |
+| 🔬 **79 Constants** | Exact CODATA values with uncertainty, category, one-click copy, multilingual descriptions |
+| 🔣 **51 Symbols** | Greek + mathematical notation with usage context |
+| 📏 **Units** | SI, derived, non-SI, and metric prefixes |
+| 🖩 **Calculator** | Built-in physics calculator — no tab switching |
+| 🔍 **Search** | Fuzzy global search across everything. Press `/` anywhere. |
+| 🌐 **14 Languages** | Physics in your language — Hindi, Bengali, Tamil, Telugu, Marathi, Arabic, Spanish, French, Portuguese, Russian, Japanese, Chinese, German |
 
-![Phyansy Light Mode — Physical Constants](https://phyansy.vercel.app/og-image.png)
+---
+
+## Why it's different
+
+Every other physics reference site gives you one of these:
+- ✅ Good content, ❌ terrible UI (HyperPhysics — bless its heart, it's from 2003)
+- ✅ Good UI, ❌ shallow content
+- ✅ Accurate values, ❌ zero explanation (NIST CODATA)
+- ✅ Everything, ❌ 47 ads and a login wall
+
+Phyansy gives you all the content, all the explanation, a modern UI, 14 languages, and nothing you didn't ask for.
+
+---
+
+## Screenshots
+
+> **Dark Mode**
+
+![Phyansy Dark Mode](https://phyansy.vercel.app/og-image.png)
 
 > Live at **[phyansy.vercel.app](https://phyansy.vercel.app)**
 
 ---
 
-## 🗂 Feature Overview
-
-### ⚡ Physical Constants
-79 fundamental constants of the universe — from the speed of light to the Planck constant.
-
-| Field | Description |
-|---|---|
-| Symbol & Value | Exact SI value with uncertainty |
-| Category | Universal, Electromagnetic, Thermodynamic, Atomic, Particle, Nuclear |
-| Description | Multilingual explanations |
-| Copy exact | One-click copy of precise value |
-
-**Categories:** Universal · Electromagnetic · Thermodynamic · Atomic · Particle · Nuclear
-
----
-
-### 📐 Equations
-295 equations across 13 physics domains. Each equation goes beyond just the formula:
-
-| Field | Description |
-|---|---|
-| `formula` | Clean human-readable form |
-| `formulaLatex` | KaTeX-rendered math |
-| `whatItSays` | Plain-English explanation |
-| `deepMeaning` | The *why* behind the equation |
-| `derivation` | Step-by-step mathematical derivation |
-| `whoDiscovered` | Historical context and attribution |
-| `whyItMatters` | Real-world significance |
-| `misconception` | Common student mistakes explained |
-| `dimensions` | Dimensional analysis |
-| `SI_units` | Units for every variable |
-| `difficulty` | GCSE / A-Level / Undergraduate / Graduate |
-| `relatedEquations` | Linked equations in the database |
-
-**Equation Categories:**
-```
-Classical Mechanics       Thermodynamics             Waves & Oscillations
-Electromagnetism          Optics                     Relativity
-Quantum Mechanics         Nuclear & Particle         Particle Physics & QFT
-Astrophysics & Cosmology  Fluid Mechanics            Solid State & Condensed Matter
-Mathematical Physics & Key Constants
-```
-
----
-
-### 🔣 Symbols
-51 physics symbols — Greek alphabet and mathematical notation — with names, usage, and context.
-
----
-
-### 📏 Units
-Complete unit reference:
-- **SI base units** — metre, kilogram, second, ampere, kelvin, mole, candela
-- **Derived units** — newton, joule, watt, pascal, tesla, hertz, and more
-- **Non-SI units** — electronvolt, astronomical unit, light-year, angstrom
-- **Metric prefixes** — femto to yotta
-
----
-
-### 🔍 Global Search Engine
-A custom-built fuzzy search engine (`searchEngine.js`) indexes every constant, equation, symbol, and unit simultaneously.
-
-- **Dropdown suggestions** as you type  
-- **Full results overlay** on Enter  
-- **Fuzzy matching** — finds results even with typos  
-- **Keyboard shortcuts** — press `/` to focus search from anywhere  
-- **Section-aware** — results tagged with source section  
-
----
-
-### 🌐 Multilingual Support (i18n)
-Phyansy supports **14 languages**. Equations, formulas, and variable names stay in English (the universal language of physics) — explanations and descriptions are translated.
-
-| Flag | Language | Code |
-|------|----------|------|
-| 🌐 | English | `en` |
-| 🇪🇸 | Español | `es` |
-| 🇨🇳 | 中文 | `zh` |
-| 🇮🇳 | हिन्दी | `hi` |
-| 🇮🇳 | বাংলা | `bn` |
-| 🇮🇳 | தமிழ் | `ta` |
-| 🇮🇳 | తెలుగు | `te` |
-| 🇮🇳 | मराठी | `mr` |
-| 🇸🇦 | العربية | `ar` |
-| 🇫🇷 | Français | `fr` |
-| 🇧🇷 | Português | `pt` |
-| 🇷🇺 | Русский | `ru` |
-| 🇯🇵 | 日本語 | `ja` |
-| 🇩🇪 | Deutsch | `de` |
-
-Language is persisted via localStorage. The language picker is accessible from the navbar.
-
----
-
-### 🖩 Calculator
-A built-in physics calculator for common computations — no need to leave the app.
-
----
-
-### 🎨 UI & UX
-- **Dark / Light mode** — system preference detected, toggle in navbar, persisted across sessions  
-- **Responsive** — works on mobile, tablet, and desktop  
-- **Particle background** — animated canvas particle renderer  
-- **Modal system** — desktop modal overlay / mobile expand-in-card for equation details  
-- **Lazy rendering** — cards render on scroll for performance  
-- **KaTeX math rendering** — beautiful, accurate math typesetting throughout  
-- **Toast notifications** — non-intrusive feedback on copy, errors  
-- **Cookie consent** — GDPR-aware cookie banner  
-
----
-
-## 🏗 Architecture
+## Each equation has
 
 ```
-Phyansy/
-├── index.html                    # Entry point, Google Translate widget
-├── script.js                     # App bootstrap, module orchestration
-├── assets/
-│   └── logo.svg                  # Phyansy logo
-│
-├── css/
-│   ├── base.css                  # Global reset & typography
-│   ├── theme.css                 # CSS variables, dark/light themes
-│   ├── search.css                # Global search bar styles
-│   ├── equations.css             # Equation cards & modal
-│   ├── constants.css             # Constants cards
-│   ├── symbols.css               # Symbols grid
-│   ├── units.css                 # Units table
-│   ├── calculator.css            # Calculator UI
-│   ├── lang.css                  # Language picker panel
-│   ├── modal.css                 # Modal overlay system
-│   └── cookie.css                # Cookie consent banner
-│
-├── js/
-│   ├── modules/
-│   │   ├── searchEngine.js       # Custom fuzzy search engine
-│   │   ├── searchInit.js         # Search bootstrap & index builder
-│   │   ├── equationsController.js
-│   │   ├── constantsController.js
-│   │   ├── symbolsController.js
-│   │   ├── unitsController.js
-│   │   ├── calculatorController.js
-│   │   ├── langController.js     # i18n engine
-│   │   ├── langPickerController.js
-│   │   ├── themeController.js
-│   │   ├── pageController.js
-│   │   ├── lazyRenderer.js       # IntersectionObserver lazy loading
-│   │   ├── bgRenderer.js         # Animated particle background
-│   │   ├── particleRenderer.js
-│   │   ├── toastController.js
-│   │   ├── cookieController.js
-│   │   ├── settingsController.js
-│   │   └── faviconController.js
-│   │
-│   └── data/
-│       ├── equationsData.js      # 295 equations with full metadata
-│       ├── equationsData_bn.js
-│       ├── constantsData.js      # 79 physical constants
-│       ├── constantsData.bn.js / zh.js / ja.js / ru.js / ta.js
-│       ├── constantsData.hi.js / es.js / ar.js / fr.js / pt.js
-│       ├── constantsData.mr.js / te.js / de.js
-│       ├── symbolsData.js
-│       ├── unitsData.js
-│       ├── calculatorData.js
-│       └── locales/
-│           └── ui-strings.js     # UI label translations (all 14 langs)
-│
-└── vite.config.js
+Formula (KaTeX rendered)     → beautiful, not plain text
+What it says                 → plain English
+Deep meaning                 → the WHY, not just the what
+Step-by-step derivation      → follow the math
+Who discovered it            → historical context
+Why it matters               → real-world significance
+Common misconceptions        → what students get wrong
+Dimensional analysis         → [M L T⁻²] etc.
+SI units per variable        → no ambiguity
+Difficulty tag               → GCSE / A-Level / Undergraduate / Graduate
+Related equations            → linked, not isolated
 ```
 
----
+No other free site does all of this. Check.
 
 ---
 
-## 🏆 How Phyansy Compares to Other Physics Reference Sites
+## Language support
 
-Below is an honest, section-by-section comparison of Phyansy against the most popular physics reference websites used by students and researchers worldwide.
+Physics equations stay in English (the universal language of physics). Descriptions, explanations, and UI — in your language.
 
-**Sites compared:**
-- [HyperPhysics](http://hyperphysics.phy-astr.gsu.edu/) — Georgia State University's long-standing physics reference
-- [The Physics Classroom](https://www.physicsclassroom.com/) — curriculum-based tutorial site
-- [Physics.info](https://physics.info/) — Glenn Elert's equations and notes reference
-- [NIST CODATA](https://physics.nist.gov/cuu/Constants/) — The official NIST physical constants database
-- [Wikipedia Physics Portal](https://en.wikipedia.org/wiki/Portal:Physics) — crowdsourced encyclopedia
-
----
-
-### 📐 Equations Coverage
-
-| Feature | **Phyansy** | HyperPhysics | The Physics Classroom | Physics.info | Wikipedia |
-|---|---|---|---|---|---|
-| Total equations | **295** | ~200 (scattered) | ~150 (curriculum only) | ~180 | Varies |
-| Derivations included | ✅ Step-by-step | ⚠️ Partial | ❌ Rarely | ⚠️ Minimal | ⚠️ Some |
-| Deep meaning / "Why it works" | ✅ Every equation | ❌ No | ❌ No | ❌ No | ⚠️ Some |
-| Historical attribution | ✅ Yes | ⚠️ Partial | ❌ No | ❌ No | ✅ Yes |
-| Common misconceptions | ✅ Explicitly listed | ❌ No | ⚠️ Some | ❌ No | ❌ No |
-| Dimensional analysis | ✅ Yes | ⚠️ Some | ❌ Rarely | ✅ Yes | ⚠️ Some |
-| Difficulty tagging (GCSE→Graduate) | ✅ Yes | ❌ No | ⚠️ Implicit | ❌ No | ❌ No |
-| LaTeX / KaTeX rendering | ✅ KaTeX | ❌ Image-based | ❌ Plain text | ⚠️ MathJax | ✅ MathJax |
-| Related equation linking | ✅ Yes | ⚠️ Concept maps | ❌ No | ❌ No | ✅ Wiki links |
-
-**⭐ Equations Rating: Phyansy 9.5/10 · HyperPhysics 6.5/10 · Physics Classroom 5/10 · Physics.info 6/10 · Wikipedia 7/10**
-
-> **Why Phyansy wins:** No other free site pairs every equation with its derivation, deep meaning, historical context, misconceptions, *and* dimensional analysis — all in one card, rendered with beautiful KaTeX math. HyperPhysics has depth but presents it as a confusing clickable concept map with no mobile support and image-rendered equations that break on zoom.
+| | Language | | Language |
+|---|---|---|---|
+| 🌐 | English | 🇮🇳 | हिन्दी |
+| 🇮🇳 | বাংলা | 🇮🇳 | தமிழ் |
+| 🇮🇳 | తెలుగు | 🇮🇳 | मराठी |
+| 🇸🇦 | العربية | 🇪🇸 | Español |
+| 🇫🇷 | Français | 🇧🇷 | Português |
+| 🇷🇺 | Русский | 🇯🇵 | 日本語 |
+| 🇨🇳 | 中文 | 🇩🇪 | Deutsch |
 
 ---
 
-### ⚡ Physical Constants
-
-| Feature | **Phyansy** | HyperPhysics | NIST CODATA | Physics.info | Wikipedia |
-|---|---|---|---|---|---|
-| Number of constants | **79** | ~60 | ~340 (exhaustive) | ~40 | ~100 |
-| Exact SI values | ✅ Yes | ✅ Yes | ✅ Official source | ✅ Yes | ✅ Yes |
-| Uncertainty values | ✅ Yes | ⚠️ Some | ✅ Full CODATA | ❌ No | ⚠️ Some |
-| Descriptions / explanations | ✅ Multilingual | ⚠️ Brief | ❌ Values only | ❌ No | ✅ Yes |
-| Category organization | ✅ 6 categories | ⚠️ Mixed | ⚠️ Alphabetical | ⚠️ Minimal | ✅ Yes |
-| One-click copy | ✅ Yes | ❌ No | ❌ No | ❌ No | ❌ No |
-| Multilingual descriptions | ✅ 14 languages | ❌ English only | ❌ English only | ❌ English only | ✅ Many (separate pages) |
-| Mobile-friendly | ✅ Yes | ❌ No | ⚠️ Partial | ✅ Yes | ✅ Yes |
-
-**⭐ Constants Rating: Phyansy 9/10 · NIST CODATA 8.5/10 · HyperPhysics 6/10 · Wikipedia 7/10 · Physics.info 4/10**
-
-> **Why Phyansy wins for students:** NIST CODATA is the *authoritative* source for raw values, but it's a data table — no explanations, no context, no mobile design. Phyansy takes NIST-level precision and wraps it in meaning: you don't just see the value of the Boltzmann constant, you understand *what it physically represents*, in your own language.
-
----
-
-### 🌐 Multilingual Support (i18n)
-
-| Feature | **Phyansy** | HyperPhysics | The Physics Classroom | NIST CODATA | Wikipedia |
-|---|---|---|---|---|---|
-| Languages supported | **14** | 1 (English) | 1 (English) | 1 (English) | 300+ (separate wikis) |
-| Indian languages | ✅ Hindi, Bengali, Tamil, Telugu, Marathi | ❌ | ❌ | ❌ | ✅ (separate pages) |
-| Arabic / Russian / Japanese | ✅ Yes | ❌ | ❌ | ❌ | ✅ (separate pages) |
-| Math stays in English | ✅ Yes (correct approach) | N/A | N/A | N/A | ✅ |
-| Persisted across sessions | ✅ localStorage | N/A | N/A | N/A | ✅ |
-| Single-page multilingual | ✅ Yes | ❌ | ❌ | ❌ | ❌ (separate full wikis) |
-
-**⭐ Multilingual Rating: Phyansy 9.5/10 · Wikipedia 8/10 (different model) · All others 1/10**
-
-> **Why this matters:** For the 1.4 billion people in India, 300+ million Arabic speakers, and hundreds of millions of other non-English speakers, physics education in English is a barrier — not a bridge. Phyansy is the *only* dedicated physics reference app with native support for Hindi, Bengali, Tamil, Telugu, and Marathi on a single page. Wikipedia has translations but they are entirely separate websites with inconsistent content.
-
----
-
-### 🔍 Search Experience
-
-| Feature | **Phyansy** | HyperPhysics | The Physics Classroom | Physics.info | Wikipedia |
-|---|---|---|---|---|---|
-| Global search (all sections) | ✅ Yes — unified | ❌ Section-only | ✅ Site search | ❌ No search | ✅ Wikipedia search |
-| Fuzzy matching (typo-tolerant) | ✅ Yes | ❌ No | ❌ No | ❌ No | ⚠️ Partial |
-| Real-time dropdown suggestions | ✅ Yes | ❌ No | ❌ No | ❌ No | ✅ Yes |
-| Keyboard shortcut (`/` to search) | ✅ Yes | ❌ No | ❌ No | ❌ No | ✅ Yes |
-| Searches equations + constants + symbols + units simultaneously | ✅ Yes | ❌ No | ❌ No | ❌ No | ❌ No |
-| Section-tagged results | ✅ Yes | ❌ N/A | ❌ No | ❌ No | ⚠️ Category tags |
-
-**⭐ Search Rating: Phyansy 9.5/10 · Wikipedia 7.5/10 · Physics Classroom 5/10 · HyperPhysics 3/10 · Physics.info 2/10**
-
-> **Why Phyansy wins:** HyperPhysics has no real search — you navigate via a clickable concept map diagram from the 1990s. Phyansy's custom-built fuzzy search engine (`searchEngine.js`) indexes all 295 equations, 79 constants, 51 symbols, and all units simultaneously. Type "planc" and it finds the Planck constant. Type "newtn" and it surfaces Newton's Second Law. No other site in this comparison matches this.
-
----
-
-### 🎨 UI / UX & Design
-
-| Feature | **Phyansy** | HyperPhysics | The Physics Classroom | Physics.info | NIST CODATA |
-|---|---|---|---|---|---|
-| Dark mode | ✅ Auto-detected + toggle | ❌ No | ❌ No | ❌ No | ❌ No |
-| Mobile responsive | ✅ Yes | ❌ No | ✅ Yes | ✅ Yes | ⚠️ Partial |
-| Animated / modern UI | ✅ Particle background, modals | ❌ Static HTML | ⚠️ Minimal | ❌ Plain HTML | ❌ Plain HTML |
-| Lazy rendering (performance) | ✅ IntersectionObserver | ❌ No | ✅ Some | ❌ No | ❌ No |
-| No ads | ✅ Completely ad-free | ✅ Ad-free | ❌ Has ads | ✅ Ad-free | ✅ Ad-free |
-| No login required | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes | ✅ Yes |
-| Open source | ✅ MIT License | ❌ No | ❌ No | ❌ No | ❌ No |
-| Last design update | 2025 | ~2005 era | 2022 | ~2010 era | 2019 |
-
-**⭐ UI/UX Rating: Phyansy 9/10 · The Physics Classroom 6/10 · Wikipedia 7/10 · HyperPhysics 2/10 · NIST 4/10**
-
-> **Honest note:** HyperPhysics is a masterpiece of *content* built on a completely outdated interface. Its concept map navigation made sense in 2000; today it is confusing and inaccessible on any mobile device. Phyansy delivers the same depth of content inside a 2025-grade UX.
-
----
-
-### 🖩 Built-in Calculator
-
-| Feature | **Phyansy** | HyperPhysics | The Physics Classroom | Physics.info | Wikipedia |
-|---|---|---|---|---|---|
-| Built-in calculator | ✅ Yes | ✅ Yes (many) | ✅ Yes | ❌ No | ❌ No |
-| Integrated into reference | ✅ Same app | ❌ Separate pages | ❌ Separate tools | ❌ N/A | ❌ N/A |
-| No external redirect needed | ✅ Yes | ✅ Yes | ❌ External links | ❌ N/A | ❌ N/A |
-
-**⭐ Calculator Rating: Phyansy 8/10 · HyperPhysics 8.5/10 · Physics Classroom 6/10 · Others N/A**
-
-> HyperPhysics genuinely excels at calculators — it has domain-specific interactive calculators for optics, thermodynamics, and more. Phyansy's calculator is general-purpose. This is an area where HyperPhysics leads.
-
----
-
-### 📚 Content Depth & Educational Quality
-
-| Feature | **Phyansy** | HyperPhysics | The Physics Classroom | Physics.info | Wikipedia |
-|---|---|---|---|---|---|
-| Beginner-friendly explanations | ✅ Yes | ⚠️ Assumes background | ✅ Excellent | ⚠️ Terse | ⚠️ Variable |
-| Graduate-level depth | ✅ Yes (QFT, Condensed Matter) | ✅ Yes | ❌ GCSE/A-Level only | ⚠️ Some | ✅ Yes |
-| Real-world applications | ✅ Every equation | ⚠️ Some | ✅ Yes | ❌ No | ✅ Yes |
-| Historical context | ✅ Every equation | ⚠️ Some | ❌ Minimal | ❌ No | ✅ Yes |
-| Misconceptions addressed | ✅ Explicitly | ❌ No | ✅ Some | ❌ No | ❌ No |
-| Covers GCSE → Graduate | ✅ Full range, tagged | ⚠️ University+ focus | ⚠️ GCSE/A-Level only | ⚠️ Mixed | ✅ All levels |
-
-**⭐ Educational Depth Rating: Phyansy 9.5/10 · Wikipedia 8/10 · HyperPhysics 7.5/10 · Physics Classroom 6.5/10 · Physics.info 5/10**
-
----
-
-### 🏁 Overall Comparison Summary
-
-| | **Phyansy** | HyperPhysics | Physics Classroom | Physics.info | NIST CODATA | Wikipedia |
-|---|---|---|---|---|---|---|
-| Equations | ⭐ 9.5 | 6.5 | 5.0 | 6.0 | N/A | 7.0 |
-| Constants | ⭐ 9.0 | 6.0 | N/A | 4.0 | 8.5 | 7.0 |
-| Multilingual | ⭐ 9.5 | 1.0 | 1.0 | 1.0 | 1.0 | 8.0 |
-| Search | ⭐ 9.5 | 3.0 | 5.0 | 2.0 | 4.0 | 7.5 |
-| UI / UX | ⭐ 9.0 | 2.0 | 6.0 | 3.0 | 4.0 | 7.0 |
-| Calculator | 8.0 | ⭐ 8.5 | 6.0 | N/A | N/A | N/A |
-| Educational Depth | ⭐ 9.5 | 7.5 | 6.5 | 5.0 | N/A | 8.0 |
-| Open Source | ✅ MIT | ❌ | ❌ | ❌ | ❌ | ✅ CC |
-| Ad-free | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
-| **Overall** | ⭐ **9.2** | **5.8** | **5.0** | **3.5** | **5.5** | **7.5** |
-
-> **Ratings are based on student-facing utility:** how useful is this site for someone learning or referencing physics, regardless of specialty level?
-
----
-
-### 💬 Bottom Line
-
-**Phyansy is the only physics reference tool that combines:**
-1. ✅ Beautiful KaTeX math rendering
-2. ✅ Deep equation explanations (not just formulas)
-3. ✅ 14 languages including 5 Indian languages
-4. ✅ Fuzzy global search across all sections
-5. ✅ Modern, mobile-first, dark-mode UI
-6. ✅ Completely open source (MIT)
-7. ✅ Zero ads, zero login, zero cost
-
-No single competitor offers all of these together. HyperPhysics has deeper domain calculators. NIST has more authoritative constant values. Wikipedia has broader coverage. But for a student who wants to **understand physics** — not just look up a number — Phyansy offers the most complete, accessible, and beautiful experience available for free.
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- [Node.js](https://nodejs.org/) v18+
-- npm
-
-### Local Development
+## Get started locally
 
 ```bash
-# Clone the repository
 git clone https://github.com/s4sxam/Phyansy.git
 cd Phyansy
-
-# Install dependencies
 npm install
-
-# Start dev server
 npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173)
 
-### Build for Production
-
 ```bash
-npm run build
-```
-
-Output is in `dist/`. Deploy to any static host.
-
-### Lint & Syntax Check
-
-```bash
-npm run lint          # ESLint
-npm run check:syntax  # Node syntax check on all JS files
-npm run check         # lint + syntax + build (full CI check)
+npm run build   # production build → dist/
+npm run lint    # ESLint
+npm run check   # lint + syntax + build
 ```
 
 ---
 
-## 🌍 Deployment
-
-Phyansy is deployed on **Vercel** with zero-config static hosting.
+## Deploy your own
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/s4sxam/Phyansy)
 
-Any push to `main` triggers an automatic redeploy.
+One click. Works out of the box.
 
 ---
 
-## 🤝 Contributing
+## Architecture
 
-Contributions are welcome! Here are the best ways to help:
+```
+Phyansy/
+├── index.html                        # Entry point
+├── script.js                         # App bootstrap & module orchestration
+├── css/                              # Modular stylesheets
+│   ├── base.css / theme.css          # Global reset, CSS variables, dark/light
+│   ├── equations.css / constants.css # Section-specific styles
+│   └── ...
+├── js/
+│   ├── modules/
+│   │   ├── searchEngine.js           # Custom fuzzy search — built from scratch
+│   │   ├── equationsController.js    # Equation card rendering & modal
+│   │   ├── constantsController.js
+│   │   ├── langController.js         # i18n engine
+│   │   ├── lazyRenderer.js           # IntersectionObserver lazy loading
+│   │   ├── bgRenderer.js             # Particle background canvas
+│   │   └── ...
+│   └── data/
+│       ├── equationsData.js          # 295 equations — full metadata
+│       ├── constantsData.js          # 79 constants — CODATA values
+│       ├── constantsData.hi.js       # + 12 more language files
+│       └── locales/ui-strings.js     # UI translations (all 14 langs)
+└── vite.config.js
+```
 
-### Add or fix equations
-Edit `js/data/equationsData.js`. Each equation should include:
+**Zero external frameworks.** Vanilla JS + Vite + KaTeX. Fast, lean, no dependency hell.
+
+---
+
+## Contributing
+
+PRs welcome. Best ways to help:
+
+**Add or fix an equation** → edit `js/data/equationsData.js`
+
 ```js
 {
-  name: "Equation Name",
-  difficulty: "GCSE" | "A-Level" | "Undergraduate" | "Graduate",
-  tags: ["tag1", "tag2"],
+  name: "Newton's Second Law",
+  difficulty: "GCSE",              // GCSE | A-Level | Undergraduate | Graduate
   formula: "F = ma",
   formulaLatex: "F = ma",
-  desc: "Short description.",
-  vars: [{ s: "F", d: "Force (N)" }, ...],
   whatItSays: "...",
   deepMeaning: "...",
   derivation: "...",
-  whoDiscovered: "...",
+  whoDiscovered: "Isaac Newton, 1687",
   whyItMatters: "...",
   misconception: "...",
   dimensions: "[M L T⁻²]",
   SI_units: { F: "N", m: "kg", a: "m/s²" },
-  relatedEquations: ["Newton's Second Law", ...],
-  year: 1687,
+  relatedEquations: ["Momentum", "Impulse"],
 }
 ```
 
-### Add a language translation
-Create `js/data/constantsData.XX.js` following the pattern of an existing translation file. Add your language to `js/data/locales/ui-strings.js`.
+**Add a language** → create `js/data/constantsData.XX.js` + add to `ui-strings.js`
 
-### Report a bug
-Open an [issue](https://github.com/s4sxam/Phyansy/issues) with steps to reproduce.
+**Report a bug** → [open an issue](https://github.com/s4sxam/Phyansy/issues)
 
 ---
 
-## 🛠 Tech Stack
+## Tech stack
 
-| Technology | Purpose |
+| Tech | Why |
 |---|---|
-| **Vanilla JavaScript (ES Modules)** | Core app logic — no framework |
-| **Vite** | Dev server, bundler, HMR |
-| **KaTeX** | Math rendering (LaTeX → HTML) |
-| **CSS Custom Properties** | Theming system (dark/light) |
-| **Google Translate API** | Page-level translation widget |
-| **Vercel** | Hosting & deployment |
-| **ESLint** | Code quality |
+| **Vanilla JS (ES Modules)** | No framework overhead. Fast. Transparent. |
+| **Vite** | Dev server + bundler with HMR |
+| **KaTeX** | Sub-millisecond LaTeX → HTML math rendering |
+| **CSS Custom Properties** | Theming system — dark/light, zero JS |
+| **Vercel** | Static hosting, zero config |
 
 ---
 
-## 📊 Data Scale
+## Data scale
 
-| Section | Count |
+| | Count |
 |---|---|
 | Equations | **295** across 13 categories |
-| Physical Constants | **79** across 6 categories |
-| Symbols | **51** (Greek + mathematical) |
-| Unit entries | SI + Derived + Non-SI + Prefixes |
+| Physical constants | **79** across 6 categories |
+| Symbols | **51** |
 | Languages | **14** |
+| Ads | **0** |
+| Login required | **Never** |
 
 ---
 
-## 📄 License
+## Support
 
-MIT License — see [LICENSE](LICENSE) for details.
-
-Free to use, fork, and build upon. If you use Phyansy in your project, a star ⭐ is appreciated.
+Phyansy is free and will always be free. If it saved you from a late-night Google spiral, consider [buying me a coffee](https://ko-fi.com/s4sxam) ☕
 
 ---
 
-## 👨‍💻 Author
+## License
 
-**Tanay Guha** ([@s4sxam](https://github.com/s4sxam))  
-Student developer from West Bengal, India.  
-Built Phyansy independently as a free resource for physics students everywhere.
+MIT — free to use, fork, and build on. If it helped you, a ⭐ means a lot.
 
 ---
 
 <div align="center">
 
-**[⚛ Open Phyansy](https://phyansy.vercel.app)** · **[⭐ Star on GitHub](https://github.com/s4sxam/Phyansy)** · **[🐛 Report Bug](https://github.com/s4sxam/Phyansy/issues)**
+**[⚛ Open Phyansy](https://phyansy.vercel.app)** · **[⭐ Star on GitHub](https://github.com/s4sxam/Phyansy)** · **[🐛 Report a Bug](https://github.com/s4sxam/Phyansy/issues)** · **[☕ Support](https://ko-fi.com/s4sxam)**
 
 <br/>
 
-*Made with love for physics students everywhere.*
+*Built solo. Kept free. For every student who deserved better tools.*
 
 </div>
